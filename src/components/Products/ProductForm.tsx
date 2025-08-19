@@ -40,13 +40,19 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
       });
       setDisplayCostPrice(formatCurrencyInput(product.costPrice));
       setDisplaySalePrice(formatCurrencyInput(product.salePrice));
-      setDisplayQuantity(formatFloatInput(product.quantity));
-      setDisplayMinQuantity(formatFloatInput(product.minQuantity));
+      // Format based on unit type
+      if (product.unit === 'units') {
+        setDisplayQuantity(Math.floor(product.quantity).toString());
+        setDisplayMinQuantity(Math.floor(product.minQuantity).toString());
+      } else {
+        setDisplayQuantity(formatFloatInput(product.quantity));
+        setDisplayMinQuantity(formatFloatInput(product.minQuantity));
+      }
     } else {
       setDisplayCostPrice('0,00');
       setDisplaySalePrice('0,00');
-      setDisplayQuantity('0,00');
-      setDisplayMinQuantity('5,00');
+      setDisplayQuantity('0');
+      setDisplayMinQuantity('5');
     }
   }, [product]);
 
@@ -70,6 +76,11 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
   const formatFloatInput = (value: number): string => {
     if (value === 0) return '0,00';
     
+    // For units, format as integer
+    if (formData.unit === 'units') {
+      return Math.floor(value).toString();
+    }
+    
     const cents = Math.round(value * 100);
     const integerPart = Math.floor(cents / 100);
     const decimalPart = cents % 100;
@@ -79,12 +90,38 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
   };
 
   const parseFloatInput = (value: string): number => {
+    // For units, parse as integer
+    if (formData.unit === 'units') {
+      const numericValue = value.replace(/[^\d]/g, '');
+      return parseInt(numericValue) || 0;
+    }
+    
     const numericValue = value.replace(/[^\d]/g, '');
     if (!numericValue) return 0;
     return parseInt(numericValue) / 100;
   };
 
   const handleFloatChange = (value: string, field: 'quantity' | 'minQuantity') => {
+    // For units, handle as integer
+    if (formData.unit === 'units') {
+      const numericValue = value.replace(/[^\d]/g, '');
+      const intValue = parseInt(numericValue) || 0;
+      
+      if (field === 'quantity') {
+        setDisplayQuantity(intValue.toString());
+        setFormData(prev => ({ ...prev, quantity: intValue }));
+      } else {
+        setDisplayMinQuantity(intValue.toString());
+        setFormData(prev => ({ ...prev, minQuantity: intValue }));
+      }
+      
+      // Clear error when user starts typing
+      if (errors[field]) {
+        setErrors(prev => ({ ...prev, [field]: '' }));
+      }
+      return;
+    }
+    
     // Pega o valor atual sem formatação
     const currentValue = field === 'quantity' ? displayQuantity : displayMinQuantity;
     const currentNumeric = currentValue.replace(/[^\d]/g, '');
@@ -139,6 +176,24 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
+
+  // Update display format when unit changes
+  useEffect(() => {
+    if (formData.unit === 'units') {
+      // Convert to integer format
+      setDisplayQuantity(Math.floor(formData.quantity).toString());
+      setDisplayMinQuantity(Math.floor(formData.minQuantity).toString());
+      setFormData(prev => ({
+        ...prev,
+        quantity: Math.floor(prev.quantity),
+        minQuantity: Math.floor(prev.minQuantity)
+      }));
+    } else {
+      // Convert to float format
+      setDisplayQuantity(formatFloatInput(formData.quantity));
+      setDisplayMinQuantity(formatFloatInput(formData.minQuantity));
+    }
+  }, [formData.unit]);
 
   const handleFloatKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // Para teclas de navegação, força o cursor para o final
@@ -520,7 +575,9 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                 onClick={handleFloatClick}
                 onFocus={(e) => {
                   handleFloatFocus(e);
-                  if (e.target.value === '0,00') {
+                  const isUnits = formData.unit === 'units';
+                  if ((isUnits && e.target.value === '0') || (!isUnits && e.target.value === '0,00')) {
+                  if ((isUnits && e.target.value === '0') || (!isUnits && e.target.value === '0,00')) {
                     setDisplayMinQuantity('');
                     setFormData(prev => ({ ...prev, minQuantity: 0 }));
                   }
@@ -528,7 +585,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                 className={`w-full pr-10 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                   errors.minQuantity ? 'border-red-500' : 'border-gray-300'
                 }`}
-                placeholder="0,00"
+                placeholder={formData.unit === 'units' ? '0' : '0,00'}
                 inputMode="decimal"
               />
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
