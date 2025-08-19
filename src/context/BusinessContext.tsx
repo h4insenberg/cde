@@ -9,7 +9,7 @@ interface BusinessState {
   stockMovements: StockMovement[];
   notifications: Notification[];
   dashboardStats: DashboardStats;
-  themeMode: ThemeMode;
+  darkMode: boolean;
 }
 
 type BusinessAction =
@@ -24,7 +24,7 @@ type BusinessAction =
   | { type: 'ADD_NOTIFICATION'; payload: Notification }
   | { type: 'MARK_NOTIFICATION_READ'; payload: string }
   | { type: 'UPDATE_STATS' }
-  | { type: 'SET_THEME_MODE'; payload: ThemeMode }
+  | { type: 'TOGGLE_DARK_MODE' }
   | { type: 'LOAD_DATA'; payload: BusinessState };
 
 const initialState: BusinessState = {
@@ -40,7 +40,7 @@ const initialState: BusinessState = {
     profitMargin: 0,
     lowStockAlerts: 0,
   },
-  themeMode: 'system',
+  darkMode: true,
 };
 
 // Sample data for testing
@@ -322,8 +322,8 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
         }
       };
     
-    case 'SET_THEME_MODE':
-      return { ...state, themeMode: action.payload };
+    case 'TOGGLE_DARK_MODE':
+      return { ...state, darkMode: !state.darkMode };
     
     case 'LOAD_DATA':
       return action.payload;
@@ -346,7 +346,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         const dataWithDefaults = {
           ...initialState,
           ...parsedData,
-          themeMode: parsedData.themeMode ?? 'system',
+          darkMode: parsedData.darkMode ?? true,
         };
         dispatch({ type: 'LOAD_DATA', payload: dataWithDefaults });
       } catch (error) {
@@ -374,7 +374,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     localStorage.setItem('businessData', JSON.stringify(state));
     dispatch({ type: 'UPDATE_STATS' });
-  }, [state.products, state.services, state.sales, state.stockMovements, state.notifications, state.themeMode]);
+  }, [state.products, state.services, state.sales, state.stockMovements, state.notifications, state.darkMode]);
 
   return (
     <BusinessContext.Provider value={{ state, dispatch }}>

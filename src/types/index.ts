@@ -71,5 +71,3 @@ export interface Notification {
   createdAt: Date;
   read: boolean;
 }
-
-export type ThemeMode = 'system' | 'light' | 'dark';
