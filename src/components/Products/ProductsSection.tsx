@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Package, Wrench } from 'lucide-react';
+import { Plus, Package, Wrench, Search } from 'lucide-react';
 import { ProductCard } from './ProductCard';
 import { ServiceCard } from '../Services/ServiceCard';
 import { ProductForm } from './ProductForm';
@@ -12,10 +12,22 @@ export function ProductsSection() {
   const { state, dispatch } = useBusiness();
   const { addNotification } = useNotifications();
   const [activeTab, setActiveTab] = useState<'products' | 'services'>('products');
+  const [searchTerm, setSearchTerm] = useState('');
   const [showProductForm, setShowProductForm] = useState(false);
   const [showServiceForm, setShowServiceForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingService, setEditingService] = useState<Service | null>(null);
+
+  // Filter products and services based on search term
+  const filteredProducts = state.products.filter(product =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredServices = state.services.filter(service =>
+    service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    service.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleSaveProduct = (product: Product) => {
     if (editingProduct) {
@@ -92,7 +104,7 @@ export function ProductsSection() {
                 <Package className="h-4 w-4" />
                 <span>Produtos</span>
                 <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs">
-                  {state.products.length}
+                  {filteredProducts.length}
                 </span>
               </button>
               <button
@@ -106,7 +118,7 @@ export function ProductsSection() {
                 <Wrench className="h-4 w-4" />
                 <span>Serviços</span>
                 <span className="bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-200 px-2 py-1 rounded-full text-xs">
-                  {state.services.length}
+                  {filteredServices.length}
                 </span>
               </button>
             </div>
@@ -140,12 +152,34 @@ export function ProductsSection() {
         </div>
       </div>
 
+      {/* Search Bar */}
+      <div className="bg-white dark:bg-[#18191c] rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-600">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder={`Buscar ${activeTab === 'products' ? 'produtos' : 'serviços'}...`}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+          />
+        </div>
+        {searchTerm && (
+          <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            {activeTab === 'products' 
+              ? `${filteredProducts.length} produto${filteredProducts.length !== 1 ? 's' : ''} encontrado${filteredProducts.length !== 1 ? 's' : ''}`
+              : `${filteredServices.length} serviço${filteredServices.length !== 1 ? 's' : ''} encontrado${filteredServices.length !== 1 ? 's' : ''}`
+            }
+          </div>
+        )}
+      </div>
+
       {/* Products Tab */}
       {activeTab === 'products' && (
         <div>
-          {state.products.length > 0 ? (
+          {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-              {state.products.map((product) => (
+              {filteredProducts.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={product}
@@ -154,7 +188,25 @@ export function ProductsSection() {
                 />
               ))}
             </div>
-          ) : (
+          ) : searchTerm ? (
+            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 dark:bg-[#18191c] dark:border-gray-700">
+              <div className="text-center">
+                <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  Nenhum produto encontrado
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-4">
+                  Tente buscar com outros termos ou limpe o filtro
+                </p>
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  Limpar Busca
+                </button>
+              </div>
+            </div>
+          ) : state.products.length === 0 ? (
             <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 dark:bg-[#18191c] dark:border-gray-700">
               <div className="text-center">
                 <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -191,7 +243,25 @@ export function ProductsSection() {
                 />
               ))}
             </div>
-          ) : (
+          ) : searchTerm ? (
+            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 dark:bg-[#18191c] dark:border-gray-700">
+              <div className="text-center">
+                <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  Nenhum serviço encontrado
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-4">
+                  Tente buscar com outros termos ou limpe o filtro
+                </p>
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  Limpar Busca
+                </button>
+              </div>
+            </div>
+          ) : state.services.length === 0 ? (
             <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 dark:bg-[#18191c] dark:border-gray-700">
               <div className="text-center">
                 <Wrench className="h-12 w-12 text-gray-400 mx-auto mb-4" />
