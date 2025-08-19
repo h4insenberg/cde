@@ -55,10 +55,10 @@ export interface StockMovement {
 }
 
 export interface DashboardStats {
-  grossRevenue: number;
-  totalCosts: number;
-  grossProfit: number;
-  netAmountReceived: number;
+  revenue: number;
+  expenses: number;
+  netProfit: number;
+  profitMargin: number;
   lowStockAlerts: number;
 }
 

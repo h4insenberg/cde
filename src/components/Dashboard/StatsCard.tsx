@@ -41,7 +41,7 @@ export function StatsCard({
         <div className="flex-1">
           <p className="text-white/80 text-xs md:text-sm font-medium">{title}</p>
           <p className="text-lg md:text-2xl font-bold mt-1">
-            {isCurrency ? formatCurrency(value) : value}
+            {isCurrency ? formatCurrency(value) : `${value.toFixed(1)}%`}
           </p>
           {subtitle && (
             <p className="text-white/70 text-xs mt-1 hidden md:block">{subtitle}</p>
