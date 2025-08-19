@@ -11,7 +11,7 @@ export function LowStockAlerts({ products }: LowStockAlertsProps) {
 
   if (lowStockProducts.length === 0) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
           <Package className="h-5 w-5 mr-2 text-green-600" />
           Alertas de Estoque
@@ -25,7 +25,7 @@ export function LowStockAlerts({ products }: LowStockAlertsProps) {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-red-100 dark:border-red-700">
+    <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-red-100 dark:border-red-700">
       <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-4 flex items-center">
         <AlertTriangle className="h-5 w-5 mr-2" />
         Alertas de Estoque Baixo
