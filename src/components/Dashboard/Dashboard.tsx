@@ -34,7 +34,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
           icon={TrendingUp}
           color="green"
           isCurrency={true}
-          subtitle={`${dashboardStats.totalSales} transaç${dashboardStats.totalSales !== 1 ? 'ões' : 'ão'}`}
+          subtitle={`${sales.length} transaç${sales.length !== 1 ? 'ões' : 'ão'}`}
         />
         
         <StatsCard
