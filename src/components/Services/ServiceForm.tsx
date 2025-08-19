@@ -45,18 +45,35 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
   };
 
   const handleCurrencyChange = (value: string) => {
-    // Remove tudo que não é dígito e pega apenas os números
-    const numericValue = value.replace(/[^\d]/g, '');
+    // Pega o valor atual sem formatação
+    const currentNumeric = displayPrice.replace(/[^\d]/g, '');
+    
+    // Remove tudo que não é dígito do novo valor
+    const inputNumeric = value.replace(/[^\d]/g, '');
+    
+    // Se o input tem mais dígitos que o atual, adiciona no final
+    // Se tem menos, remove do final
+    let finalNumeric = '';
+    if (inputNumeric.length > currentNumeric.length) {
+      // Adiciona apenas o último dígito digitado
+      const newDigit = inputNumeric[inputNumeric.length - 1];
+      finalNumeric = currentNumeric + newDigit;
+    } else if (inputNumeric.length < currentNumeric.length) {
+      // Remove do final
+      finalNumeric = currentNumeric.slice(0, -1);
+    } else {
+      finalNumeric = inputNumeric;
+    }
     
     // Se vazio, define como 0
-    if (!numericValue) {
+    if (!finalNumeric) {
       setDisplayPrice('0,00');
       setFormData(prev => ({ ...prev, price: 0 }));
       return;
     }
     
     // Limita a 10 dígitos (máximo R$ 99.999.999,99)
-    const limitedValue = numericValue.slice(0, 10);
+    const limitedValue = finalNumeric.slice(0, 10);
     const numericPrice = parseInt(limitedValue, 10) / 100;
     
     // Formata o valor
@@ -78,6 +95,16 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
   };
 
   const handleCurrencyKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Para teclas de navegação, força o cursor para o final
+    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+      e.preventDefault();
+      setTimeout(() => {
+        const target = e.target as HTMLInputElement;
+        target.setSelectionRange(target.value.length, target.value.length);
+      }, 0);
+      return;
+    }
+    
     // Permite apenas números, backspace, delete, tab, escape, enter
     const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter'];
     const isNumber = /^[0-9]$/.test(e.key);
@@ -85,6 +112,22 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
     if (!isNumber && !allowedKeys.includes(e.key)) {
       e.preventDefault();
     }
+  };
+
+  const handleCurrencyInput = (e: React.FormEvent<HTMLInputElement>) => {
+    // Move o cursor para o final sempre que houver input
+    setTimeout(() => {
+      const target = e.target as HTMLInputElement;
+      target.setSelectionRange(target.value.length, target.value.length);
+    }, 0);
+  };
+
+  const handleCurrencyClick = (e: React.MouseEvent<HTMLInputElement>) => {
+    // Move o cursor para o final sempre que clicar
+    setTimeout(() => {
+      const target = e.target as HTMLInputElement;
+      target.setSelectionRange(target.value.length, target.value.length);
+    }, 0);
   };
 
   const handleCurrencyFocus = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -195,7 +238,9 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
               type="text"
               value={displayPrice}
               onChange={(e) => handleCurrencyChange(e.target.value)}
+              onInput={handleCurrencyInput}
               onKeyDown={handleCurrencyKeyDown}
+              onClick={handleCurrencyClick}
               onFocus={handleCurrencyFocus}
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                 errors.price ? 'border-red-500' : 'border-gray-300'
