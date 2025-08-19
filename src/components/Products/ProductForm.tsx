@@ -45,24 +45,43 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
   }, [product]);
 
   const formatCurrencyInput = (value: number): string => {
-    return (value * 100).toFixed(0).padStart(3, '0').replace(/(\d+)(\d{2})$/, '$1,$2');
+    if (value === 0) return '0,00';
+    
+    const cents = Math.round(value * 100);
+    const reais = Math.floor(cents / 100);
+    const centavos = cents % 100;
+    
+    const reaisFormatted = reais.toLocaleString('pt-BR');
+    return `${reaisFormatted},${centavos.toString().padStart(2, '0')}`;
   };
 
   const parseCurrencyInput = (value: string): number => {
-    const numericValue = value.replace(/\D/g, '');
-    return parseFloat(numericValue) / 100;
+    const numericValue = value.replace(/[^\d]/g, '');
+    if (!numericValue) return 0;
+    return parseInt(numericValue) / 100;
   };
 
   const handleCurrencyChange = (value: string, field: 'costPrice' | 'salePrice') => {
     // Remove tudo que não é dígito
-    const numericValue = value.replace(/\D/g, '');
+    const numericValue = value.replace(/[^\d]/g, '');
+    
+    // Se vazio, define como 0
+    if (!numericValue) {
+      if (field === 'costPrice') {
+        setDisplayCostPrice('0,00');
+      } else {
+        setDisplaySalePrice('0,00');
+      }
+      setFormData(prev => ({ ...prev, [field]: 0 }));
+      return;
+    }
     
     // Limita a 10 dígitos (máximo R$ 99.999.999,99)
     const limitedValue = numericValue.slice(0, 10);
+    const numericPrice = parseInt(limitedValue) / 100;
     
-    // Formata como moeda
-    const paddedValue = limitedValue.padStart(3, '0');
-    const formattedValue = paddedValue.replace(/(\d+)(\d{2})$/, '$1,$2');
+    // Formata o valor
+    const formattedValue = formatCurrencyInput(numericPrice);
     
     // Atualiza o display
     if (field === 'costPrice') {
@@ -72,7 +91,6 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     }
     
     // Atualiza o valor numérico no formData
-    const numericPrice = parseFloat(limitedValue) / 100;
     setFormData(prev => ({
       ...prev,
       [field]: numericPrice

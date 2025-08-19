@@ -34,25 +34,38 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
   }, [service]);
 
   const formatCurrencyInput = (value: number): string => {
-    return (value * 100).toFixed(0).padStart(3, '0').replace(/(\d+)(\d{2})$/, '$1,$2');
+    if (value === 0) return '0,00';
+    
+    const cents = Math.round(value * 100);
+    const reais = Math.floor(cents / 100);
+    const centavos = cents % 100;
+    
+    const reaisFormatted = reais.toLocaleString('pt-BR');
+    return `${reaisFormatted},${centavos.toString().padStart(2, '0')}`;
   };
 
   const handleCurrencyChange = (value: string) => {
     // Remove tudo que não é dígito
-    const numericValue = value.replace(/\D/g, '');
+    const numericValue = value.replace(/[^\d]/g, '');
+    
+    // Se vazio, define como 0
+    if (!numericValue) {
+      setDisplayPrice('0,00');
+      setFormData(prev => ({ ...prev, price: 0 }));
+      return;
+    }
     
     // Limita a 10 dígitos (máximo R$ 99.999.999,99)
     const limitedValue = numericValue.slice(0, 10);
+    const numericPrice = parseInt(limitedValue) / 100;
     
-    // Formata como moeda
-    const paddedValue = limitedValue.padStart(3, '0');
-    const formattedValue = paddedValue.replace(/(\d+)(\d{2})$/, '$1,$2');
+    // Formata o valor
+    const formattedValue = formatCurrencyInput(numericPrice);
     
     // Atualiza o display
     setDisplayPrice(formattedValue);
     
     // Atualiza o valor numérico no formData
-    const numericPrice = parseFloat(limitedValue) / 100;
     setFormData(prev => ({
       ...prev,
       price: numericPrice
