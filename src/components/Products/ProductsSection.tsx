@@ -78,7 +78,7 @@ export function ProductsSection() {
     <div className="space-y-6 pb-20">
       {/* Header with Tabs */}
       <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
-        <div className="flex items-center justify-between mb-4">
+        <div className="space-y-4">
           <div className="flex space-x-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
             <button
               onClick={() => setActiveTab('products')}
@@ -109,7 +109,7 @@ export function ProductsSection() {
               </span>
             </button>
           </div>
-
+          
           <button
             onClick={() => activeTab === 'products' ? setShowProductForm(true) : setShowServiceForm(true)}
             className={`px-4 py-2 rounded-lg text-white transition-colors flex items-center space-x-2 shadow-lg ${
