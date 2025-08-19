@@ -21,7 +21,7 @@ export function StatsCard({
   color, 
   isCurrency = true, 
   isPercentage = false,
-  subtitle 
+  subtitle,
   description,
   onInfoClick
 }: StatsCardProps) {
