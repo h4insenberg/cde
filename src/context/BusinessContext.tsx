@@ -34,8 +34,7 @@ const initialState: BusinessState = {
   dashboardStats: {
     grossRevenue: 0,
     totalCosts: 0,
-    netProfit: 0,
-    profitMargin: 0,
+    grossProfit: 0,
     netAmountReceived: 0,
     lowStockAlerts: 0,
   },
@@ -305,8 +304,7 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
     case 'UPDATE_STATS':
       const grossRevenue = state.sales.reduce((sum, sale) => sum + sale.total, 0);
       const totalCosts = state.sales.reduce((sum, sale) => sum + (sale.total - sale.profit), 0);
-      const netProfit = grossRevenue - totalCosts;
-      const profitMargin = grossRevenue > 0 ? (netProfit / grossRevenue) * 100 : 0;
+      const grossProfit = state.sales.reduce((sum, sale) => sum + sale.profit, 0);
       const netAmountReceived = state.sales.reduce((sum, sale) => sum + sale.netAmount, 0);
       const lowStockAlerts = state.products.filter(p => p.quantity <= p.minQuantity).length;
       
@@ -315,8 +313,7 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
         dashboardStats: {
           grossRevenue,
           totalCosts,
-          netProfit,
-          profitMargin,
+          grossProfit,
           netAmountReceived,
           lowStockAlerts,
         }
