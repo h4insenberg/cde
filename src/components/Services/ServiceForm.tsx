@@ -32,6 +32,8 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
       setDisplayPrice('0,00');
     }
   }, [service]);
+
+  const formatCurrencyInput = (value: number) => {
     if (value === 0) return '0,00';
     
     const cents = Math.round(value * 100);
@@ -41,9 +43,13 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
     const reaisFormatted = reais.toLocaleString('pt-BR');
     return `${reaisFormatted},${centavos.toString().padStart(2, '0')}`;
   };
+
+  const handlePriceChange = (value: string) => {
     const currentNumeric = displayPrice.replace(/[^\d]/g, '');
     
     // Remove tudo que não é dígito do novo valor
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
