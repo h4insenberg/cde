@@ -235,7 +235,7 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
               Preço do Serviço *
             </label>
             <div className="flex">
-              <div className="flex items-center px-3 py-2 bg-gray-100 dark:bg-gray-600 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-lg">
+              <div className="flex items-center px-2 sm:px-3 py-2 bg-gray-100 dark:bg-gray-600 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-lg">
                 <span className="text-gray-700 dark:text-gray-300 font-medium">R$</span>
               </div>
               <input
@@ -246,7 +246,7 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
                 onKeyDown={handleCurrencyKeyDown}
                 onClick={handleCurrencyClick}
                 onFocus={handleCurrencyFocus}
-                className={`flex-1 px-3 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                className={`flex-1 px-2 sm:px-3 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm sm:text-base ${
                   errors.price ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="0,00"
