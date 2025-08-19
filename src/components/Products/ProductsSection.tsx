@@ -139,35 +139,6 @@ export function ProductsSection() {
           </button>
         </div>
       </div>
-            <button
-              onClick={() => setActiveTab('services')}
-              className={`px-4 py-2 rounded-md transition-colors flex items-center space-x-2 ${
-                activeTab === 'services'
-                  ? 'bg-white dark:bg-gray-600 text-purple-600 dark:text-purple-400 shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-              }`}
-            >
-              <Wrench className="h-4 w-4" />
-              <span>Serviços</span>
-              <span className="bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 px-2 py-1 rounded-full text-xs">
-                {state.services.length}
-              </span>
-            </button>
-          </div>
-          
-          <button
-            onClick={() => activeTab === 'products' ? setShowProductForm(true) : setShowServiceForm(true)}
-            className={`px-4 py-2 rounded-lg text-white transition-colors flex items-center space-x-2 shadow-lg ${
-              activeTab === 'products'
-                ? 'bg-blue-600 hover:bg-blue-700'
-                : 'bg-purple-600 hover:bg-purple-700'
-            }`}
-          >
-            <Plus className="h-4 w-4" />
-            <span>{activeTab === 'products' ? 'Novo Produto' : 'Novo Serviço'}</span>
-          </button>
-        </div>
-      </div>
 
       {/* Products Tab */}
       {activeTab === 'products' && (
