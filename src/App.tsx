@@ -9,7 +9,6 @@ import { ReportsSection } from './components/Reports/ReportsSection';
 import { NotificationModal } from './components/Notifications/NotificationModal';
 import { SaleForm } from './components/Sales/SaleForm';
 import { useBusiness } from './context/BusinessContext';
-import React, { useState, useEffect } from 'react';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
