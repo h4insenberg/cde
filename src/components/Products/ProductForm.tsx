@@ -152,6 +152,15 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
   };
 
   const handleNumberFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Se o valor for "0", limpa o campo ao focar
+    if (e.target.value === '0') {
+      const field = e.target.getAttribute('data-field') as 'quantity' | 'minQuantity';
+      if (field === 'quantity') {
+        setDisplayQuantity('');
+      } else {
+        setDisplayMinQuantity('');
+      }
+    }
     // Move o cursor para o final sempre
     setTimeout(() => {
       e.target.setSelectionRange(e.target.value.length, e.target.value.length);
@@ -395,6 +404,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
               </label>
               <input
                 type="text"
+                data-field="quantity"
                 value={displayQuantity}
                 onChange={(e) => handleNumberChange(e.target.value, 'quantity')}
                 onInput={handleNumberInput}
@@ -418,20 +428,25 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Preço de Custo *
               </label>
-              <input
-                type="text"
-                value={displayCostPrice}
-                onChange={(e) => handleCurrencyChange(e.target.value, 'costPrice')}
-                onInput={(e) => handleCurrencyInput(e, 'costPrice')}
-                onKeyDown={(e) => handleCurrencyKeyDown(e, 'costPrice')}
-                onClick={handleCurrencyClick}
-                onFocus={handleCurrencyFocus}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                  errors.costPrice ? 'border-red-500' : 'border-gray-300'
-                }`}
-                placeholder="0,00"
-                inputMode="numeric"
-              />
+              <div className="flex">
+                <div className="flex items-center px-3 py-2 bg-gray-100 dark:bg-gray-600 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-lg">
+                  <span className="text-gray-700 dark:text-gray-300 font-medium">R$</span>
+                </div>
+                <input
+                  type="text"
+                  value={displayCostPrice}
+                  onChange={(e) => handleCurrencyChange(e.target.value, 'costPrice')}
+                  onInput={(e) => handleCurrencyInput(e, 'costPrice')}
+                  onKeyDown={(e) => handleCurrencyKeyDown(e, 'costPrice')}
+                  onClick={handleCurrencyClick}
+                  onFocus={handleCurrencyFocus}
+                  className={`flex-1 px-3 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                    errors.costPrice ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="0,00"
+                  inputMode="numeric"
+                />
+              </div>
               {errors.costPrice && (
                 <p className="text-red-500 text-sm mt-1">{errors.costPrice}</p>
               )}
@@ -441,20 +456,25 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Preço de Venda *
               </label>
-              <input
-                type="text"
-                value={displaySalePrice}
-                onChange={(e) => handleCurrencyChange(e.target.value, 'salePrice')}
-                onInput={(e) => handleCurrencyInput(e, 'salePrice')}
-                onKeyDown={(e) => handleCurrencyKeyDown(e, 'salePrice')}
-                onClick={handleCurrencyClick}
-                onFocus={handleCurrencyFocus}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                  errors.salePrice ? 'border-red-500' : 'border-gray-300'
-                }`}
-                placeholder="0,00"
-                inputMode="numeric"
-              />
+              <div className="flex">
+                <div className="flex items-center px-3 py-2 bg-gray-100 dark:bg-gray-600 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-lg">
+                  <span className="text-gray-700 dark:text-gray-300 font-medium">R$</span>
+                </div>
+                <input
+                  type="text"
+                  value={displaySalePrice}
+                  onChange={(e) => handleCurrencyChange(e.target.value, 'salePrice')}
+                  onInput={(e) => handleCurrencyInput(e, 'salePrice')}
+                  onKeyDown={(e) => handleCurrencyKeyDown(e, 'salePrice')}
+                  onClick={handleCurrencyClick}
+                  onFocus={handleCurrencyFocus}
+                  className={`flex-1 px-3 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                    errors.salePrice ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="0,00"
+                  inputMode="numeric"
+                />
+              </div>
               {errors.salePrice && (
                 <p className="text-red-500 text-sm mt-1">{errors.salePrice}</p>
               )}
@@ -467,6 +487,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
             </label>
             <input
               type="text"
+              data-field="minQuantity"
               value={displayMinQuantity}
               onChange={(e) => handleNumberChange(e.target.value, 'minQuantity')}
               onInput={handleNumberInput}

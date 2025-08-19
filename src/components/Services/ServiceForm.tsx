@@ -234,20 +234,25 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Preço do Serviço *
             </label>
-            <input
-              type="text"
-              value={displayPrice}
-              onChange={(e) => handleCurrencyChange(e.target.value)}
-              onInput={handleCurrencyInput}
-              onKeyDown={handleCurrencyKeyDown}
-              onClick={handleCurrencyClick}
-              onFocus={handleCurrencyFocus}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                errors.price ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="0,00"
-              inputMode="numeric"
-            />
+            <div className="flex">
+              <div className="flex items-center px-3 py-2 bg-gray-100 dark:bg-gray-600 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-lg">
+                <span className="text-gray-700 dark:text-gray-300 font-medium">R$</span>
+              </div>
+              <input
+                type="text"
+                value={displayPrice}
+                onChange={(e) => handleCurrencyChange(e.target.value)}
+                onInput={handleCurrencyInput}
+                onKeyDown={handleCurrencyKeyDown}
+                onClick={handleCurrencyClick}
+                onFocus={handleCurrencyFocus}
+                className={`flex-1 px-3 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                  errors.price ? 'border-red-500' : 'border-gray-300'
+                }`}
+                placeholder="0,00"
+                inputMode="numeric"
+              />
+            </div>
             {errors.price && (
               <p className="text-red-500 text-sm mt-1">{errors.price}</p>
             )}
