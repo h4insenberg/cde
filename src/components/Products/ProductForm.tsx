@@ -504,11 +504,12 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                 <p className="text-red-500 text-sm mt-1">{errors.salePrice}</p>
               )}
             </div>
-            <div className="relative">
-              <input
-                type="text"
-                value={displayQuantity}
-                onChange={(e) => handleFloatChange(e.target.value, 'quantity')}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Estoque Mínimo *
+            </label>
             <div className="relative">
               <input
                 type="text"
