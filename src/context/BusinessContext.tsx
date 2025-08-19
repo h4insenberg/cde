@@ -95,7 +95,7 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       };
     
     case 'UPDATE_STATS':
-      const totalRevenue = state.sales.reduce((sum, sale) => sum + sale.total, 0);
+      const totalRevenue = state.sales.reduce((sum, sale) => sum + sale.netAmount, 0);
       const totalCosts = state.sales.reduce((sum, sale) => sum + (sale.total - sale.profit), 0);
       const grossProfit = state.sales.reduce((sum, sale) => sum + sale.profit, 0);
       const netProfit = state.sales.reduce((sum, sale) => sum + (sale.netAmount - (sale.total - sale.profit)), 0);
@@ -104,10 +104,10 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       return {
         ...state,
         dashboardStats: {
-          totalRevenue,
+          totalRevenue: state.sales.reduce((sum, sale) => sum + sale.total, 0),
           totalCosts,
           grossProfit,
-          netProfit,
+          netProfit: totalRevenue,
           totalSales: state.sales.length,
           lowStockAlerts,
         }

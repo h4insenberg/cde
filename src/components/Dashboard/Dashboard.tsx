@@ -27,13 +27,13 @@ export function Dashboard({ onNewSale }: DashboardProps) {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <StatsCard
           title="Entradas"
           value={dashboardStats.totalSales}
           icon={TrendingUp}
           color="green"
-          isCurrency={false}
+          isCurrency={true}
           subtitle={`${dashboardStats.totalSales} transaç${dashboardStats.totalSales !== 1 ? 'ões' : 'ão'}`}
         />
         

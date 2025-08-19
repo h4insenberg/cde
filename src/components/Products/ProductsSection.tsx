@@ -77,23 +77,68 @@ export function ProductsSection() {
   return (
     <div className="space-y-6 pb-20">
       {/* Header with Tabs */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-600">
         <div className="space-y-4">
-          <div className="flex space-x-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+            <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1">
+              <button
+                onClick={() => setActiveTab('products')}
+                className={`px-4 py-2 rounded-md transition-colors flex items-center space-x-2 ${
+                  activeTab === 'products'
+                    ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                }`}
+              >
+                <Package className="h-4 w-4" />
+                <span>Produtos</span>
+                <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs">
+                  {state.products.length}
+                </span>
+              </button>
+              <button
+                onClick={() => setActiveTab('services')}
+                className={`px-4 py-2 rounded-md transition-colors flex items-center space-x-2 ${
+                  activeTab === 'services'
+                    ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-purple-400 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                }`}
+              >
+                <Wrench className="h-4 w-4" />
+                <span>Serviços</span>
+                <span className="bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-200 px-2 py-1 rounded-full text-xs">
+                  {state.services.length}
+                </span>
+              </button>
+            </div>
+            
+            {/* Desktop button */}
             <button
-              onClick={() => setActiveTab('products')}
-              className={`px-4 py-2 rounded-md transition-colors flex items-center space-x-2 ${
+              onClick={() => activeTab === 'products' ? setShowProductForm(true) : setShowServiceForm(true)}
+              className={`hidden md:flex px-4 py-2 rounded-lg text-white transition-colors items-center space-x-2 shadow-lg ${
                 activeTab === 'products'
-                  ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                  ? 'bg-blue-600 hover:bg-blue-700'
+                  : 'bg-purple-600 hover:bg-purple-700'
               }`}
             >
-              <Package className="h-4 w-4" />
-              <span>Produtos</span>
-              <span className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full text-xs">
-                {state.products.length}
-              </span>
+              <Plus className="h-4 w-4" />
+              <span>{activeTab === 'products' ? 'Novo Produto' : 'Novo Serviço'}</span>
             </button>
+          </div>
+          
+          {/* Mobile button */}
+          <button
+            onClick={() => activeTab === 'products' ? setShowProductForm(true) : setShowServiceForm(true)}
+            className={`md:hidden w-full px-4 py-2 rounded-lg text-white transition-colors flex items-center justify-center space-x-2 shadow-lg ${
+              activeTab === 'products'
+                ? 'bg-blue-600 hover:bg-blue-700'
+                : 'bg-purple-600 hover:bg-purple-700'
+            }`}
+          >
+            <Plus className="h-4 w-4" />
+            <span>{activeTab === 'products' ? 'Novo Produto' : 'Novo Serviço'}</span>
+          </button>
+        </div>
+      </div>
             <button
               onClick={() => setActiveTab('services')}
               className={`px-4 py-2 rounded-md transition-colors flex items-center space-x-2 ${
