@@ -32,8 +32,6 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
       setDisplayPrice('0,00');
     }
   }, [service]);
-
-  const formatCurrencyInput = (value: number): string => {
     if (value === 0) return '0,00';
     
     const cents = Math.round(value * 100);
@@ -43,99 +41,9 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
     const reaisFormatted = reais.toLocaleString('pt-BR');
     return `${reaisFormatted},${centavos.toString().padStart(2, '0')}`;
   };
-
-  const handleCurrencyChange = (value: string) => {
-    // Pega o valor atual sem formatação
     const currentNumeric = displayPrice.replace(/[^\d]/g, '');
     
     // Remove tudo que não é dígito do novo valor
-    const inputNumeric = value.replace(/[^\d]/g, '');
-    
-    // Se o input tem mais dígitos que o atual, adiciona no final
-    // Se tem menos, remove do final
-    let finalNumeric = '';
-    if (inputNumeric.length > currentNumeric.length) {
-      // Adiciona apenas o último dígito digitado
-      const newDigit = inputNumeric[inputNumeric.length - 1];
-      finalNumeric = currentNumeric + newDigit;
-    } else if (inputNumeric.length < currentNumeric.length) {
-      // Remove do final
-      finalNumeric = currentNumeric.slice(0, -1);
-    } else {
-      finalNumeric = inputNumeric;
-    }
-    
-    // Se vazio, define como 0
-    if (!finalNumeric) {
-      setDisplayPrice('0,00');
-      setFormData(prev => ({ ...prev, price: 0 }));
-      return;
-    }
-    
-    // Limita a 10 dígitos (máximo R$ 99.999.999,99)
-    const limitedValue = finalNumeric.slice(0, 10);
-    const numericPrice = parseInt(limitedValue, 10) / 100;
-    
-    // Formata o valor
-    const formattedValue = formatCurrencyInput(numericPrice);
-    
-    // Atualiza o display
-    setDisplayPrice(formattedValue);
-    
-    // Atualiza o valor numérico no formData
-    setFormData(prev => ({
-      ...prev,
-      price: numericPrice
-    }));
-
-    // Clear error when user starts typing
-    if (errors.price) {
-      setErrors(prev => ({ ...prev, price: '' }));
-    }
-  };
-
-  const handleCurrencyKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Para teclas de navegação, força o cursor para o final
-    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
-      e.preventDefault();
-      setTimeout(() => {
-        const target = e.target as HTMLInputElement;
-        target.setSelectionRange(target.value.length, target.value.length);
-      }, 0);
-      return;
-    }
-    
-    // Permite apenas números, backspace, delete, tab, escape, enter
-    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter'];
-    const isNumber = /^[0-9]$/.test(e.key);
-    
-    if (!isNumber && !allowedKeys.includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-
-  const handleCurrencyInput = (e: React.FormEvent<HTMLInputElement>) => {
-    // Move o cursor para o final sempre que houver input
-    setTimeout(() => {
-      const target = e.target as HTMLInputElement;
-      target.setSelectionRange(target.value.length, target.value.length);
-    }, 0);
-  };
-
-  const handleCurrencyClick = (e: React.MouseEvent<HTMLInputElement>) => {
-    // Move o cursor para o final sempre que clicar
-    setTimeout(() => {
-      const target = e.target as HTMLInputElement;
-      target.setSelectionRange(target.value.length, target.value.length);
-    }, 0);
-  };
-
-  const handleCurrencyFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    // Move o cursor para o final sempre
-    setTimeout(() => {
-      e.target.setSelectionRange(e.target.value.length, e.target.value.length);
-    }, 0);
-  };
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -235,18 +143,16 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
               Preço do Serviço *
             </label>
             <input
-              type="text"
-              value={displayPrice}
-              onChange={(e) => handleCurrencyChange(e.target.value)}
-              onInput={handleCurrencyInput}
-              onKeyDown={handleCurrencyKeyDown}
-              onClick={handleCurrencyClick}
-              onFocus={handleCurrencyFocus}
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              min="0"
+              step="0.01"
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                 errors.price ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="0,00"
-              inputMode="numeric"
+              placeholder="0.00"
             />
             {errors.price && (
               <p className="text-red-500 text-sm mt-1">{errors.price}</p>
