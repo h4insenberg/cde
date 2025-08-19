@@ -347,6 +347,16 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     }
   };
 
+  const getUnitAbbreviation = (unit: Product['unit']): string => {
+    const abbreviations = {
+      kg: 'kg',
+      liters: 'L',
+      meters: 'm',
+      units: 'un',
+    };
+    return abbreviations[unit] || unit;
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -494,26 +504,36 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                 <p className="text-red-500 text-sm mt-1">{errors.salePrice}</p>
               )}
             </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Estoque Mínimo *
-            </label>
-            <input
-              type="text"
-              value={displayMinQuantity}
-              onChange={(e) => handleFloatChange(e.target.value, 'minQuantity')}
-              onInput={handleFloatInput}
-              onKeyDown={handleFloatKeyDown}
-              onClick={handleFloatClick}
-              onFocus={handleFloatFocus}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                errors.minQuantity ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="0,00"
-              inputMode="decimal"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={displayQuantity}
+                onChange={(e) => handleFloatChange(e.target.value, 'quantity')}
+            <div className="relative">
+              <input
+                type="text"
+                value={displayMinQuantity}
+                onChange={(e) => handleFloatChange(e.target.value, 'minQuantity')}
+                onInput={handleFloatInput}
+                onKeyDown={handleFloatKeyDown}
+                onClick={handleFloatClick}
+                onFocus={(e) => {
+                  handleFloatFocus(e);
+                  if (e.target.value === '0,00') {
+                    setDisplayMinQuantity('');
+                    setFormData(prev => ({ ...prev, minQuantity: 0 }));
+                  }
+                }}
+                className={`w-full pr-10 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                  errors.minQuantity ? 'border-red-500' : 'border-gray-300'
+                }`}
+                placeholder="0,00"
+                inputMode="decimal"
+              />
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
+                {getUnitAbbreviation(formData.unit)}
+              </div>
+            </div>
             {errors.minQuantity && (
               <p className="text-red-500 text-sm mt-1">{errors.minQuantity}</p>
             )}
