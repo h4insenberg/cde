@@ -1,5 +1,5 @@
 import React from 'react';
-import { DivideIcon as LucideIcon } from 'lucide-react';
+import { DivideIcon as LucideIcon, Info } from 'lucide-react';
 import { formatCurrency } from '../../utils/helpers';
 
 interface StatsCardProps {
@@ -8,7 +8,10 @@ interface StatsCardProps {
   icon: LucideIcon;
   color: 'blue' | 'green' | 'red' | 'yellow' | 'purple';
   isCurrency?: boolean;
+  isPercentage?: boolean;
   subtitle?: string;
+  description?: string;
+  onInfoClick?: () => void;
 }
 
 export function StatsCard({ 
@@ -17,7 +20,10 @@ export function StatsCard({
   icon: Icon, 
   color, 
   isCurrency = true, 
+  isPercentage = false,
   subtitle 
+  description,
+  onInfoClick
 }: StatsCardProps) {
   const colorClasses = {
     blue: 'bg-gradient-to-br from-blue-500 to-blue-600 text-white dark:from-blue-600 dark:to-blue-700',
@@ -35,20 +41,40 @@ export function StatsCard({
     purple: 'bg-purple-400/20',
   };
 
+  const formatValue = () => {
+    if (isPercentage) {
+      return `${value.toFixed(1)}%`;
+    }
+    return isCurrency ? formatCurrency(value) : value;
+  };
+
   return (
     <div className={`rounded-xl p-3 md:p-4 ${colorClasses[color]} shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}>
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-white/80 text-xs md:text-sm font-medium">{title}</p>
+        <div className="flex items-center space-x-2">
+          {onInfoClick && (
+            <button
+              onClick={onInfoClick}
+              className="p-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+            >
+              <Info className="h-3 w-3 md:h-4 md:w-4" />
+            </button>
+          )}
+          <div className={`p-2 md:p-3 rounded-lg ${iconBgClasses[color]}`}>
+            <Icon className="h-5 w-5 md:h-6 md:w-6" />
+          </div>
+        </div>
+      </div>
+      
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <p className="text-white/80 text-xs md:text-sm font-medium">{title}</p>
           <p className="text-lg md:text-2xl font-bold mt-1">
-            {isCurrency ? formatCurrency(value) : value}
+            {formatValue()}
           </p>
           {subtitle && (
             <p className="text-white/70 text-xs mt-1 hidden md:block">{subtitle}</p>
           )}
-        </div>
-        <div className={`p-2 md:p-3 rounded-lg ${iconBgClasses[color]}`}>
-          <Icon className="h-5 w-5 md:h-6 md:w-6" />
         </div>
       </div>
     </div>
