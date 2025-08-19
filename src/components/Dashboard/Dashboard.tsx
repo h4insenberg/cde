@@ -29,35 +29,33 @@ export function Dashboard({ onNewSale }: DashboardProps) {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
-          title="Receita Total"
+          title="Entradas"
+          value={dashboardStats.totalSales}
+          icon={TrendingUp}
+          color="green"
+          isCurrency={false}
+          subtitle={`${dashboardStats.totalSales} transaç${dashboardStats.totalSales !== 1 ? 'ões' : 'ão'}`}
+        />
+        
+        <StatsCard
+          title="Saídas"
+          value={dashboardStats.totalCosts}
+          icon={DollarSign}
+          color="red"
+        />
+        
+        <StatsCard
+          title="Receita Bruta"
           value={dashboardStats.totalRevenue}
           icon={DollarSign}
           color="blue"
         />
         
         <StatsCard
-          title="Lucro Líquido"
+          title="Receita Líquida"
           value={dashboardStats.netProfit}
           icon={TrendingUp}
-          color="green"
-        />
-        
-        <StatsCard
-          title="Total de Vendas"
-          value={dashboardStats.totalSales}
-          icon={ShoppingCart}
           color="purple"
-          isCurrency={false}
-          subtitle={`${dashboardStats.totalSales} transaç${dashboardStats.totalSales !== 1 ? 'ões' : 'ão'}`}
-        />
-        
-        <StatsCard
-          title="Alertas de Estoque"
-          value={dashboardStats.lowStockAlerts}
-          icon={AlertTriangle}
-          color={dashboardStats.lowStockAlerts > 0 ? "red" : "green"}
-          isCurrency={false}
-          subtitle={dashboardStats.lowStockAlerts > 0 ? "Produtos em falta" : "Estoque adequado"}
         />
       </div>
 

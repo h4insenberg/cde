@@ -128,7 +128,7 @@ export function ProductsSection() {
       {activeTab === 'products' && (
         <div>
           {state.products.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {state.products.map((product) => (
                 <ProductCard
                   key={product.id}
@@ -165,7 +165,7 @@ export function ProductsSection() {
       {activeTab === 'services' && (
         <div>
           {state.services.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {state.services.map((service) => (
                 <ServiceCard
                   key={service.id}
