@@ -577,7 +577,6 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                   handleFloatFocus(e);
                   const isUnits = formData.unit === 'units';
                   if ((isUnits && e.target.value === '0') || (!isUnits && e.target.value === '0,00')) {
-                  if ((isUnits && e.target.value === '0') || (!isUnits && e.target.value === '0,00')) {
                     setDisplayMinQuantity('');
                     setFormData(prev => ({ ...prev, minQuantity: 0 }));
                   }
