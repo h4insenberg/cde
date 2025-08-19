@@ -43,9 +43,6 @@ export function StatsCard({
           <p className="text-lg md:text-2xl font-bold mt-1">
             {isCurrency ? formatCurrency(value) : `${value.toFixed(1)}%`}
           </p>
-          {subtitle && (
-            <p className="text-white/70 text-xs mt-1 hidden md:block">{subtitle}</p>
-          )}
         </div>
         <div className={`p-2 md:p-3 rounded-lg ${iconBgClasses[color]}`}>
           <Icon className="h-5 w-5 md:h-6 md:w-6" />
