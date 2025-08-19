@@ -77,7 +77,7 @@ export function ProductsSection() {
   return (
     <div className="space-y-6 pb-20">
       {/* Header with Tabs */}
-      <div className="bg-white dark:bg-[#18191c] rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-600">
+      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 dark:bg-[#18191c] dark:border-gray-600">
         <div className="space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
             <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1">
@@ -155,7 +155,7 @@ export function ProductsSection() {
               ))}
             </div>
           ) : (
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 dark:bg-[#18191c] dark:border-gray-700">
               <div className="text-center">
                 <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -192,7 +192,7 @@ export function ProductsSection() {
               ))}
             </div>
           ) : (
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 dark:bg-[#18191c] dark:border-gray-700">
               <div className="text-center">
                 <Wrench className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
