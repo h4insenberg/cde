@@ -29,8 +29,8 @@ export function Dashboard({ onNewSale }: DashboardProps) {
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <StatsCard
-          title="Entradas"
-          value={dashboardStats.totalSales}
+          title="Receita Bruta"
+          value={dashboardStats.grossRevenue}
           icon={TrendingUp}
           color="green"
           isCurrency={true}
@@ -38,22 +38,22 @@ export function Dashboard({ onNewSale }: DashboardProps) {
         />
         
         <StatsCard
-          title="Saídas"
+          title="Custos"
           value={dashboardStats.totalCosts}
           icon={DollarSign}
           color="red"
         />
         
         <StatsCard
-          title="Receita Bruta"
-          value={dashboardStats.totalRevenue}
+          title="Lucro Bruto"
+          value={dashboardStats.grossProfit}
           icon={DollarSign}
           color="blue"
         />
         
         <StatsCard
-          title="Receita Líquida"
-          value={dashboardStats.netProfit}
+          title="Valor Líquido"
+          value={dashboardStats.netAmountReceived}
           icon={TrendingUp}
           color="purple"
         />
