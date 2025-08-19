@@ -45,7 +45,7 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
   };
 
   const handleCurrencyChange = (value: string) => {
-    // Remove tudo que não é dígito
+    // Remove tudo que não é dígito e pega apenas os números
     const numericValue = value.replace(/[^\d]/g, '');
     
     // Se vazio, define como 0
@@ -57,7 +57,7 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
     
     // Limita a 10 dígitos (máximo R$ 99.999.999,99)
     const limitedValue = numericValue.slice(0, 10);
-    const numericPrice = parseInt(limitedValue) / 100;
+    const numericPrice = parseInt(limitedValue, 10) / 100;
     
     // Formata o valor
     const formattedValue = formatCurrencyInput(numericPrice);
@@ -75,6 +75,23 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
     if (errors.price) {
       setErrors(prev => ({ ...prev, price: '' }));
     }
+  };
+
+  const handleCurrencyKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Permite apenas números, backspace, delete, tab, escape, enter
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter'];
+    const isNumber = /^[0-9]$/.test(e.key);
+    
+    if (!isNumber && !allowedKeys.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  const handleCurrencyFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Move o cursor para o final sempre
+    setTimeout(() => {
+      e.target.setSelectionRange(e.target.value.length, e.target.value.length);
+    }, 0);
   };
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -178,6 +195,8 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
               type="text"
               value={displayPrice}
               onChange={(e) => handleCurrencyChange(e.target.value)}
+              onKeyDown={handleCurrencyKeyDown}
+              onFocus={handleCurrencyFocus}
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                 errors.price ? 'border-red-500' : 'border-gray-300'
               }`}
