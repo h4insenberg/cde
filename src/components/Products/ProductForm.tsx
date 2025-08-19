@@ -428,9 +428,9 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Preço de Custo *
               </label>
-              <div className="flex">
-                <div className="flex items-center px-2 sm:px-3 py-2 bg-gray-100 dark:bg-gray-600 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-lg">
-                  <span className="text-gray-700 dark:text-gray-300 font-medium">R$</span>
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
+                  R$
                 </div>
                 <input
                   type="text"
@@ -440,7 +440,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                   onKeyDown={(e) => handleCurrencyKeyDown(e, 'costPrice')}
                   onClick={handleCurrencyClick}
                   onFocus={handleCurrencyFocus}
-                  className={`flex-1 px-2 sm:px-3 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm sm:text-base ${
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                     errors.costPrice ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="0,00"
@@ -456,9 +456,9 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Preço de Venda *
               </label>
-              <div className="flex">
-                <div className="flex items-center px-2 sm:px-3 py-2 bg-gray-100 dark:bg-gray-600 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-lg">
-                  <span className="text-gray-700 dark:text-gray-300 font-medium">R$</span>
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
+                  R$
                 </div>
                 <input
                   type="text"
@@ -468,7 +468,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                   onKeyDown={(e) => handleCurrencyKeyDown(e, 'salePrice')}
                   onClick={handleCurrencyClick}
                   onFocus={handleCurrencyFocus}
-                  className={`flex-1 px-2 sm:px-3 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm sm:text-base ${
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                     errors.salePrice ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="0,00"
