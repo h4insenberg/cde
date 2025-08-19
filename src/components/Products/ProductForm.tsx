@@ -22,6 +22,8 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
 
   const [displayCostPrice, setDisplayCostPrice] = useState('0,00');
   const [displaySalePrice, setDisplaySalePrice] = useState('0,00');
+  const [displayQuantity, setDisplayQuantity] = useState('0');
+  const [displayMinQuantity, setDisplayMinQuantity] = useState('5');
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -38,9 +40,13 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
       });
       setDisplayCostPrice(formatCurrencyInput(product.costPrice));
       setDisplaySalePrice(formatCurrencyInput(product.salePrice));
+      setDisplayQuantity(formatNumberInput(product.quantity));
+      setDisplayMinQuantity(formatNumberInput(product.minQuantity));
     } else {
       setDisplayCostPrice('0,00');
       setDisplaySalePrice('0,00');
+      setDisplayQuantity('0');
+      setDisplayMinQuantity('5');
     }
   }, [product]);
 
@@ -59,6 +65,97 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     const numericValue = value.replace(/[^\d]/g, '');
     if (!numericValue) return 0;
     return parseInt(numericValue) / 100;
+  };
+
+  const formatNumberInput = (value: number): string => {
+    if (value === 0) return '0';
+    return value.toString().replace('.', ',');
+  };
+
+  const parseNumberInput = (value: string): number => {
+    const numericValue = value.replace(',', '.');
+    return parseFloat(numericValue) || 0;
+  };
+
+  const handleNumberChange = (value: string, field: 'quantity' | 'minQuantity') => {
+    // Remove tudo que não é dígito ou vírgula
+    const cleanValue = value.replace(/[^\d,]/g, '');
+    
+    // Permite apenas uma vírgula
+    const parts = cleanValue.split(',');
+    let finalValue = parts[0];
+    if (parts.length > 1) {
+      finalValue += ',' + parts[1];
+    }
+    
+    // Se vazio, define como 0
+    if (!finalValue || finalValue === ',') {
+      if (field === 'quantity') {
+        setDisplayQuantity('0');
+        setFormData(prev => ({ ...prev, quantity: 0 }));
+      } else {
+        setDisplayMinQuantity('0');
+        setFormData(prev => ({ ...prev, minQuantity: 0 }));
+      }
+      return;
+    }
+    
+    // Atualiza o display
+    if (field === 'quantity') {
+      setDisplayQuantity(finalValue);
+      setFormData(prev => ({ ...prev, quantity: parseNumberInput(finalValue) }));
+    } else {
+      setDisplayMinQuantity(finalValue);
+      setFormData(prev => ({ ...prev, minQuantity: parseNumberInput(finalValue) }));
+    }
+
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const handleNumberKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Para teclas de navegação, força o cursor para o final
+    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+      e.preventDefault();
+      setTimeout(() => {
+        const target = e.target as HTMLInputElement;
+        target.setSelectionRange(target.value.length, target.value.length);
+      }, 0);
+      return;
+    }
+    
+    // Permite apenas números, vírgula, backspace, delete, tab, escape, enter
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', ','];
+    const isNumber = /^[0-9]$/.test(e.key);
+    
+    if (!isNumber && !allowedKeys.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  const handleNumberInput = (e: React.FormEvent<HTMLInputElement>) => {
+    // Move o cursor para o final sempre que houver input
+    setTimeout(() => {
+      const target = e.target as HTMLInputElement;
+      target.setSelectionRange(target.value.length, target.value.length);
+    }, 0);
+  };
+
+  const handleNumberClick = (e: React.MouseEvent<HTMLInputElement>) => {
+    // Move o cursor para o final sempre que clicar
+    setTimeout(() => {
+      const target = e.target as HTMLInputElement;
+      target.setSelectionRange(target.value.length, target.value.length);
+    }, 0);
+  };
+
+  const handleNumberFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Move o cursor para o final sempre
+    setTimeout(() => {
+      e.target.setSelectionRange(e.target.value.length, e.target.value.length);
+    }, 0);
   };
 
   const handleCurrencyChange = (value: string, field: 'costPrice' | 'salePrice') => {
@@ -297,15 +394,18 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                 Quantidade Atual *
               </label>
               <input
-                type="number"
-                name="quantity"
-                value={formData.quantity}
-                onChange={handleChange}
-                min="0"
-                step="0.01"
+                type="text"
+                value={displayQuantity}
+                onChange={(e) => handleNumberChange(e.target.value, 'quantity')}
+                onInput={handleNumberInput}
+                onKeyDown={handleNumberKeyDown}
+                onClick={handleNumberClick}
+                onFocus={handleNumberFocus}
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                   errors.quantity ? 'border-red-500' : 'border-gray-300'
                 }`}
+                placeholder="0"
+                inputMode="decimal"
               />
               {errors.quantity && (
                 <p className="text-red-500 text-sm mt-1">{errors.quantity}</p>
@@ -366,15 +466,18 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
               Estoque Mínimo *
             </label>
             <input
-              type="number"
-              name="minQuantity"
-              value={formData.minQuantity}
-              onChange={handleChange}
-              min="0"
-              step="1"
+              type="text"
+              value={displayMinQuantity}
+              onChange={(e) => handleNumberChange(e.target.value, 'minQuantity')}
+              onInput={handleNumberInput}
+              onKeyDown={handleNumberKeyDown}
+              onClick={handleNumberClick}
+              onFocus={handleNumberFocus}
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                 errors.minQuantity ? 'border-red-500' : 'border-gray-300'
               }`}
+              placeholder="0"
+              inputMode="decimal"
             />
             {errors.minQuantity && (
               <p className="text-red-500 text-sm mt-1">{errors.minQuantity}</p>
