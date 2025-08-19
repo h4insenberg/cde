@@ -1,5 +1,5 @@
 import React from 'react';
-import { DollarSign, TrendingUp, ShoppingCart, AlertTriangle, Plus } from 'lucide-react';
+import { DollarSign, TrendingUp, ShoppingCart, AlertTriangle, Plus, ArrowUp, ArrowDown } from 'lucide-react';
 import { StatsCard } from './StatsCard';
 import { RecentSales } from './RecentSales';
 import { LowStockAlerts } from './LowStockAlerts';
@@ -31,7 +31,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
         <StatsCard
           title="Receitas"
           value={dashboardStats.revenue}
-          icon={TrendingUp}
+          icon={ArrowUp}
           color="green"
           isCurrency={true}
           subtitle={`${sales.length} transaç${sales.length !== 1 ? 'ões' : 'ão'}`}
@@ -40,8 +40,9 @@ export function Dashboard({ onNewSale }: DashboardProps) {
         <StatsCard
           title="Despesas"
           value={dashboardStats.expenses}
-          icon={DollarSign}
+          icon={ArrowDown}
           color="red"
+          isCurrency={true}
         />
         
         <StatsCard
