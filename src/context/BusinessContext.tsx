@@ -9,7 +9,6 @@ interface BusinessState {
   stockMovements: StockMovement[];
   notifications: Notification[];
   dashboardStats: DashboardStats;
-  darkMode: boolean;
 }
 
 type BusinessAction =
@@ -24,7 +23,6 @@ type BusinessAction =
   | { type: 'ADD_NOTIFICATION'; payload: Notification }
   | { type: 'MARK_NOTIFICATION_READ'; payload: string }
   | { type: 'UPDATE_STATS' }
-  | { type: 'TOGGLE_DARK_MODE' }
   | { type: 'LOAD_DATA'; payload: BusinessState };
 
 const initialState: BusinessState = {
@@ -40,7 +38,6 @@ const initialState: BusinessState = {
     profitMargin: 0,
     lowStockAlerts: 0,
   },
-  darkMode: false,
 };
 
 // Sample data for testing
@@ -322,9 +319,6 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
         }
       };
     
-    case 'TOGGLE_DARK_MODE':
-      return { ...state, darkMode: !state.darkMode };
-    
     case 'LOAD_DATA':
       return action.payload;
     
@@ -338,43 +332,20 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
 
   // Load data from localStorage on mount
   useEffect(() => {
-    const savedData = localStorage.getItem('businessData');
-    if (savedData) {
-      try {
-        const parsedData = JSON.parse(savedData);
-        // Ensure we have the darkMode property
-        const dataWithDefaults = {
-          ...initialState,
-          ...parsedData,
-          darkMode: parsedData.darkMode ?? false,
-        };
-        dispatch({ type: 'LOAD_DATA', payload: dataWithDefaults });
-      } catch (error) {
-        console.error('Error loading saved data:', error);
-        // Load sample data if parsing fails
-        const initialDataWithSamples = {
-          ...initialState,
-          products: sampleProducts,
-          services: sampleServices,
-        };
-        dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
-      }
-    } else {
-      // Load sample data (will be replaced with real data in the future)
-      const initialDataWithSamples = {
-        ...initialState,
-        products: sampleProducts,
-        services: sampleServices,
-      };
-      dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
-    }
+    // Load sample data (will be replaced with real data in the future)
+    const initialDataWithSamples = {
+      ...initialState,
+      products: sampleProducts,
+      services: sampleServices,
+    };
+    dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
   }, []);
 
   // Save data to localStorage whenever state changes
   useEffect(() => {
     localStorage.setItem('businessData', JSON.stringify(state));
     dispatch({ type: 'UPDATE_STATS' });
-  }, [state.products, state.services, state.sales, state.stockMovements, state.notifications, state.darkMode]);
+  }, [state.products, state.services, state.sales, state.stockMovements, state.notifications]);
 
   return (
     <BusinessContext.Provider value={{ state, dispatch }}>
