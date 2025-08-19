@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BusinessProvider } from './context/BusinessContext';
 import { Header } from './components/Layout/Header';
 import { BottomNavigation } from './components/Layout/BottomNavigation';
@@ -16,7 +16,7 @@ function AppContent() {
   const [showQuickSale, setShowQuickSale] = useState(false);
   const { state, dispatch } = useBusiness();
 
-  // Apply theme mode class to document
+  // Apply dark mode class to document
   useEffect(() => {
     if (state.darkMode) {
       document.documentElement.classList.add('dark');
@@ -82,17 +82,16 @@ function AppContent() {
                   Configurações
                 </h3>
                 
-                {/* Theme Mode Selection */}
+                {/* Dark Mode Toggle */}
                 <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <div>
                     <h4 className="text-sm font-medium text-gray-900 dark:text-white">
                       Modo Escuro
                     </h4>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Ativar ou desativar o modo escuro
+                      Alterna entre tema claro e escuro
                     </p>
                   </div>
-                  
                   <button
                     onClick={() => dispatch({ type: 'TOGGLE_DARK_MODE' })}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${

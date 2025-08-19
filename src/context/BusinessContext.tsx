@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { Product, Service, Sale, StockMovement, DashboardStats, Notification, ThemeMode } from '../types';
+import { Product, Service, Sale, StockMovement, DashboardStats, Notification } from '../types';
 import { generateId } from '../utils/helpers';
 
 interface BusinessState {
@@ -40,7 +40,7 @@ const initialState: BusinessState = {
     profitMargin: 0,
     lowStockAlerts: 0,
   },
-  darkMode: true,
+  darkMode: false,
 };
 
 // Sample data for testing
@@ -346,7 +346,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         const dataWithDefaults = {
           ...initialState,
           ...parsedData,
-          darkMode: parsedData.darkMode ?? true,
+          darkMode: parsedData.darkMode ?? false,
         };
         dispatch({ type: 'LOAD_DATA', payload: dataWithDefaults });
       } catch (error) {
