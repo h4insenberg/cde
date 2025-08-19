@@ -16,14 +16,28 @@ function AppContent() {
   const [showQuickSale, setShowQuickSale] = useState(false);
   const { state, dispatch } = useBusiness();
 
-  // Apply dark mode class to document
+  // Apply theme mode class to document
   useEffect(() => {
-    if (state.darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    const applyTheme = () => {
+      const isDark = state.themeMode === 'dark' || 
+        (state.themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    };
+
+    applyTheme();
+
+    // Listen for system theme changes when in system mode
+    if (state.themeMode === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      mediaQuery.addEventListener('change', applyTheme);
+      return () => mediaQuery.removeEventListener('change', applyTheme);
     }
-  }, [state.darkMode]);
+  }, [state.themeMode]);
 
   const getPageTitle = () => {
     switch (activeTab) {
@@ -82,28 +96,46 @@ function AppContent() {
                   Configurações
                 </h3>
                 
-                {/* Dark Mode Toggle */}
-                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                {/* Theme Mode Selection */}
+                <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <div>
                     <h4 className="text-sm font-medium text-gray-900 dark:text-white">
-                      Modo Escuro
+                      Tema da Aplicação
                     </h4>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Alterna entre tema claro e escuro
+                      Escolha entre tema claro, escuro ou seguir o sistema
                     </p>
                   </div>
-                  <button
-                    onClick={() => dispatch({ type: 'TOGGLE_DARK_MODE' })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      state.darkMode ? 'bg-blue-600' : 'bg-gray-200'
-                    }`}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        state.darkMode ? 'translate-x-6' : 'translate-x-1'
-                      }`}
-                    />
-                  </button>
+                  
+                  <div className="mt-4 space-y-2">
+                    {[
+                      { value: 'system', label: 'Sistema', description: 'Segue a preferência do sistema' },
+                      { value: 'light', label: 'Claro', description: 'Sempre tema claro' },
+                      { value: 'dark', label: 'Escuro', description: 'Sempre tema escuro' }
+                    ].map((option) => (
+                      <label
+                        key={option.value}
+                        className="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        <input
+                          type="radio"
+                          name="themeMode"
+                          value={option.value}
+                          checked={state.themeMode === option.value}
+                          onChange={(e) => dispatch({ type: 'SET_THEME_MODE', payload: e.target.value as ThemeMode })}
+                          className="mr-3 text-blue-600 focus:ring-blue-500"
+                        />
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">
+                            {option.label}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {option.description}
+                          </div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
                 </div>
                 
                 {/* Future Settings Placeholder */}
