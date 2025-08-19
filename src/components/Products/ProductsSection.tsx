@@ -232,9 +232,9 @@ export function ProductsSection() {
       {/* Services Tab */}
       {activeTab === 'services' && (
         <div>
-          {state.services.length > 0 ? (
+          {filteredServices.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-              {state.services.map((service) => (
+              {filteredServices.map((service) => (
                 <ServiceCard
                   key={service.id}
                   service={service}
