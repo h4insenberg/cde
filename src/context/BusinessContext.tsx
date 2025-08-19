@@ -334,23 +334,13 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
 
   // Load data from localStorage on mount
   useEffect(() => {
-    const savedData = localStorage.getItem('businessData');
-    if (savedData) {
-      try {
-        const parsedData = JSON.parse(savedData);
-        dispatch({ type: 'LOAD_DATA', payload: parsedData });
-      } catch (error) {
-        console.error('Error loading saved data:', error);
-      }
-    } else {
-      // Load sample data if no saved data exists
-      const initialDataWithSamples = {
-        ...initialState,
-        products: sampleProducts,
-        services: sampleServices,
-      };
-      dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
-    }
+    // Load sample data (will be replaced with real data in the future)
+    const initialDataWithSamples = {
+      ...initialState,
+      products: sampleProducts,
+      services: sampleServices,
+    };
+    dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
   }, []);
 
   // Save data to localStorage whenever state changes
