@@ -85,7 +85,7 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#131416]">
       <Header
         title={getPageTitle()}
         onNotificationsClick={() => setShowNotifications(true)}

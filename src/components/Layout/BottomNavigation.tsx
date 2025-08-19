@@ -16,7 +16,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-2 py-2">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#131416] border-t border-gray-200 dark:border-gray-700 px-2 py-2">
       <div className="flex justify-around max-w-md mx-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
