@@ -22,8 +22,8 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
 
   const [displayCostPrice, setDisplayCostPrice] = useState('0,00');
   const [displaySalePrice, setDisplaySalePrice] = useState('0,00');
-  const [displayQuantity, setDisplayQuantity] = useState('0');
-  const [displayMinQuantity, setDisplayMinQuantity] = useState('5');
+  const [displayQuantity, setDisplayQuantity] = useState('0,00');
+  const [displayMinQuantity, setDisplayMinQuantity] = useState('5,00');
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -40,13 +40,13 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
       });
       setDisplayCostPrice(formatCurrencyInput(product.costPrice));
       setDisplaySalePrice(formatCurrencyInput(product.salePrice));
-      setDisplayQuantity(formatNumberInput(product.quantity));
-      setDisplayMinQuantity(formatNumberInput(product.minQuantity));
+      setDisplayQuantity(formatFloatInput(product.quantity));
+      setDisplayMinQuantity(formatFloatInput(product.minQuantity));
     } else {
       setDisplayCostPrice('0,00');
       setDisplaySalePrice('0,00');
-      setDisplayQuantity('0');
-      setDisplayMinQuantity('5');
+      setDisplayQuantity('0,00');
+      setDisplayMinQuantity('5,00');
     }
   }, [product]);
 
@@ -67,46 +67,71 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     return parseInt(numericValue) / 100;
   };
 
-  const formatNumberInput = (value: number): string => {
-    if (value === 0) return '0';
-    return value.toString().replace('.', ',');
-  };
-
-  const parseNumberInput = (value: string): number => {
-    const numericValue = value.replace(',', '.');
-    return parseFloat(numericValue) || 0;
-  };
-
-  const handleNumberChange = (value: string, field: 'quantity' | 'minQuantity') => {
-    // Remove tudo que não é dígito ou vírgula
-    const cleanValue = value.replace(/[^\d,]/g, '');
+  const formatFloatInput = (value: number): string => {
+    if (value === 0) return '0,00';
     
-    // Permite apenas uma vírgula
-    const parts = cleanValue.split(',');
-    let finalValue = parts[0];
-    if (parts.length > 1) {
-      finalValue += ',' + parts[1];
+    const cents = Math.round(value * 100);
+    const integerPart = Math.floor(cents / 100);
+    const decimalPart = cents % 100;
+    
+    const integerFormatted = integerPart.toLocaleString('pt-BR');
+    return `${integerFormatted},${decimalPart.toString().padStart(2, '0')}`;
+  };
+
+  const parseFloatInput = (value: string): number => {
+    const numericValue = value.replace(/[^\d]/g, '');
+    if (!numericValue) return 0;
+    return parseInt(numericValue) / 100;
+  };
+
+  const handleFloatChange = (value: string, field: 'quantity' | 'minQuantity') => {
+    // Pega o valor atual sem formatação
+    const currentValue = field === 'quantity' ? displayQuantity : displayMinQuantity;
+    const currentNumeric = currentValue.replace(/[^\d]/g, '');
+    
+    // Remove tudo que não é dígito do novo valor
+    const inputNumeric = value.replace(/[^\d]/g, '');
+    
+    // Se o input tem mais dígitos que o atual, adiciona no final
+    // Se tem menos, remove do final
+    let finalNumeric = '';
+    if (inputNumeric.length > currentNumeric.length) {
+      // Adiciona apenas o último dígito digitado
+      const newDigit = inputNumeric[inputNumeric.length - 1];
+      finalNumeric = currentNumeric + newDigit;
+    } else if (inputNumeric.length < currentNumeric.length) {
+      // Remove do final
+      finalNumeric = currentNumeric.slice(0, -1);
+    } else {
+      finalNumeric = inputNumeric;
     }
     
     // Se vazio, define como 0
-    if (!finalValue || finalValue === ',') {
+    if (!finalNumeric) {
       if (field === 'quantity') {
-        setDisplayQuantity('0');
+        setDisplayQuantity('0,00');
         setFormData(prev => ({ ...prev, quantity: 0 }));
       } else {
-        setDisplayMinQuantity('0');
+        setDisplayMinQuantity('0,00');
         setFormData(prev => ({ ...prev, minQuantity: 0 }));
       }
       return;
     }
     
+    // Limita a 10 dígitos (máximo 99.999.999,99)
+    const limitedValue = finalNumeric.slice(0, 10);
+    const numericValue = parseInt(limitedValue, 10) / 100;
+    
+    // Formata o valor
+    const formattedValue = formatFloatInput(numericValue);
+    
     // Atualiza o display
     if (field === 'quantity') {
-      setDisplayQuantity(finalValue);
-      setFormData(prev => ({ ...prev, quantity: parseNumberInput(finalValue) }));
+      setDisplayQuantity(formattedValue);
+      setFormData(prev => ({ ...prev, quantity: numericValue }));
     } else {
-      setDisplayMinQuantity(finalValue);
-      setFormData(prev => ({ ...prev, minQuantity: parseNumberInput(finalValue) }));
+      setDisplayMinQuantity(formattedValue);
+      setFormData(prev => ({ ...prev, minQuantity: numericValue }));
     }
 
     // Clear error when user starts typing
@@ -115,7 +140,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     }
   };
 
-  const handleNumberKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleFloatKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // Para teclas de navegação, força o cursor para o final
     if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
       e.preventDefault();
@@ -127,7 +152,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     }
     
     // Permite apenas números, vírgula, backspace, delete, tab, escape, enter
-    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', ','];
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter'];
     const isNumber = /^[0-9]$/.test(e.key);
     
     if (!isNumber && !allowedKeys.includes(e.key)) {
@@ -135,7 +160,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     }
   };
 
-  const handleNumberInput = (e: React.FormEvent<HTMLInputElement>) => {
+  const handleFloatInput = (e: React.FormEvent<HTMLInputElement>) => {
     // Move o cursor para o final sempre que houver input
     setTimeout(() => {
       const target = e.target as HTMLInputElement;
@@ -143,7 +168,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     }, 0);
   };
 
-  const handleNumberClick = (e: React.MouseEvent<HTMLInputElement>) => {
+  const handleFloatClick = (e: React.MouseEvent<HTMLInputElement>) => {
     // Move o cursor para o final sempre que clicar
     setTimeout(() => {
       const target = e.target as HTMLInputElement;
@@ -151,16 +176,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     }, 0);
   };
 
-  const handleNumberFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    // Se o valor for "0", limpa o campo ao focar
-    if (e.target.value === '0') {
-      const field = e.target.getAttribute('data-field') as 'quantity' | 'minQuantity';
-      if (field === 'quantity') {
-        setDisplayQuantity('');
-      } else {
-        setDisplayMinQuantity('');
-      }
-    }
+  const handleFloatFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     // Move o cursor para o final sempre
     setTimeout(() => {
       e.target.setSelectionRange(e.target.value.length, e.target.value.length);
@@ -404,17 +420,16 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
               </label>
               <input
                 type="text"
-                data-field="quantity"
                 value={displayQuantity}
-                onChange={(e) => handleNumberChange(e.target.value, 'quantity')}
-                onInput={handleNumberInput}
-                onKeyDown={handleNumberKeyDown}
-                onClick={handleNumberClick}
-                onFocus={handleNumberFocus}
+                onChange={(e) => handleFloatChange(e.target.value, 'quantity')}
+                onInput={handleFloatInput}
+                onKeyDown={handleFloatKeyDown}
+                onClick={handleFloatClick}
+                onFocus={handleFloatFocus}
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                   errors.quantity ? 'border-red-500' : 'border-gray-300'
                 }`}
-                placeholder="0"
+                placeholder="0,00"
                 inputMode="decimal"
               />
               {errors.quantity && (
@@ -487,17 +502,16 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
             </label>
             <input
               type="text"
-              data-field="minQuantity"
               value={displayMinQuantity}
-              onChange={(e) => handleNumberChange(e.target.value, 'minQuantity')}
-              onInput={handleNumberInput}
-              onKeyDown={handleNumberKeyDown}
-              onClick={handleNumberClick}
-              onFocus={handleNumberFocus}
+              onChange={(e) => handleFloatChange(e.target.value, 'minQuantity')}
+              onInput={handleFloatInput}
+              onKeyDown={handleFloatKeyDown}
+              onClick={handleFloatClick}
+              onFocus={handleFloatFocus}
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                 errors.minQuantity ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="0"
+              placeholder="0,00"
               inputMode="decimal"
             />
             {errors.minQuantity && (
