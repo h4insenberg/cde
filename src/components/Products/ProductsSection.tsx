@@ -261,7 +261,7 @@ export function ProductsSection() {
                 </button>
               </div>
             </div>
-          ) : state.services.length === 0 ? (
+          ) : (
             <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 dark:bg-[#18191c] dark:border-gray-700">
               <div className="text-center">
                 <Wrench className="h-12 w-12 text-gray-400 mx-auto mb-4" />
