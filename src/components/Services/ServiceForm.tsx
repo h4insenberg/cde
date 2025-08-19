@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
 import { Service } from '../../types';
-import { generateId } from '../../utils/helpers';
+import { generateId, formatCurrency } from '../../utils/helpers';
 
 interface ServiceFormProps {
   service?: Service | null;
@@ -16,6 +16,8 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
     price: 0,
   });
 
+  const [displayPrice, setDisplayPrice] = useState('0,00');
+
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -25,9 +27,42 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
         description: service.description,
         price: service.price,
       });
+      setDisplayPrice(formatCurrencyInput(service.price));
+    } else {
+      setDisplayPrice('0,00');
     }
   }, [service]);
 
+  const formatCurrencyInput = (value: number): string => {
+    return (value * 100).toFixed(0).padStart(3, '0').replace(/(\d+)(\d{2})$/, '$1,$2');
+  };
+
+  const handleCurrencyChange = (value: string) => {
+    // Remove tudo que não é dígito
+    const numericValue = value.replace(/\D/g, '');
+    
+    // Limita a 10 dígitos (máximo R$ 99.999.999,99)
+    const limitedValue = numericValue.slice(0, 10);
+    
+    // Formata como moeda
+    const paddedValue = limitedValue.padStart(3, '0');
+    const formattedValue = paddedValue.replace(/(\d+)(\d{2})$/, '$1,$2');
+    
+    // Atualiza o display
+    setDisplayPrice(formattedValue);
+    
+    // Atualiza o valor numérico no formData
+    const numericPrice = parseFloat(limitedValue) / 100;
+    setFormData(prev => ({
+      ...prev,
+      price: numericPrice
+    }));
+
+    // Clear error when user starts typing
+    if (errors.price) {
+      setErrors(prev => ({ ...prev, price: '' }));
+    }
+  };
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -129,14 +164,13 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
             <input
               type="number"
               name="price"
-              value={formData.price}
-              onChange={handleChange}
-              min="0"
-              step="0.01"
+              value={displayPrice}
+              onChange={(e) => handleCurrencyChange(e.target.value)}
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                 errors.price ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="0,00"
+              inputMode="numeric"
             />
             {errors.price && (
               <p className="text-red-500 text-sm mt-1">{errors.price}</p>

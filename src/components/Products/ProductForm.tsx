@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
 import { Product } from '../../types';
-import { generateId } from '../../utils/helpers';
+import { generateId, formatCurrency } from '../../utils/helpers';
 
 interface ProductFormProps {
   product?: Product | null;
@@ -20,6 +20,9 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     minQuantity: 5,
   });
 
+  const [displayCostPrice, setDisplayCostPrice] = useState('0,00');
+  const [displaySalePrice, setDisplaySalePrice] = useState('0,00');
+
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -33,9 +36,53 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
         salePrice: product.salePrice,
         minQuantity: product.minQuantity,
       });
+      setDisplayCostPrice(formatCurrencyInput(product.costPrice));
+      setDisplaySalePrice(formatCurrencyInput(product.salePrice));
+    } else {
+      setDisplayCostPrice('0,00');
+      setDisplaySalePrice('0,00');
     }
   }, [product]);
 
+  const formatCurrencyInput = (value: number): string => {
+    return (value * 100).toFixed(0).padStart(3, '0').replace(/(\d+)(\d{2})$/, '$1,$2');
+  };
+
+  const parseCurrencyInput = (value: string): number => {
+    const numericValue = value.replace(/\D/g, '');
+    return parseFloat(numericValue) / 100;
+  };
+
+  const handleCurrencyChange = (value: string, field: 'costPrice' | 'salePrice') => {
+    // Remove tudo que não é dígito
+    const numericValue = value.replace(/\D/g, '');
+    
+    // Limita a 10 dígitos (máximo R$ 99.999.999,99)
+    const limitedValue = numericValue.slice(0, 10);
+    
+    // Formata como moeda
+    const paddedValue = limitedValue.padStart(3, '0');
+    const formattedValue = paddedValue.replace(/(\d+)(\d{2})$/, '$1,$2');
+    
+    // Atualiza o display
+    if (field === 'costPrice') {
+      setDisplayCostPrice(formattedValue);
+    } else {
+      setDisplaySalePrice(formattedValue);
+    }
+    
+    // Atualiza o valor numérico no formData
+    const numericPrice = parseFloat(limitedValue) / 100;
+    setFormData(prev => ({
+      ...prev,
+      [field]: numericPrice
+    }));
+
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -195,14 +242,13 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
               <input
                 type="number"
                 name="costPrice"
-                value={formData.costPrice}
-                onChange={handleChange}
-                min="0"
-                step="0.01"
+                value={displayCostPrice}
+                onChange={(e) => handleCurrencyChange(e.target.value, 'costPrice')}
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                   errors.costPrice ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="0,00"
+                inputMode="numeric"
               />
               {errors.costPrice && (
                 <p className="text-red-500 text-sm mt-1">{errors.costPrice}</p>
@@ -216,14 +262,13 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
               <input
                 type="number"
                 name="salePrice"
-                value={formData.salePrice}
-                onChange={handleChange}
-                min="0"
-                step="0.01"
+                value={displaySalePrice}
+                onChange={(e) => handleCurrencyChange(e.target.value, 'salePrice')}
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                   errors.salePrice ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="0,00"
+                inputMode="numeric"
               />
               {errors.salePrice && (
                 <p className="text-red-500 text-sm mt-1">{errors.salePrice}</p>
