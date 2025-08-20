@@ -12,7 +12,7 @@ export function SalesList({ sales }: SalesListProps) {
 
   if (sortedSales.length === 0) {
     return (
-      <div className="bg-white dark:bg-[#18191c] rounded-xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl p-8 shadow-sm border-2 border-blue-200 dark:border-blue-600">
         <div className="text-center">
           <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -29,11 +29,11 @@ export function SalesList({ sales }: SalesListProps) {
   return (
     <div className="space-y-4">
       {sortedSales.map((sale) => (
-        <div key={sale.id} className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
+        <div key={sale.id} className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border-2 border-blue-200 dark:border-blue-600 hover:shadow-md transition-shadow">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center space-x-3">
               <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-lg">
-                <CreditCard className="h-5 w-5 text-green-600 dark:text-green-400" />
+                <CreditCard className="h-5 w-5 text-green-500 dark:text-green-400" />
               </div>
               <div>
                 <p className="font-semibold text-gray-900 dark:text-white">

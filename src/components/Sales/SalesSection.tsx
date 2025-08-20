@@ -77,7 +77,7 @@ export function SalesSection() {
       {state.sales.length > 0 ? (
         <SalesList sales={state.sales} />
       ) : (
-        <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 dark:bg-[#18191c] dark:border-gray-700">
+        <div className="bg-white rounded-xl p-8 shadow-sm border-2 border-blue-200 dark:bg-[#18191c] dark:border-blue-600">
           <div className="text-center">
             <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">

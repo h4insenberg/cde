@@ -89,7 +89,7 @@ export function ProductsSection() {
   return (
     <div className="space-y-6 pb-20">
       {/* Header with Tabs */}
-      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 dark:bg-[#18191c] dark:border-gray-600">
+      <div className="bg-white rounded-xl p-4 shadow-sm border-2 border-blue-200 dark:bg-[#18191c] dark:border-blue-600">
         <div className="space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
             <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1">
@@ -111,13 +111,13 @@ export function ProductsSection() {
                 onClick={() => setActiveTab('services')}
                 className={`px-4 py-2 rounded-md transition-colors flex items-center space-x-2 ${
                   activeTab === 'services'
-                    ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-purple-400 shadow-sm'
+                    ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                 }`}
               >
                 <Wrench className="h-4 w-4" />
                 <span>Serviços</span>
-                <span className="bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-200 px-2 py-1 rounded-full text-xs">
+                <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs">
                   {filteredServices.length}
                 </span>
               </button>
@@ -126,11 +126,7 @@ export function ProductsSection() {
             {/* Desktop button */}
             <button
               onClick={() => activeTab === 'products' ? setShowProductForm(true) : setShowServiceForm(true)}
-              className={`hidden md:flex px-4 py-2 rounded-lg text-white transition-colors items-center space-x-2 shadow-lg ${
-                activeTab === 'products'
-                  ? 'bg-blue-600 hover:bg-blue-700'
-                  : 'bg-purple-600 hover:bg-purple-700'
-              }`}
+              className={`hidden md:flex px-4 py-2 rounded-lg text-white transition-colors items-center space-x-2 shadow-lg bg-blue-600 hover:bg-blue-700`}
             >
               <Plus className="h-4 w-4" />
               <span>{activeTab === 'products' ? 'Novo Produto' : 'Novo Serviço'}</span>
@@ -140,11 +136,7 @@ export function ProductsSection() {
           {/* Mobile button */}
           <button
             onClick={() => activeTab === 'products' ? setShowProductForm(true) : setShowServiceForm(true)}
-            className={`md:hidden w-full px-4 py-2 rounded-lg text-white transition-colors flex items-center justify-center space-x-2 shadow-lg ${
-              activeTab === 'products'
-                ? 'bg-blue-600 hover:bg-blue-700'
-                : 'bg-purple-600 hover:bg-purple-700'
-            }`}
+            className={`md:hidden w-full px-4 py-2 rounded-lg text-white transition-colors flex items-center justify-center space-x-2 shadow-lg bg-blue-600 hover:bg-blue-700`}
           >
             <Plus className="h-4 w-4" />
             <span>{activeTab === 'products' ? 'Novo Produto' : 'Novo Serviço'}</span>
@@ -153,7 +145,7 @@ export function ProductsSection() {
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white dark:bg-[#18191c] rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-600">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl p-4 shadow-sm border-2 border-blue-200 dark:border-blue-600">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
@@ -161,7 +153,7 @@ export function ProductsSection() {
             placeholder={`Buscar ${activeTab === 'products' ? 'produtos' : 'serviços'}...`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+            className="w-full pl-10 pr-4 py-2 border-2 border-blue-200 dark:border-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
           />
         </div>
         {searchTerm && (
@@ -189,7 +181,7 @@ export function ProductsSection() {
               ))}
             </div>
           ) : searchTerm ? (
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 dark:bg-[#18191c] dark:border-gray-700">
+            <div className="bg-white rounded-xl p-8 shadow-sm border-2 border-blue-200 dark:bg-[#18191c] dark:border-blue-600">
               <div className="text-center">
                 <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -207,7 +199,7 @@ export function ProductsSection() {
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 dark:bg-[#18191c] dark:border-gray-700">
+            <div className="bg-white rounded-xl p-8 shadow-sm border-2 border-blue-200 dark:bg-[#18191c] dark:border-blue-600">
               <div className="text-center">
                 <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -244,7 +236,7 @@ export function ProductsSection() {
               ))}
             </div>
           ) : searchTerm ? (
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 dark:bg-[#18191c] dark:border-gray-700">
+            <div className="bg-white rounded-xl p-8 shadow-sm border-2 border-blue-200 dark:bg-[#18191c] dark:border-blue-600">
               <div className="text-center">
                 <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -255,14 +247,14 @@ export function ProductsSection() {
                 </p>
                 <button
                   onClick={() => setSearchTerm('')}
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
                 >
                   Limpar Busca
                 </button>
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 dark:bg-[#18191c] dark:border-gray-700">
+            <div className="bg-white rounded-xl p-8 shadow-sm border-2 border-blue-200 dark:bg-[#18191c] dark:border-blue-600">
               <div className="text-center">
                 <Wrench className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -273,7 +265,7 @@ export function ProductsSection() {
                 </p>
                 <button
                   onClick={() => setShowServiceForm(true)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 mx-auto"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 mx-auto"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Adicionar Primeiro Serviço</span>

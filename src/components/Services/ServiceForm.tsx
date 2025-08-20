@@ -209,7 +209,7 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                 errors.name ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="Ex: Corte de cabelo feminino"
+              className={`w-full px-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
             />
             {errors.name && (
               <p className="text-red-500 text-sm mt-1">{errors.name}</p>
@@ -225,7 +225,7 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
               value={formData.description}
               onChange={handleChange}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               placeholder="Descrição opcional do serviço"
             />
           </div>
@@ -246,7 +246,7 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
                 onKeyDown={handleCurrencyKeyDown}
                 onClick={handleCurrencyClick}
                 onFocus={handleCurrencyFocus}
-                className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                className={`w-full pl-10 pr-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                   errors.price ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="0,00"
@@ -268,7 +268,7 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center space-x-2"
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
             >
               <Save className="h-4 w-4" />
               <span>Salvar</span>

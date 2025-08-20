@@ -14,14 +14,14 @@ export function ProductCard({ product, onEdit, onDelete }: ProductCardProps) {
   const profitMargin = ((product.salePrice - product.costPrice) / product.salePrice * 100).toFixed(1);
 
   return (
-    <div className={`bg-white dark:bg-[#18191c] rounded-xl p-3 sm:p-4 shadow-sm border transition-all duration-200 hover:shadow-md ${
+    <div className={`bg-white dark:bg-[#18191c] rounded-xl p-3 sm:p-4 shadow-sm border-2 transition-all duration-200 hover:shadow-md ${
       isLowStock 
-        ? 'border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-950/80' 
-        : 'border-gray-100 dark:border-gray-600 hover:border-blue-200 dark:hover:border-blue-600'
+        ? 'border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/80' 
+        : 'border-blue-200 dark:border-blue-600 hover:border-blue-300 dark:hover:border-blue-500'
     }`}>
       <div className="flex items-start justify-between mb-2 sm:mb-3">
         <div className="flex items-center space-x-2 flex-1">
-          <Package className={`h-5 w-5 ${isLowStock ? 'text-red-500' : 'text-blue-600'}`} />
+          <Package className={`h-5 w-5 ${isLowStock ? 'text-red-500' : 'text-blue-500'}`} />
           <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white truncate">{product.name}</h3>
           {isLowStock && (
             <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0" />
@@ -31,7 +31,7 @@ export function ProductCard({ product, onEdit, onDelete }: ProductCardProps) {
         <div className="flex items-center space-x-1 flex-shrink-0">
           <button
             onClick={() => onEdit(product)}
-            className="p-1 sm:p-1.5 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
+            className="p-1 sm:p-1.5 text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
           >
             <Edit2 className="h-4 w-4" />
           </button>

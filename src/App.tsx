@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Settings, Cog, Database, Download, Upload, RefreshCw, Trash2 } from 'lucide-react';
 import { BusinessProvider } from './context/BusinessContext';
 import { Header } from './components/Layout/Header';
 import { BottomNavigation } from './components/Layout/BottomNavigation';
