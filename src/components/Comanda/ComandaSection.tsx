@@ -114,7 +114,7 @@ export function ComandaSection() {
   const totalOpenValue = openComandas.reduce((sum, c) => sum + c.total, 0);
 
   return (
-    <div className="space-y-6 pb-20">
+    <div className="max-w-7xl mx-auto space-y-6 pb-20">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -174,7 +174,7 @@ export function ComandaSection() {
 
       {/* Comandas List */}
       {filteredComandas.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {filteredComandas.map((comanda) => (
             <ComandaCard
               key={comanda.id}

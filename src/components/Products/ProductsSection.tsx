@@ -87,7 +87,7 @@ export function ProductsSection() {
   };
 
   return (
-    <div className="space-y-6 pb-20">
+    <div className="max-w-7xl mx-auto space-y-6 pb-20">
       {/* Header with Tabs */}
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 dark:bg-[#18191c] dark:border-gray-700">
         <div className="space-y-4">

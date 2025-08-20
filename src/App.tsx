@@ -67,7 +67,7 @@ function AppContent() {
         return <ComandaSection />;
       case 'settings':
         return (
-          <div className="space-y-6 pb-20">
+          <div className="max-w-7xl mx-auto space-y-6 pb-20">
             {/* Dados do Negócio */}
             <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
@@ -228,7 +228,7 @@ function AppContent() {
         onNotificationsClick={() => setShowNotifications(true)}
       />
       
-      <main className="max-w-7xl mx-auto px-4 py-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {renderContent()}
       </main>
 
