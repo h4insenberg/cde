@@ -116,26 +116,17 @@ export function ComandaSection() {
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Comandas</h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            {openComandas.length} comanda{openComandas.length !== 1 ? 's' : ''} aberta{openComandas.length !== 1 ? 's' : ''} • {formatCurrency(totalOpenValue)} em aberto
-          </p>
-        </div>
-        
-        <button
-          onClick={() => setShowComandaForm(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Nova Comanda</span>
-        </button>
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Comandas</h2>
+        <p className="text-gray-600 dark:text-gray-400">
+          {openComandas.length} comanda{openComandas.length !== 1 ? 's' : ''} aberta{openComandas.length !== 1 ? 's' : ''} • {formatCurrency(totalOpenValue)} em aberto
+        </p>
       </div>
 
       {/* Filter */}
       <div className="bg-white dark:bg-[#18191c] rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
           <Filter className="h-5 w-5 text-gray-400" />
           <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1">
             <button
@@ -205,6 +196,15 @@ export function ComandaSection() {
                 <span>Criar Primeira Comanda</span>
               </button>
             )}
+          </div>
+          
+          <button
+            onClick={() => setShowComandaForm(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Nova Comanda</span>
+          </button>
           </div>
         </div>
       )}
