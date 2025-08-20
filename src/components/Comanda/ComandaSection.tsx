@@ -116,71 +116,59 @@ export function ComandaSection() {
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20">
       {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Comandas</h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          {openComandas.length} comanda{openComandas.length !== 1 ? 's' : ''} aberta{openComandas.length !== 1 ? 's' : ''} • {formatCurrency(totalOpenValue)} em aberto
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Comandas</h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            {openComandas.length} comanda{openComandas.length !== 1 ? 's' : ''} aberta{openComandas.length !== 1 ? 's' : ''} • {formatCurrency(totalOpenValue)} em aberto
+          </p>
+        </div>
+        
+        <button
+          onClick={() => setShowComandaForm(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Nova Comanda</span>
+        </button>
       </div>
 
       {/* Filter */}
       <div className="bg-white dark:bg-[#18191c] rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-            <div className="flex items-center space-x-4">
-              <Filter className="h-5 w-5 text-gray-400" />
-              <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1">
-                <button
-                  onClick={() => setFilter('all')}
-                  className={`px-3 py-1 rounded-md transition-colors text-sm ${
-                    filter === 'all'
-                      ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-                  }`}
-                >
-                  Todas ({state.comandas.length})
-                </button>
-                <button
-                  onClick={() => setFilter('open')}
-                  className={`px-3 py-1 rounded-md transition-colors text-sm ${
-                    filter === 'open'
-                      ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-                  }`}
-                >
-                  Abertas ({openComandas.length})
-                </button>
-                <button
-                  onClick={() => setFilter('paid')}
-                  className={`px-3 py-1 rounded-md transition-colors text-sm ${
-                    filter === 'paid'
-                      ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-                  }`}
-                >
-                  Pagas ({state.comandas.filter(c => c.status === 'PAID').length})
-                </button>
-              </div>
-            </div>
-            
-            {/* Desktop button */}
+        <div className="flex items-center space-x-4">
+          <Filter className="h-5 w-5 text-gray-400" />
+          <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1">
             <button
-              onClick={() => setShowComandaForm(true)}
-              className="hidden sm:flex bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors items-center space-x-2"
+              onClick={() => setFilter('all')}
+              className={`px-3 py-1 rounded-md transition-colors text-sm ${
+                filter === 'all'
+                  ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+              }`}
             >
-              <Plus className="h-4 w-4" />
-              <span>Nova Comanda</span>
+              Todas ({state.comandas.length})
+            </button>
+            <button
+              onClick={() => setFilter('open')}
+              className={`px-3 py-1 rounded-md transition-colors text-sm ${
+                filter === 'open'
+                  ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+              }`}
+            >
+              Abertas ({openComandas.length})
+            </button>
+            <button
+              onClick={() => setFilter('paid')}
+              className={`px-3 py-1 rounded-md transition-colors text-sm ${
+                filter === 'paid'
+                  ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+              }`}
+            >
+              Pagas ({state.comandas.filter(c => c.status === 'PAID').length})
             </button>
           </div>
-          
-          {/* Mobile button */}
-          <button
-            onClick={() => setShowComandaForm(true)}
-            className="sm:hidden w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center justify-center space-x-2"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Nova Comanda</span>
-          </button>
         </div>
       </div>
 
