@@ -148,7 +148,7 @@ export function ReportsSection({ sales, products }: ReportsSectionProps) {
   const averageTicket = filteredSales.length > 0 ? (totalRevenue / filteredSales.length) : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-20">
       {/* Period Filter */}
       <div className="bg-white dark:bg-[#18191c] rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
@@ -159,7 +159,7 @@ export function ReportsSection({ sales, products }: ReportsSectionProps) {
           <select
             value={period}
             onChange={(e) => setPeriod(e.target.value)}
-            className="px-3 py-2 border-2 border-blue-200 dark:border-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm"
+            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm"
           >
             <option value="7days">Últimos 7 dias</option>
             <option value="30days">Últimos 30 dias</option>

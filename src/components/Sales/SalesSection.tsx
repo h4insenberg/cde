@@ -66,7 +66,7 @@ export function SalesSection() {
         
         <button
           onClick={() => setShowSaleForm(true)}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
         >
           <Plus className="h-4 w-4" />
           <span>Nova Venda</span>
@@ -88,7 +88,7 @@ export function SalesSection() {
             </p>
             <button
               onClick={() => setShowSaleForm(true)}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 mx-auto"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 mx-auto"
             >
               <Plus className="h-4 w-4" />
               <span>Registrar Primeira Venda</span>
