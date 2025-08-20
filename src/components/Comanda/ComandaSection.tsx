@@ -183,7 +183,6 @@ export function ComandaSection() {
           </button>
         </div>
       </div>
-      </div>
 
       {/* Comandas List */}
       {filteredComandas.length > 0 ? (
