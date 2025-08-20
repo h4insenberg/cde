@@ -150,7 +150,7 @@ export function ReportsSection({ sales, products }: ReportsSectionProps) {
   return (
     <div className="space-y-6">
       {/* Period Filter */}
-      <div className="bg-white dark:bg-[#18191c] rounded-xl p-4 shadow-sm border-2 border-blue-200 dark:border-blue-600">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
             <BarChart3 className="h-5 w-5 mr-2 text-blue-500" />
@@ -214,7 +214,7 @@ export function ReportsSection({ sales, products }: ReportsSectionProps) {
       {/* Charts Section */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Daily Sales Chart */}
-        <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border-2 border-blue-200 dark:border-blue-600">
+        <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
           <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
             <BarChart3 className="h-5 w-5 mr-2 text-blue-500" />
             Vendas dos Últimos 7 Dias
@@ -251,7 +251,7 @@ export function ReportsSection({ sales, products }: ReportsSectionProps) {
         </div>
 
         {/* Payment Methods */}
-        <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border-2 border-blue-200 dark:border-blue-600">
+        <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
           <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
             <PieChart className="h-5 w-5 mr-2 text-green-500" />
             Formas de Pagamento
@@ -294,7 +294,7 @@ export function ReportsSection({ sales, products }: ReportsSectionProps) {
         </div>
 
         {/* Top Products */}
-        <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border-2 border-blue-200 dark:border-blue-600">
+        <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
           <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
             <Package className="h-5 w-5 mr-2 text-blue-500" />
             Produtos Mais Vendidos
@@ -329,7 +329,7 @@ export function ReportsSection({ sales, products }: ReportsSectionProps) {
         </div>
 
         {/* Top Services */}
-        <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border-2 border-blue-200 dark:border-blue-600">
+        <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
           <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
             <TrendingUp className="h-5 w-5 mr-2 text-blue-500" />
             Serviços Mais Vendidos
@@ -366,7 +366,7 @@ export function ReportsSection({ sales, products }: ReportsSectionProps) {
 
       {/* Hourly Stats */}
       {hourlyStats.length > 0 && (
-        <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border-2 border-blue-200 dark:border-blue-600">
+        <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
           <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
             <Activity className="h-5 w-5 mr-2 text-orange-500" />
             Horários de Maior Movimento

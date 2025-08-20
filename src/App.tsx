@@ -68,7 +68,7 @@ function AppContent() {
       case 'settings':
         return (
           <div className="space-y-6 pb-20">
-            <div className="bg-white dark:bg-[#18191c] rounded-xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="bg-white dark:bg-[#18191c] rounded-xl p-8 shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="text-center">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                   Configurações
