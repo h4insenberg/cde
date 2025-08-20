@@ -86,14 +86,24 @@ export function ComandaSection() {
         quantity: item.quantity,
         unitPrice: item.unitPrice,
         total: item.total,
-        profit: item.total, // For comandas, we consider full amount as profit
+        profit: item.type === 'product' && item.productId 
+          ? (() => {
+              const product = state.products.find(p => p.id === item.productId);
+              return product 
+                ? (item.unitPrice - product.costPrice) * item.quantity
+                : item.total; // Fallback if product not found
+            })()
+          : item.total, // For services, consider full amount as profit
       }));
+
+      // Calculate total profit correctly
+      const totalProfit = saleItems.reduce((sum, item) => sum + item.profit, 0);
 
       const sale: Sale = {
         id: generateId(),
         items: saleItems,
         total: comanda.total,
-        profit: comanda.total,
+        profit: totalProfit,
         paymentMethod: 'PIX', // Default payment method for comandas
         netAmount: comanda.total,
         createdAt: new Date(),
