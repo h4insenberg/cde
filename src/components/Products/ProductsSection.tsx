@@ -89,35 +89,35 @@ export function ProductsSection() {
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20">
       {/* Header with Tabs */}
-      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 dark:bg-[#18191c] dark:border-gray-700">
+      <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:bg-[#18191c] dark:border-gray-700">
         <div className="space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-            <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1">
+            <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1 overflow-x-auto">
               <button
                 onClick={() => setActiveTab('products')}
-                className={`px-4 py-2 rounded-md transition-colors flex items-center space-x-2 ${
+                className={`px-3 sm:px-4 py-2 rounded-md transition-colors flex items-center space-x-2 whitespace-nowrap ${
                   activeTab === 'products'
                     ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                 }`}
               >
-                <Package className="h-4 w-4" />
+                <Package className="h-4 w-4 flex-shrink-0" />
                 <span>Produtos</span>
-                <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs">
+                <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs flex-shrink-0">
                   {filteredProducts.length}
                 </span>
               </button>
               <button
                 onClick={() => setActiveTab('services')}
-                className={`px-4 py-2 rounded-md transition-colors flex items-center space-x-2 ${
+                className={`px-3 sm:px-4 py-2 rounded-md transition-colors flex items-center space-x-2 whitespace-nowrap ${
                   activeTab === 'services'
                     ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                 }`}
               >
-                <Wrench className="h-4 w-4" />
+                <Wrench className="h-4 w-4 flex-shrink-0" />
                 <span>Serviços</span>
-                <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs">
+                <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs flex-shrink-0">
                   {filteredServices.length}
                 </span>
               </button>
@@ -126,7 +126,7 @@ export function ProductsSection() {
             {/* Desktop button */}
             <button
               onClick={() => activeTab === 'products' ? setShowProductForm(true) : setShowServiceForm(true)}
-              className={`hidden md:flex px-4 py-2 rounded-lg text-white transition-colors items-center space-x-2 shadow-lg bg-blue-600 hover:bg-blue-700`}
+              className={`hidden md:flex px-4 py-2 rounded-lg text-white transition-colors items-center space-x-2 shadow-lg bg-blue-600 hover:bg-blue-700 whitespace-nowrap`}
             >
               <Plus className="h-4 w-4" />
               <span>{activeTab === 'products' ? 'Novo Produto' : 'Novo Serviço'}</span>
@@ -136,7 +136,7 @@ export function ProductsSection() {
           {/* Mobile button */}
           <button
             onClick={() => activeTab === 'products' ? setShowProductForm(true) : setShowServiceForm(true)}
-            className={`md:hidden w-full px-4 py-2 rounded-lg text-white transition-colors flex items-center justify-center space-x-2 shadow-lg bg-blue-600 hover:bg-blue-700`}
+            className={`md:hidden w-full px-4 py-3 rounded-lg text-white transition-colors flex items-center justify-center space-x-2 shadow-lg bg-blue-600 hover:bg-blue-700`}
           >
             <Plus className="h-4 w-4" />
             <span>{activeTab === 'products' ? 'Novo Produto' : 'Novo Serviço'}</span>
@@ -145,7 +145,7 @@ export function ProductsSection() {
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white dark:bg-[#18191c] rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
@@ -153,11 +153,11 @@ export function ProductsSection() {
             placeholder={`Buscar ${activeTab === 'products' ? 'produtos' : 'serviços'}...`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+            className="w-full pl-10 pr-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm sm:text-base"
           />
         </div>
         {searchTerm && (
-          <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          <div className="mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
             {activeTab === 'products' 
               ? `${filteredProducts.length} produto${filteredProducts.length !== 1 ? 's' : ''} encontrado${filteredProducts.length !== 1 ? 's' : ''}`
               : `${filteredServices.length} serviço${filteredServices.length !== 1 ? 's' : ''} encontrado${filteredServices.length !== 1 ? 's' : ''}`

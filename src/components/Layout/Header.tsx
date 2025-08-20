@@ -12,18 +12,18 @@ export function Header({ title, onMenuClick, onNotificationsClick }: HeaderProps
   const { unreadCount } = useNotifications();
 
   return (
-    <header className="bg-white dark:bg-[#131416] border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+    <header className="bg-white dark:bg-[#131416] border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center space-x-3">
           {onMenuClick && (
             <button
               onClick={onMenuClick}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors md:hidden"
             >
               <Menu className="h-5 w-5" />
             </button>
           )}
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate">
             {title}
           </h1>
         </div>
