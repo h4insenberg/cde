@@ -209,6 +209,8 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
               className={`w-full px-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                 errors.name ? 'border-red-500' : 'border-blue-200 dark:border-gray-600'
               }`}
+            />
+            {errors.name && (
               <p className="text-red-500 text-sm mt-1">{errors.name}</p>
             )}
           </div>
@@ -275,5 +277,4 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
       </div>
     </div>
   );
-}
 }
