@@ -14,10 +14,10 @@ export function ProductCard({ product, onEdit, onDelete }: ProductCardProps) {
   const profitMargin = ((product.salePrice - product.costPrice) / product.salePrice * 100).toFixed(1);
 
   return (
-    <div className={`bg-white dark:bg-[#18191c] rounded-xl p-3 sm:p-4 shadow-sm border-2 transition-all duration-200 hover:shadow-md ${
+    <div className={`bg-white dark:bg-[#18191c] rounded-xl p-3 sm:p-4 shadow-sm border transition-all duration-200 hover:shadow-md ${
       isLowStock 
-        ? 'border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/80' 
-        : 'border-blue-200 dark:border-blue-600 hover:border-blue-300 dark:hover:border-blue-500'
+        ? 'border-red-200 dark:border-red-700 bg-red-50/50 dark:bg-red-950/80' 
+        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
     }`}>
       <div className="flex items-start justify-between mb-2 sm:mb-3">
         <div className="flex items-center space-x-2 flex-1">

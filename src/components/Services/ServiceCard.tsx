@@ -11,7 +11,7 @@ interface ServiceCardProps {
 
 export function ServiceCard({ service, onEdit, onDelete }: ServiceCardProps) {
   return (
-    <div className="bg-white dark:bg-[#18191c] rounded-xl p-3 sm:p-4 shadow-sm border-2 border-blue-200 dark:border-blue-600 hover:border-blue-300 dark:hover:border-blue-500 transition-all duration-200 hover:shadow-md">
+    <div className="bg-white dark:bg-[#18191c] rounded-xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 hover:shadow-md">
       <div className="flex items-start justify-between mb-2 sm:mb-3">
         <div className="flex items-center space-x-2 flex-1">
           <Wrench className="h-5 w-5 text-blue-500" />
