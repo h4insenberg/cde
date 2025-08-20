@@ -161,6 +161,14 @@ export function ComandaSection() {
             </button>
           </div>
         </div>
+          <button
+            onClick={() => setShowComandaForm(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Nova Comanda</span>
+          </button>
+        </div>
       </div>
 
       {/* Comandas List */}
@@ -196,15 +204,6 @@ export function ComandaSection() {
                 <span>Criar Primeira Comanda</span>
               </button>
             )}
-          </div>
-          
-          <button
-            onClick={() => setShowComandaForm(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Nova Comanda</span>
-          </button>
           </div>
         </div>
       )}
