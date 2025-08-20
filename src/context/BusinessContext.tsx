@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { Product, Service, Sale, StockMovement, DashboardStats, Notification } from '../types';
+import { Product, Service, Sale, StockMovement, DashboardStats, Notification, Comanda } from '../types';
 import { generateId } from '../utils/helpers';
 
 interface BusinessState {
   products: Product[];
   services: Service[];
   sales: Sale[];
+  comandas: Comanda[];
   stockMovements: StockMovement[];
   notifications: Notification[];
   dashboardStats: DashboardStats;
@@ -19,6 +20,9 @@ type BusinessAction =
   | { type: 'UPDATE_SERVICE'; payload: Service }
   | { type: 'DELETE_SERVICE'; payload: string }
   | { type: 'ADD_SALE'; payload: Sale }
+  | { type: 'ADD_COMANDA'; payload: Comanda }
+  | { type: 'UPDATE_COMANDA'; payload: Comanda }
+  | { type: 'DELETE_COMANDA'; payload: string }
   | { type: 'ADD_STOCK_MOVEMENT'; payload: StockMovement }
   | { type: 'ADD_NOTIFICATION'; payload: Notification }
   | { type: 'MARK_NOTIFICATION_READ'; payload: string }
@@ -29,6 +33,7 @@ const initialState: BusinessState = {
   products: [],
   services: [],
   sales: [],
+  comandas: [],
   stockMovements: [],
   notifications: [],
   dashboardStats: {
@@ -287,6 +292,21 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
     case 'ADD_SALE':
       return { ...state, sales: [...state.sales, action.payload] };
     
+    case 'ADD_COMANDA':
+      return { ...state, comandas: [...state.comandas, action.payload] };
+    
+    case 'UPDATE_COMANDA':
+      return {
+        ...state,
+        comandas: state.comandas.map(c => c.id === action.payload.id ? action.payload : c)
+      };
+    
+    case 'DELETE_COMANDA':
+      return {
+        ...state,
+        comandas: state.comandas.filter(c => c.id !== action.payload)
+      };
+    
     case 'ADD_STOCK_MOVEMENT':
       return { ...state, stockMovements: [...state.stockMovements, action.payload] };
     
@@ -302,7 +322,11 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       };
     
     case 'UPDATE_STATS':
-      const revenue = state.sales.reduce((sum, sale) => sum + sale.total, 0);
+      const salesRevenue = state.sales.reduce((sum, sale) => sum + sale.total, 0);
+      const comandasRevenue = state.comandas
+        .filter(c => c.status === 'PAID')
+        .reduce((sum, comanda) => sum + comanda.total, 0);
+      const revenue = salesRevenue + comandasRevenue;
       const expenses = state.sales.reduce((sum, sale) => sum + (sale.total - sale.profit), 0);
       const netProfit = revenue - expenses;
       const profitMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
@@ -345,7 +369,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     localStorage.setItem('businessData', JSON.stringify(state));
     dispatch({ type: 'UPDATE_STATS' });
-  }, [state.products, state.services, state.sales, state.stockMovements, state.notifications]);
+  }, [state.products, state.services, state.sales, state.comandas, state.stockMovements, state.notifications]);
 
   return (
     <BusinessContext.Provider value={{ state, dispatch }}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Package, ShoppingCart, BarChart3, Settings } from 'lucide-react';
+import { Home, Package, ShoppingCart, ClipboardList, Settings } from 'lucide-react';
 
 interface BottomNavigationProps {
   activeTab: string;
@@ -9,9 +9,9 @@ interface BottomNavigationProps {
 export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
   const tabs = [
     { id: 'dashboard', label: 'Início', icon: Home },
-    { id: 'products', label: 'Produtos', icon: Package },
+    { id: 'products', label: 'Estoque', icon: Package },
     { id: 'sales', label: 'Vendas', icon: ShoppingCart },
-    { id: 'reports', label: 'Relatórios', icon: BarChart3 },
+    { id: 'comanda', label: 'Comanda', icon: ClipboardList },
     { id: 'settings', label: 'Config', icon: Settings },
   ];
 

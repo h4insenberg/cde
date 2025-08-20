@@ -63,8 +63,13 @@ export function Dashboard({ onNewSale }: DashboardProps) {
 
       {/* Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentSales sales={sales} />
-        <LowStockAlerts products={products} />
+        {/* Mobile: Low Stock first, Desktop: Recent Sales first */}
+        <div className="lg:order-1 order-2">
+          <RecentSales sales={sales} />
+        </div>
+        <div className="lg:order-2 order-1">
+          <LowStockAlerts products={products} />
+        </div>
       </div>
     </div>
   );

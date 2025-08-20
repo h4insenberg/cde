@@ -6,7 +6,7 @@ import { BottomNavigation } from './components/Layout/BottomNavigation';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { ProductsSection } from './components/Products/ProductsSection';
 import { SalesSection } from './components/Sales/SalesSection';
-import { ReportsSection } from './components/Reports/ReportsSection';
+import { ComandaSection } from './components/Comanda/ComandaSection';
 import { NotificationModal } from './components/Notifications/NotificationModal';
 import { SaleForm } from './components/Sales/SaleForm';
 import { useBusiness } from './context/BusinessContext';
@@ -22,11 +22,11 @@ function AppContent() {
       case 'dashboard':
         return 'Dashboard';
       case 'products':
-        return 'Produtos & Serviços';
+        return 'Estoque & Serviços';
       case 'sales':
         return 'Vendas';
-      case 'reports':
-        return 'Relatórios';
+      case 'comanda':
+        return 'Comandas';
       case 'settings':
         return 'Configurações';
       default:
@@ -63,8 +63,8 @@ function AppContent() {
         return <ProductsSection />;
       case 'sales':
         return <SalesSection />;
-      case 'reports':
-        return <ReportsSection sales={state.sales} products={state.products} />;
+      case 'comanda':
+        return <ComandaSection />;
       case 'settings':
         return (
           <div className="space-y-6 pb-20">

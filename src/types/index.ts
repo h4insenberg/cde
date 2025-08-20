@@ -71,3 +71,25 @@ export interface Notification {
   createdAt: Date;
   read: boolean;
 }
+
+export interface Comanda {
+  id: string;
+  customerName: string;
+  status: 'OPEN' | 'PAID';
+  items: ComandaItem[];
+  total: number;
+  createdAt: Date;
+  paidAt?: Date;
+}
+
+export interface ComandaItem {
+  id: string;
+  type: 'product' | 'service';
+  productId?: string;
+  serviceId?: string;
+  name: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+  addedAt: Date;
+}
