@@ -1,26 +1,123 @@
 import React from 'react';
-import { Calendar, CreditCard } from 'lucide-react';
-import { Sale } from '../../types';
+import { Calendar, CreditCard, Package, Wrench, TrendingUp, TrendingDown, Eye, EyeOff } from 'lucide-react';
+import { Sale, Comanda, StockMovement } from '../../types';
 import { formatCurrency, formatDate, getPaymentMethodLabel } from '../../utils/helpers';
 
-interface RecentSalesProps {
+interface ExtratoProps {
   sales: Sale[];
+  comandas: Comanda[];
+  stockMovements: StockMovement[];
+  showValues: boolean;
+  onToggleValues: () => void;
 }
 
-export function RecentSales({ sales }: RecentSalesProps) {
-  const recentSales = sales
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 5);
+type MovementType = 'sale' | 'comanda' | 'stock_in' | 'stock_out' | 'service';
 
-  if (recentSales.length === 0) {
+interface Movement {
+  id: string;
+  type: MovementType;
+  description: string;
+  amount?: number;
+  quantity?: number;
+  unit?: string;
+  createdAt: Date;
+  paymentMethod?: string;
+  profit?: number;
+}
+
+export function RecentSales({ sales, comandas, stockMovements, showValues, onToggleValues }: ExtratoProps) {
+  const movements: Movement[] = [];
+
+  // Add sales
+  sales.forEach(sale => {
+    sale.items.forEach(item => {
+      movements.push({
+        id: `sale-${sale.id}-${item.id}`,
+        type: item.type === 'product' ? 'sale' : 'service',
+        description: `${item.name} (${item.quantity}x)`,
+        amount: item.total,
+        createdAt: new Date(sale.createdAt),
+        paymentMethod: sale.paymentMethod,
+        profit: item.profit,
+      });
+    });
+  });
+
+  // Add paid comandas
+  comandas.filter(c => c.status === 'PAID').forEach(comanda => {
+    comanda.items.forEach(item => {
+      movements.push({
+        id: `comanda-${comanda.id}-${item.id}`,
+        type: item.type === 'product' ? 'sale' : 'service',
+        description: `${item.name} (${item.quantity}x) - ${comanda.customerName}`,
+        amount: item.total,
+        createdAt: new Date(comanda.paidAt || comanda.createdAt),
+        paymentMethod: 'PIX', // Default for comandas
+      });
+    });
+  });
+
+  // Add stock movements
+  stockMovements.forEach(movement => {
+    movements.push({
+      id: `stock-${movement.id}`,
+      type: movement.type === 'IN' ? 'stock_in' : 'stock_out',
+      description: `${movement.productName} (${movement.quantity}x)`,
+      quantity: movement.quantity,
+      createdAt: new Date(movement.createdAt),
+    });
+  });
+
+  const recentMovements = movements
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 8);
+
+  const getMovementIcon = (type: MovementType) => {
+    switch (type) {
+      case 'sale':
+        return <Package className="h-4 w-4 text-green-500" />;
+      case 'service':
+        return <Wrench className="h-4 w-4 text-purple-500" />;
+      case 'stock_in':
+        return <TrendingUp className="h-4 w-4 text-blue-500" />;
+      case 'stock_out':
+        return <TrendingDown className="h-4 w-4 text-red-500" />;
+      default:
+        return <CreditCard className="h-4 w-4 text-gray-400" />;
+    }
+  };
+
+  const getMovementColor = (type: MovementType) => {
+    switch (type) {
+      case 'sale':
+      case 'service':
+        return 'text-green-600 dark:text-green-400';
+      case 'stock_in':
+        return 'text-blue-600 dark:text-blue-400';
+      case 'stock_out':
+        return 'text-red-600 dark:text-red-400';
+      default:
+        return 'text-gray-600 dark:text-gray-400';
+    }
+  };
+
+  if (recentMovements.length === 0) {
     return (
       <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-          <Calendar className="h-5 w-5 mr-2 text-blue-600" />
-          Vendas Recentes
-        </h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+            <Calendar className="h-5 w-5 mr-2 text-blue-500" />
+            Extrato
+          </h3>
+          <button
+            onClick={onToggleValues}
+            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          >
+            {showValues ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
         <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-          Nenhuma venda realizada ainda
+          Nenhuma movimentação registrada ainda
         </p>
       </div>
     );
@@ -28,36 +125,56 @@ export function RecentSales({ sales }: RecentSalesProps) {
 
   return (
     <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-        <Calendar className="h-5 w-5 mr-2 text-blue-500" />
-        Vendas Recentes
-      </h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+          <Calendar className="h-5 w-5 mr-2 text-blue-600" />
+          Extrato
+        </h3>
+        <button
+          onClick={onToggleValues}
+          className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+        >
+          {showValues ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
+      </div>
       
       <div className="space-y-3">
-        {recentSales.map((sale) => (
-          <div key={sale.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+        {recentMovements.map((movement) => (
+          <div key={movement.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
             <div className="flex-1">
               <div className="flex items-center space-x-2">
-                <CreditCard className="h-4 w-4 text-gray-400" />
+                {getMovementIcon(movement.type)}
                 <span className="text-sm font-medium text-gray-900 dark:text-white">
-                  {sale.items.length} item{sale.items.length > 1 ? 's' : ''}
+                  {movement.description}
                 </span>
-                <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full">
-                  {getPaymentMethodLabel(sale.paymentMethod)}
-                </span>
+                {movement.paymentMethod && (
+                  <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full">
+                    {getPaymentMethodLabel(movement.paymentMethod)}
+                  </span>
+                )}
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {formatDate(new Date(sale.createdAt))}
+                {formatDate(movement.createdAt)}
               </p>
             </div>
             
             <div className="text-right">
-              <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                {formatCurrency(sale.total)}
-              </p>
-              <p className="text-xs text-green-600 dark:text-green-400">
-                +{formatCurrency(sale.profit)}
-              </p>
+              {movement.amount !== undefined ? (
+                <div>
+                  <p className={`text-sm font-semibold ${getMovementColor(movement.type)}`}>
+                    {showValues ? formatCurrency(movement.amount) : '••••'}
+                  </p>
+                  {movement.profit !== undefined && showValues && (
+                    <p className="text-xs text-green-600 dark:text-green-400">
+                      +{formatCurrency(movement.profit)}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p className={`text-sm font-semibold ${getMovementColor(movement.type)}`}>
+                  {movement.quantity} {movement.unit || 'un'}
+                </p>
+              )}
             </div>
           </div>
         ))}

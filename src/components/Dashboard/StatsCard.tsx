@@ -8,6 +8,7 @@ interface StatsCardProps {
   icon: LucideIcon;
   color: 'blue' | 'green' | 'red' | 'yellow' | 'purple';
   isCurrency?: boolean;
+  showValue?: boolean;
   subtitle?: string;
 }
 
@@ -17,6 +18,7 @@ export function StatsCard({
   icon: Icon, 
   color, 
   isCurrency = true, 
+  showValue = true,
   subtitle 
 }: StatsCardProps) {
   const colorClasses = {
@@ -35,14 +37,20 @@ export function StatsCard({
     purple: 'bg-purple-400/20',
   };
 
+  const displayValue = showValue 
+    ? (isCurrency ? formatCurrency(value) : `${value.toFixed(1)}%`)
+    : '••••';
   return (
     <div className={`rounded-xl p-3 md:p-4 ${colorClasses[color]} shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}>
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <p className="text-white/80 text-xs md:text-sm font-medium">{title}</p>
           <p className="text-lg md:text-2xl font-bold mt-1">
-            {isCurrency ? formatCurrency(value) : `${value.toFixed(1)}%`}
+            {displayValue}
           </p>
+          {subtitle && (
+            <p className="text-white/60 text-xs mt-1">{subtitle}</p>
+          )}
         </div>
         <div className={`p-2 md:p-3 rounded-lg ${iconBgClasses[color]}`}>
           <Icon className="h-5 w-5 md:h-6 md:w-6" />

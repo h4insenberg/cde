@@ -1,5 +1,5 @@
 import React from 'react';
-import { DollarSign, TrendingUp, ShoppingCart, AlertTriangle, Plus, ArrowUp, ArrowDown } from 'lucide-react';
+import { DollarSign, TrendingUp, ShoppingCart, AlertTriangle, Plus, ArrowUp, ArrowDown, Eye, EyeOff } from 'lucide-react';
 import { StatsCard } from './StatsCard';
 import { RecentSales } from './RecentSales';
 import { LowStockAlerts } from './LowStockAlerts';
@@ -11,7 +11,8 @@ interface DashboardProps {
 
 export function Dashboard({ onNewSale }: DashboardProps) {
   const { state } = useBusiness();
-  const { dashboardStats, sales, products } = state;
+  const { dashboardStats, sales, products, comandas, stockMovements } = state;
+  const [showValues, setShowValues] = React.useState(true);
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20">
@@ -34,6 +35,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
           icon={ArrowUp}
           color="green"
           isCurrency={true}
+          showValue={showValues}
           subtitle={`${sales.length} transaç${sales.length !== 1 ? 'ões' : 'ão'}`}
         />
         
@@ -43,6 +45,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
           icon={ArrowDown}
           color="red"
           isCurrency={true}
+          showValue={showValues}
         />
         
         <StatsCard
@@ -50,6 +53,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
           value={dashboardStats.netProfit}
           icon={DollarSign}
           color="blue"
+          showValue={showValues}
         />
         
         <StatsCard
@@ -58,6 +62,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
           icon={TrendingUp}
           color="purple"
           isCurrency={false}
+          showValue={showValues}
         />
       </div>
 
@@ -65,7 +70,13 @@ export function Dashboard({ onNewSale }: DashboardProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Mobile: Low Stock first, Desktop: Recent Sales first */}
         <div className="lg:order-1 order-2">
-          <RecentSales sales={sales} />
+          <RecentSales 
+            sales={sales} 
+            comandas={comandas}
+            stockMovements={stockMovements}
+            showValues={showValues}
+            onToggleValues={() => setShowValues(!showValues)}
+          />
         </div>
         <div className="lg:order-2 order-1">
           <LowStockAlerts products={products} />
