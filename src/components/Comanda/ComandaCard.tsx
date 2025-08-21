@@ -2,6 +2,7 @@ import React from 'react';
 import { User, Clock, DollarSign, Plus, Check } from 'lucide-react';
 import { Comanda } from '../../types';
 import { formatCurrency, formatDate } from '../../utils/helpers';
+import { useBusiness } from '../../context/BusinessContext';
 
 interface ComandaCardProps {
   comanda: Comanda;
@@ -10,6 +11,7 @@ interface ComandaCardProps {
 }
 
 export function ComandaCard({ comanda, onAddItems, onPayComanda }: ComandaCardProps) {
+  const { state } = useBusiness();
   const isOpen = comanda.status === 'OPEN';
 
   return (
@@ -33,7 +35,7 @@ export function ComandaCard({ comanda, onAddItems, onPayComanda }: ComandaCardPr
         
         <div className="text-right flex-shrink-0">
           <p className="text-sm sm:text-lg font-bold text-gray-900 dark:text-white">
-            {formatCurrency(comanda.total)}
+            {state.showValues ? formatCurrency(comanda.total) : '••••'}
           </p>
           <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
             <Clock className="h-3 w-3" />
@@ -54,7 +56,7 @@ export function ComandaCard({ comanda, onAddItems, onPayComanda }: ComandaCardPr
                 {item.name} x{item.quantity}
               </span>
               <span className="font-medium text-gray-900 dark:text-white">
-                {formatCurrency(item.total)}
+                {state.showValues ? formatCurrency(item.total) : '••••'}
               </span>
             </div>
           ))}

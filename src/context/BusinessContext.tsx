@@ -10,6 +10,7 @@ interface BusinessState {
   stockMovements: StockMovement[];
   notifications: Notification[];
   dashboardStats: DashboardStats;
+  showValues: boolean;
 }
 
 type BusinessAction =
@@ -43,6 +44,7 @@ const initialState: BusinessState = {
     profitMargin: 0,
     lowStockAlerts: 0,
   },
+  showValues: true,
 };
 
 // Sample data for testing
@@ -343,6 +345,9 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
         }
       };
     
+    case 'TOGGLE_SHOW_VALUES':
+      return { ...state, showValues: !state.showValues };
+    
     case 'LOAD_DATA':
       return action.payload;
     
@@ -356,20 +361,37 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
 
   // Load data from localStorage on mount
   useEffect(() => {
-    // Load sample data (will be replaced with real data in the future)
-    const initialDataWithSamples = {
-      ...initialState,
-      products: sampleProducts,
-      services: sampleServices,
-    };
-    dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
+    const savedData = localStorage.getItem('businessData');
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        dispatch({ type: 'LOAD_DATA', payload: parsedData });
+      } catch (error) {
+        console.error('Error loading saved data:', error);
+        // Load sample data if saved data is corrupted
+        const initialDataWithSamples = {
+          ...initialState,
+          products: sampleProducts,
+          services: sampleServices,
+        };
+        dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
+      }
+    } else {
+      // Load sample data (will be replaced with real data in the future)
+      const initialDataWithSamples = {
+        ...initialState,
+        products: sampleProducts,
+        services: sampleServices,
+      };
+      dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
+    }
   }, []);
 
   // Save data to localStorage whenever state changes
   useEffect(() => {
     localStorage.setItem('businessData', JSON.stringify(state));
     dispatch({ type: 'UPDATE_STATS' });
-  }, [state.products, state.services, state.sales, state.comandas, state.stockMovements, state.notifications]);
+  }, [state.products, state.services, state.sales, state.comandas, state.stockMovements, state.notifications, state.showValues]);
 
   return (
     <BusinessContext.Provider value={{ state, dispatch }}>

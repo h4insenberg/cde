@@ -1,14 +1,13 @@
 import React from 'react';
-import { Calendar, CreditCard, Package, Wrench, TrendingUp, TrendingDown, Eye, EyeOff } from 'lucide-react';
+import { Calendar, CreditCard, Package, Wrench, TrendingUp, TrendingDown } from 'lucide-react';
 import { Sale, Comanda, StockMovement } from '../../types';
 import { formatCurrency, formatDate, getPaymentMethodLabel } from '../../utils/helpers';
+import { useBusiness } from '../../context/BusinessContext';
 
 interface ExtratoProps {
   sales: Sale[];
   comandas: Comanda[];
   stockMovements: StockMovement[];
-  showValues: boolean;
-  onToggleValues: () => void;
 }
 
 type MovementType = 'sale' | 'comanda' | 'stock_in' | 'stock_out' | 'service';
@@ -25,7 +24,9 @@ interface Movement {
   profit?: number;
 }
 
-export function RecentSales({ sales, comandas, stockMovements, showValues, onToggleValues }: ExtratoProps) {
+export function RecentSales({ sales, comandas, stockMovements }: ExtratoProps) {
+  const { state } = useBusiness();
+  const { showValues } = state;
   const movements: Movement[] = [];
 
   // Add sales
@@ -109,12 +110,6 @@ export function RecentSales({ sales, comandas, stockMovements, showValues, onTog
             <Calendar className="h-5 w-5 mr-2 text-blue-500" />
             Extrato
           </h3>
-          <button
-            onClick={onToggleValues}
-            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-          >
-            {showValues ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
         </div>
         <p className="text-gray-500 dark:text-gray-400 text-center py-8">
           Nenhuma movimentação registrada ainda
@@ -130,12 +125,6 @@ export function RecentSales({ sales, comandas, stockMovements, showValues, onTog
           <Calendar className="h-5 w-5 mr-2 text-blue-600" />
           Extrato
         </h3>
-        <button
-          onClick={onToggleValues}
-          className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-        >
-          {showValues ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-        </button>
       </div>
       
       <div className="space-y-3">

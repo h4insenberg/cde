@@ -12,7 +12,6 @@ interface DashboardProps {
 export function Dashboard({ onNewSale }: DashboardProps) {
   const { state } = useBusiness();
   const { dashboardStats, sales, products, comandas, stockMovements } = state;
-  const [showValues, setShowValues] = React.useState(true);
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20">
@@ -35,7 +34,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
           icon={ArrowUp}
           color="green"
           isCurrency={true}
-          showValue={showValues}
+          showValue={state.showValues}
           subtitle={`${sales.length} transaç${sales.length !== 1 ? 'ões' : 'ão'}`}
         />
         
@@ -45,7 +44,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
           icon={ArrowDown}
           color="red"
           isCurrency={true}
-          showValue={showValues}
+          showValue={state.showValues}
         />
         
         <StatsCard
@@ -53,7 +52,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
           value={dashboardStats.netProfit}
           icon={DollarSign}
           color="blue"
-          showValue={showValues}
+          showValue={state.showValues}
         />
         
         <StatsCard
@@ -62,7 +61,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
           icon={TrendingUp}
           color="purple"
           isCurrency={false}
-          showValue={showValues}
+          showValue={state.showValues}
         />
       </div>
 
@@ -74,8 +73,6 @@ export function Dashboard({ onNewSale }: DashboardProps) {
             sales={sales} 
             comandas={comandas}
             stockMovements={stockMovements}
-            showValues={showValues}
-            onToggleValues={() => setShowValues(!showValues)}
           />
         </div>
         <div className="lg:order-2 order-1">

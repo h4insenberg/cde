@@ -2,6 +2,7 @@ import React from 'react';
 import { Calendar, CreditCard, TrendingUp, Package } from 'lucide-react';
 import { Sale } from '../../types';
 import { formatCurrency, formatDate, getPaymentMethodLabel } from '../../utils/helpers';
+import { useBusiness } from '../../context/BusinessContext';
 
 interface SalesListProps {
   sales: Sale[];
@@ -48,7 +49,7 @@ export function SalesList({ sales }: SalesListProps) {
             
             <div className="text-right">
               <p className="text-lg font-bold text-gray-900 dark:text-white">
-                {formatCurrency(sale.total)}
+                {state.showValues ? formatCurrency(sale.total) : '••••'}
               </p>
               <div className="flex items-center space-x-2 mt-1">
                 <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full">
@@ -56,7 +57,7 @@ export function SalesList({ sales }: SalesListProps) {
                 </span>
                 {sale.cardFeeAmount && sale.cardFeeAmount > 0 && (
                   <span className="text-xs text-red-600 dark:text-red-400">
-                    -Taxa: {formatCurrency(sale.cardFeeAmount)}
+                    -Taxa: {state.showValues ? formatCurrency(sale.cardFeeAmount) : '••••'}
                   </span>
                 )}
               </div>
@@ -80,10 +81,10 @@ export function SalesList({ sales }: SalesListProps) {
                   </div>
                   <div className="text-right">
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {formatCurrency(item.total)}
+                      {state.showValues ? formatCurrency(item.total) : '••••'}
                     </span>
                     <div className="text-xs text-green-600 dark:text-green-400">
-                      +{formatCurrency(item.profit)}
+                      +{state.showValues ? formatCurrency(item.profit) : '••••'}
                     </div>
                   </div>
                 </div>
@@ -97,7 +98,7 @@ export function SalesList({ sales }: SalesListProps) {
                 <TrendingUp className="h-4 w-4 text-green-500" />
                 <span className="text-gray-600 dark:text-gray-400">Lucro:</span>
                 <span className="font-medium text-green-600 dark:text-green-400">
-                  {formatCurrency(sale.profit)}
+                  {state.showValues ? formatCurrency(sale.profit) : '••••'}
                 </span>
               </div>
             </div>
@@ -105,7 +106,7 @@ export function SalesList({ sales }: SalesListProps) {
             <div className="text-right">
               <p className="text-sm text-gray-600 dark:text-gray-400">Valor líquido</p>
               <p className="font-bold text-green-600 dark:text-green-400">
-                {formatCurrency(sale.netAmount)}
+                {state.showValues ? formatCurrency(sale.netAmount) : '••••'}
               </p>
             </div>
           </div>

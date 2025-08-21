@@ -130,7 +130,7 @@ export function ComandaSection() {
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Comandas</h2>
           <p className="text-gray-600 dark:text-gray-400">
-            {openComandas.length} comanda{openComandas.length !== 1 ? 's' : ''} aberta{openComandas.length !== 1 ? 's' : ''} • {formatCurrency(totalOpenValue)} em aberto
+            {openComandas.length} comanda{openComandas.length !== 1 ? 's' : ''} aberta{openComandas.length !== 1 ? 's' : ''} • {state.showValues ? formatCurrency(totalOpenValue) : '••••'} em aberto
           </p>
         </div>
         
