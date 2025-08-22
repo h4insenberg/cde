@@ -66,7 +66,6 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
           </button>
         </div>
 
-        <div className="overflow-y-auto max-h-96">
         <div className="overflow-y-auto max-h-[calc(90vh-8rem)]">
           {sortedNotifications.length > 0 ? (
             <div className="p-4 space-y-3">
