@@ -104,7 +104,7 @@ export function RecentSales({ sales, comandas, stockMovements }: ExtratoProps) {
 
   if (recentMovements.length === 0) {
     return (
-      <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
             <Calendar className="h-5 w-5 mr-2 text-blue-500" />
@@ -122,7 +122,7 @@ export function RecentSales({ sales, comandas, stockMovements }: ExtratoProps) {
     <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-          <Calendar className="h-5 w-5 mr-2 text-blue-600" />
+          <Calendar className="h-5 w-5 mr-2 text-blue-500" />
           Extrato
         </h3>
       </div>
