@@ -383,25 +383,26 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
               )}
             </div>
           </div>
+        </div>
 
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#18191c] p-4 sm:p-6">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center"
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={cartItems.length === 0}
-              className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2"
-            >
-              <ShoppingCart className="h-4 w-4" />
-              <span>Finalizar Venda ({formatCurrency(netAmount)})</span>
-            </button>
-          </div>
+        {/* Actions */}
+        <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#18191c] p-4 sm:p-6">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={cartItems.length === 0}
+            className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2"
+          >
+            <ShoppingCart className="h-4 w-4" />
+            <span>Finalizar Venda ({formatCurrency(netAmount)})</span>
+          </button>
+        </div>
       </div>
     </div>
   );
