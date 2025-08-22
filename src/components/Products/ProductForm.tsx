@@ -600,9 +600,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
             </p>
           </div>
 
-          </form>
-
-          <div className="flex space-x-3 pt-6">
+          <div className="flex space-x-3 pt-4">
             <button
               type="button"
               onClick={onCancel}
@@ -611,13 +609,14 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
               Cancelar
             </button>
             <button
-              onClick={handleSubmit}
+              type="submit"
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
             >
               <Save className="h-4 w-4" />
               <span>Salvar</span>
             </button>
           </div>
+        </form>
         </div>
       </div>
     </div>
