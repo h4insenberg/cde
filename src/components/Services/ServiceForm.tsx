@@ -136,6 +136,7 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
       e.target.setSelectionRange(e.target.value.length, e.target.value.length);
     }, 0);
   };
+  
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
