@@ -66,18 +66,38 @@ export function Dashboard({ onNewSale }: DashboardProps) {
       </div>
 
       {/* Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Mobile: Low Stock first, Desktop: Recent Sales first */}
-        <div className="lg:order-1 order-2">
+      <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 ${
+        products.filter(p => p.quantity <= p.minQuantity).length === 0 ? '' : ''
+      }`}>
+        {/* Desktop: Recent Sales first, Mobile: conditional order */}
+        <div className={`lg:order-1 ${
+          products.filter(p => p.quantity <= p.minQuantity).length > 0 ? 'order-2' : 'order-1'
+        }`}>
           <RecentSales 
             sales={sales} 
             comandas={comandas}
             stockMovements={stockMovements}
           />
         </div>
-        <div className="lg:order-2 order-1">
+        {/* Show stock alerts only if there are low stock items */}
+        {products.filter(p => p.quantity <= p.minQuantity).length > 0 && (
+          <div className="lg:order-2 order-1">
+            <LowStockAlerts products={products} />
+          </div>
+        )}
+        {/* If no low stock alerts, show extrato in full width on mobile */}
+        {products.filter(p => p.quantity <= p.minQuantity).length === 0 && (
+          <div className="lg:hidden">
+            {/* Placeholder for mobile when no alerts */}
+          </div>
+        )}
+      </div>
+
+      {/* Desktop: Always show stock alerts in second column */}
+      <div className="hidden lg:block">
+        {products.filter(p => p.quantity <= p.minQuantity).length === 0 && (
           <LowStockAlerts products={products} />
-        </div>
+        )}
       </div>
     </div>
   );
