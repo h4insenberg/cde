@@ -367,8 +367,12 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
 export function BusinessProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(businessReducer, initialState);
 
-  // Load data from localStorage on mount
+  // Load data and detect theme on mount
   useEffect(() => {
+    // First, detect system theme preference
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    console.log('System prefers dark mode:', systemPrefersDark);
+    
     const savedData = localStorage.getItem('businessData');
     
     if (savedData) {
@@ -378,60 +382,29 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         dispatch({ type: 'LOAD_DATA', payload: parsedData });
       } catch (error) {
         console.error('Error loading saved data:', error);
-        // Detect system theme preference if no saved data
-        const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        console.log('System prefers dark mode (fallback):', prefersDarkMode);
+        // Use system preference if saved data is corrupted
         const initialDataWithSamples = {
           ...initialState,
           products: sampleProducts,
           services: sampleServices,
-          darkMode: prefersDarkMode,
+          darkMode: systemPrefersDark,
         };
         dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
       }
     } else {
-      // Detect system theme preference for first time users
-      const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      console.log('System prefers dark mode (first time):', prefersDarkMode);
+      // First time user - use system preference
+      console.log('First time user - using system preference:', systemPrefersDark);
       const initialDataWithSamples = {
         ...initialState,
         products: sampleProducts,
         services: sampleServices,
-        darkMode: prefersDarkMode,
+        darkMode: systemPrefersDark,
       };
-      console.log('Loading initial data with darkMode:', prefersDarkMode);
+      console.log('Loading initial data with darkMode:', systemPrefersDark);
       dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
     }
   }, []);
 
-  // Listen for system theme changes
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    const handleThemeChange = (e: MediaQueryListEvent) => {
-      // Check if we should follow system theme changes
-      const savedData = localStorage.getItem('businessData');
-      if (savedData) {
-        try {
-          const parsedData = JSON.parse(savedData);
-          // Only follow system changes if user hasn't manually overridden
-          const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          if (parsedData.darkMode === systemPreference) {
-            console.log('Following system theme change to:', e.matches ? 'dark' : 'light');
-            dispatch({ type: 'LOAD_DATA', payload: { ...parsedData, darkMode: e.matches } });
-          }
-        } catch (error) {
-          console.error('Error parsing saved data for theme change:', error);
-        }
-      }
-    };
-    
-    mediaQuery.addEventListener('change', handleThemeChange);
-    
-    return () => {
-      mediaQuery.removeEventListener('change', handleThemeChange);
-    };
-  }, []);
   // Save data to localStorage whenever state changes
   useEffect(() => {
     console.log('Saving state with darkMode:', state.darkMode);
@@ -446,16 +419,13 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
   // Apply dark mode to document
   useEffect(() => {
     const htmlElement = document.documentElement;
-    console.log('Current theme state:', state.darkMode);
-    console.log('HTML classes before:', htmlElement.className);
+    console.log('Applying theme - darkMode:', state.darkMode);
     
     if (state.darkMode) {
       htmlElement.classList.add('dark');
     } else {
       htmlElement.classList.remove('dark');
     }
-    
-    console.log('HTML classes after:', htmlElement.className);
   }, [state.darkMode]);
 
   return (
