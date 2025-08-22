@@ -52,7 +52,7 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-md max-h-[80vh] overflow-hidden">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
             <Bell className="h-5 w-5 mr-2" />
@@ -67,6 +67,7 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
         </div>
 
         <div className="overflow-y-auto max-h-96">
+        <div className="overflow-y-auto max-h-[calc(90vh-8rem)]">
           {sortedNotifications.length > 0 ? (
             <div className="p-4 space-y-3">
               {sortedNotifications.map((notification) => (
