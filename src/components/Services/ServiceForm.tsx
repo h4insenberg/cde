@@ -136,6 +136,7 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
       e.target.setSelectionRange(e.target.value.length, e.target.value.length);
     }, 0);
   };
+  
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -198,84 +199,83 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
 
         <div className="p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Nome do Serviço *
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className={`w-full px-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                errors.name ? 'border-red-500' : 'border-blue-200 dark:border-gray-600'
-              }`}
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Descrição
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows={3}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-              placeholder="Descrição opcional do serviço"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Preço do Serviço *
-            </label>
-            <div className="relative">
-              <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
-                R$
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Nome do Serviço *
+              </label>
               <input
                 type="text"
-                value={displayPrice}
-                onChange={(e) => handleCurrencyChange(e.target.value)}
-                onInput={handleCurrencyInput}
-                onKeyDown={handleCurrencyKeyDown}
-                onClick={handleCurrencyClick}
-                onFocus={handleCurrencyFocus}
-                className={`w-full pl-10 pr-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                  errors.price ? 'border-red-500' : 'border-gray-300'
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className={`w-full px-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                  errors.name ? 'border-red-500' : 'border-blue-200 dark:border-gray-600'
                 }`}
-                placeholder="0,00"
-                inputMode="numeric"
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Descrição
+              </label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows={3}
+                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                placeholder="Descrição opcional do serviço"
               />
             </div>
-            {errors.price && (
-              <p className="text-red-500 text-sm mt-1">{errors.price}</p>
-            )}
-          </div>
 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Preço do Serviço *
+              </label>
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
+                  R$
+                </div>
+                <input
+                  type="text"
+                  value={displayPrice}
+                  onChange={(e) => handleCurrencyChange(e.target.value)}
+                  onInput={handleCurrencyInput}
+                  onKeyDown={handleCurrencyKeyDown}
+                  onClick={handleCurrencyClick}
+                  onFocus={handleCurrencyFocus}
+                  className={`w-full pl-10 pr-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                    errors.price ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="0,00"
+                  inputMode="numeric"
+                />
+              </div>
+              {errors.price && (
+                <p className="text-red-500 text-sm mt-1">{errors.price}</p>
+              )}
+            </div>
+
+            <div className="flex space-x-3 pt-4">
+              <button
+                type="button"
+                onClick={onCancel}
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+              >
+                <Save className="h-4 w-4" />
+                <span>Salvar</span>
+              </button>
+            </div>
           </form>
-
-          <div className="flex space-x-3 pt-6">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={handleSubmit}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
-            >
-              <Save className="h-4 w-4" />
-              <span>Salvar</span>
-            </button>
-          </div>
         </div>
       </div>
     </div>
