@@ -353,6 +353,7 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       return { ...state, showValues: !state.showValues };
     
     case 'TOGGLE_DARK_MODE':
+      console.log('Toggling dark mode from', state.darkMode, 'to', !state.darkMode);
       return { ...state, darkMode: !state.darkMode };
     
     case 'LOAD_DATA':
@@ -369,9 +370,16 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
   // Load data from localStorage on mount
   useEffect(() => {
     const savedData = localStorage.getItem('businessData');
+    
+    // Load theme preference first
+    const savedTheme = localStorage.getItem('darkMode');
+    const isDarkMode = savedTheme ? JSON.parse(savedTheme) : false;
+    
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
+        // Ensure theme is applied from saved data or localStorage
+        parsedData.darkMode = parsedData.darkMode !== undefined ? parsedData.darkMode : isDarkMode;
         dispatch({ type: 'LOAD_DATA', payload: parsedData });
       } catch (error) {
         console.error('Error loading saved data:', error);
@@ -380,6 +388,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
           ...initialState,
           products: sampleProducts,
           services: sampleServices,
+          darkMode: isDarkMode,
         };
         dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
       }
@@ -389,6 +398,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         ...initialState,
         products: sampleProducts,
         services: sampleServices,
+        darkMode: isDarkMode,
       };
       dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
     }
@@ -397,11 +407,13 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
   // Save data to localStorage whenever state changes
   useEffect(() => {
     localStorage.setItem('businessData', JSON.stringify(state));
+    localStorage.setItem('darkMode', JSON.stringify(state.darkMode));
     dispatch({ type: 'UPDATE_STATS' });
   }, [state.products, state.services, state.sales, state.comandas, state.stockMovements, state.notifications, state.showValues]);
 
   // Apply dark mode to document
   useEffect(() => {
+    console.log('Applying theme:', state.darkMode ? 'dark' : 'light');
     if (state.darkMode) {
       document.documentElement.classList.add('dark');
     } else {
