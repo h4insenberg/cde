@@ -290,24 +290,3 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
     </div>
   );
 }
-            <button
-              type="button"
-              onClick={onCancel}
-              className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={cartItems.length === 0}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2"
-            >
-              <Save className="h-4 w-4" />
-              <span>Adicionar Itens</span>
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
