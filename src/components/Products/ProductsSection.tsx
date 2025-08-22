@@ -88,10 +88,28 @@ export function ProductsSection() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Estoque & Serviços</h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            {state.products.length} produto{state.products.length !== 1 ? 's' : ''} • {state.services.length} serviço{state.services.length !== 1 ? 's' : ''}
+          </p>
+        </div>
+        
+        <button
+          onClick={() => activeTab === 'products' ? setShowProductForm(true) : setShowServiceForm(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
+        >
+          <Plus className="h-4 w-4" />
+          <span>{activeTab === 'products' ? 'Novo Produto' : 'Novo Serviço'}</span>
+        </button>
+      </div>
+
       {/* Header with Tabs */}
       <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:bg-[#18191c] dark:border-gray-700">
         <div className="space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+          <div>
             <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1 overflow-x-auto">
               <button
                 onClick={() => setActiveTab('products')}
@@ -122,25 +140,7 @@ export function ProductsSection() {
                 </span>
               </button>
             </div>
-            
-            {/* Desktop button */}
-            <button
-              onClick={() => activeTab === 'products' ? setShowProductForm(true) : setShowServiceForm(true)}
-              className={`hidden md:flex px-4 py-2 rounded-lg text-white transition-colors items-center space-x-2 shadow-lg bg-blue-600 hover:bg-blue-700 whitespace-nowrap`}
-            >
-              <Plus className="h-4 w-4" />
-              <span>{activeTab === 'products' ? 'Novo Produto' : 'Novo Serviço'}</span>
-            </button>
           </div>
-          
-          {/* Mobile button */}
-          <button
-            onClick={() => activeTab === 'products' ? setShowProductForm(true) : setShowServiceForm(true)}
-            className={`md:hidden w-full px-4 py-3 rounded-lg text-white transition-colors flex items-center justify-center space-x-2 shadow-lg bg-blue-600 hover:bg-blue-700`}
-          >
-            <Plus className="h-4 w-4" />
-            <span>{activeTab === 'products' ? 'Novo Produto' : 'Novo Serviço'}</span>
-          </button>
         </div>
       </div>
 
