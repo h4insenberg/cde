@@ -15,8 +15,17 @@ export function Dashboard({ onNewSale }: DashboardProps) {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20">
-      {/* Quick Action */}
-      <div className="flex justify-end">
+      {/* Header with greeting and quick action */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+            Olá, Usuário! 👋
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+            Bem-vindo ao seu painel de controle
+          </p>
+        </div>
+        
         <button
           onClick={onNewSale}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
