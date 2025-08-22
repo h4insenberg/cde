@@ -413,8 +413,8 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             {product ? 'Editar Produto' : 'Novo Produto'}
@@ -427,8 +427,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
           </button>
         </div>
 
-        <div className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Nome do Produto *
@@ -617,7 +616,6 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
             </button>
           </div>
         </form>
-        </div>
       </div>
     </div>
   );

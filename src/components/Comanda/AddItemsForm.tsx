@@ -105,7 +105,7 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
   const newItemsTotal = cartItems.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <div>
@@ -122,7 +122,7 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
           </button>
         </div>
 
-        <div className="p-6">
+        <form onSubmit={handleSubmit} className="p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Items Selection */}
             <div className="space-y-6">
@@ -274,7 +274,7 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
               Cancelar
             </button>
             <button
-              onClick={handleSubmit}
+              type="submit"
               disabled={cartItems.length === 0}
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2"
             >
@@ -282,7 +282,7 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
               <span>Adicionar Itens</span>
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

@@ -67,19 +67,7 @@ function AppContent() {
         return <ComandaSection />;
       case 'settings':
         return (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Configurações</h2>
-                <button
-                  onClick={() => setActiveTab('dashboard')}
-                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              <div className="p-6 space-y-6">
+          <div className="max-w-7xl mx-auto space-y-6 pb-20">
             {/* Dados do Negócio */}
             <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
@@ -152,25 +140,25 @@ function AppContent() {
             </div>
 
             {/* Configurações do Sistema */}
-            <div className="bg-white dark:bg-[#18191c] rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                 <Cog className="h-5 w-5 mr-2 text-blue-500" />
                 Configurações do Sistema
               </h3>
               
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex-wrap sm:flex-nowrap gap-2">
+                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <div>
                     <p className="font-medium text-gray-900 dark:text-white">Modo Escuro</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Alternar tema do sistema</p>
                   </div>
-                  <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                  <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" className="sr-only peer" />
                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                   </label>
                 </div>
                 
-                <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg space-y-2">
+                <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Taxa Padrão do Cartão (%)
                   </label>
@@ -180,16 +168,16 @@ function AppContent() {
                     min="0"
                     max="20"
                     step="0.1"
-                    className="w-full sm:w-32 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:text-white"
                   />
                 </div>
                 
-                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex-wrap sm:flex-nowrap gap-2">
+                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <div>
                     <p className="font-medium text-gray-900 dark:text-white">Backup Automático</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Salvar dados automaticamente</p>
                   </div>
-                  <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                  <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" defaultChecked className="sr-only peer" />
                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                   </label>
@@ -198,13 +186,13 @@ function AppContent() {
             </div>
 
             {/* Backup e Dados */}
-            <div className="bg-white dark:bg-[#18191c] rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                 <Download className="h-5 w-5 mr-2 text-blue-500" />
                 Backup e Dados
               </h3>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <button className="flex items-center justify-center space-x-2 p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                   <Download className="h-4 w-4" />
                   <span>Exportar Dados</span>
@@ -220,7 +208,7 @@ function AppContent() {
                   <span>Limpar Cache</span>
                 </button>
                 
-                <button className="flex items-center justify-center space-x-2 p-3 border border-red-300 dark:border-red-600 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors sm:col-span-2">
+                <button className="flex items-center justify-center space-x-2 p-3 border border-red-300 dark:border-red-600 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
                   <Trash2 className="h-4 w-4" />
                   <span>Resetar Sistema</span>
                 </button>
@@ -236,7 +224,6 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#131416]">
       <Header
-        )
         title={getPageTitle()}
         onNotificationsClick={() => setShowNotifications(true)}
       />
@@ -268,9 +255,6 @@ function AppContent() {
 }
 
 function App() {
-      }
-    }
-  }
   return (
     <BusinessProvider>
       <AppContent />
@@ -279,6 +263,3 @@ function App() {
 }
 
 export default App;
-    }
-  }
-}

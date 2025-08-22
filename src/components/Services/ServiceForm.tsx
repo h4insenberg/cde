@@ -136,7 +136,6 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
       e.target.setSelectionRange(e.target.value.length, e.target.value.length);
     }, 0);
   };
-  
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -184,7 +183,7 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-lg">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             {service ? 'Editar Serviço' : 'Novo Serviço'}
@@ -197,86 +196,84 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
           </button>
         </div>
 
-        <div className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Nome do Serviço *
-              </label>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Nome do Serviço *
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                errors.name ? 'border-red-500' : 'border-blue-200 dark:border-gray-600'
+              }`}
+            />
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Descrição
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={3}
+              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              placeholder="Descrição opcional do serviço"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Preço do Serviço *
+            </label>
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
+                R$
+              </div>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className={`w-full px-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                  errors.name ? 'border-red-500' : 'border-blue-200 dark:border-gray-600'
+                value={displayPrice}
+                onChange={(e) => handleCurrencyChange(e.target.value)}
+                onInput={handleCurrencyInput}
+                onKeyDown={handleCurrencyKeyDown}
+                onClick={handleCurrencyClick}
+                onFocus={handleCurrencyFocus}
+                className={`w-full pl-10 pr-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                  errors.price ? 'border-red-500' : 'border-gray-300'
                 }`}
-              />
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Descrição
-              </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                rows={3}
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                placeholder="Descrição opcional do serviço"
+                placeholder="0,00"
+                inputMode="numeric"
               />
             </div>
+            {errors.price && (
+              <p className="text-red-500 text-sm mt-1">{errors.price}</p>
+            )}
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Preço do Serviço *
-              </label>
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
-                  R$
-                </div>
-                <input
-                  type="text"
-                  value={displayPrice}
-                  onChange={(e) => handleCurrencyChange(e.target.value)}
-                  onInput={handleCurrencyInput}
-                  onKeyDown={handleCurrencyKeyDown}
-                  onClick={handleCurrencyClick}
-                  onFocus={handleCurrencyFocus}
-                  className={`w-full pl-10 pr-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                    errors.price ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  placeholder="0,00"
-                  inputMode="numeric"
-                />
-              </div>
-              {errors.price && (
-                <p className="text-red-500 text-sm mt-1">{errors.price}</p>
-              )}
-            </div>
-
-            <div className="flex space-x-3 pt-4">
-              <button
-                type="button"
-                onClick={onCancel}
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
-              >
-                <Save className="h-4 w-4" />
-                <span>Salvar</span>
-              </button>
-            </div>
-          </form>
-        </div>
+          <div className="flex space-x-3 pt-4">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+            >
+              <Save className="h-4 w-4" />
+              <span>Salvar</span>
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
