@@ -369,17 +369,20 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
 
   // Load data from localStorage on mount
   useEffect(() => {
-    const savedData = localStorage.getItem('businessData');
-    
     // Load theme preference first
     const savedTheme = localStorage.getItem('darkMode');
+    console.log('Saved theme from localStorage:', savedTheme);
     const isDarkMode = savedTheme ? JSON.parse(savedTheme) : false;
+    console.log('Parsed darkMode:', isDarkMode);
+    
+    const savedData = localStorage.getItem('businessData');
     
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
         // Ensure theme is applied from saved data or localStorage
         parsedData.darkMode = parsedData.darkMode !== undefined ? parsedData.darkMode : isDarkMode;
+        console.log('Loading data with darkMode:', parsedData.darkMode);
         dispatch({ type: 'LOAD_DATA', payload: parsedData });
       } catch (error) {
         console.error('Error loading saved data:', error);
@@ -400,12 +403,14 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         services: sampleServices,
         darkMode: isDarkMode,
       };
+      console.log('Loading initial data with darkMode:', isDarkMode);
       dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
     }
   }, []);
 
   // Save data to localStorage whenever state changes
   useEffect(() => {
+    console.log('Saving state with darkMode:', state.darkMode);
     localStorage.setItem('businessData', JSON.stringify(state));
     localStorage.setItem('darkMode', JSON.stringify(state.darkMode));
     dispatch({ type: 'UPDATE_STATS' });
@@ -413,12 +418,17 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
 
   // Apply dark mode to document
   useEffect(() => {
-    console.log('Applying theme:', state.darkMode ? 'dark' : 'light');
+    const htmlElement = document.documentElement;
+    console.log('Current theme state:', state.darkMode);
+    console.log('HTML classes before:', htmlElement.className);
+    
     if (state.darkMode) {
-      document.documentElement.classList.add('dark');
+      htmlElement.classList.add('dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      htmlElement.classList.remove('dark');
     }
+    
+    console.log('HTML classes after:', htmlElement.className);
   }, [state.darkMode]);
 
   return (
