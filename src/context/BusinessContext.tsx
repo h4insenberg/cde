@@ -369,54 +369,37 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
 
   // Load data from localStorage on mount
   useEffect(() => {
-    // Detect system theme preference
-    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    console.log('System prefers dark mode:', prefersDarkMode);
-    
-    // Load theme preference (user override or system preference)
-    const savedTheme = localStorage.getItem('darkMode');
-    console.log('Saved theme from localStorage:', savedTheme);
-    
-    let isDarkMode: boolean;
-    if (savedTheme !== null) {
-      // User has manually set a preference
-      isDarkMode = JSON.parse(savedTheme);
-      console.log('Using saved user preference:', isDarkMode);
-    } else {
-      // Use system preference
-      isDarkMode = prefersDarkMode;
-      console.log('Using system preference:', isDarkMode);
-    }
-    
     const savedData = localStorage.getItem('businessData');
     
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
-        // Ensure theme is applied from saved data or localStorage
-        parsedData.darkMode = parsedData.darkMode !== undefined ? parsedData.darkMode : isDarkMode;
-        console.log('Loading data with darkMode:', parsedData.darkMode);
+        console.log('Loading saved data with darkMode:', parsedData.darkMode);
         dispatch({ type: 'LOAD_DATA', payload: parsedData });
       } catch (error) {
         console.error('Error loading saved data:', error);
-        // Load sample data if saved data is corrupted
+        // Detect system theme preference if no saved data
+        const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        console.log('System prefers dark mode (fallback):', prefersDarkMode);
         const initialDataWithSamples = {
           ...initialState,
           products: sampleProducts,
           services: sampleServices,
-          darkMode: isDarkMode,
+          darkMode: prefersDarkMode,
         };
         dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
       }
     } else {
-      // Load sample data (will be replaced with real data in the future)
+      // Detect system theme preference for first time users
+      const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      console.log('System prefers dark mode (first time):', prefersDarkMode);
       const initialDataWithSamples = {
         ...initialState,
         products: sampleProducts,
         services: sampleServices,
-        darkMode: isDarkMode,
+        darkMode: prefersDarkMode,
       };
-      console.log('Loading initial data with darkMode:', isDarkMode);
+      console.log('Loading initial data with darkMode:', prefersDarkMode);
       dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
     }
   }, []);
@@ -426,11 +409,20 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const handleThemeChange = (e: MediaQueryListEvent) => {
-      // Only auto-update if user hasn't manually set a preference
-      const savedTheme = localStorage.getItem('darkMode');
-      if (savedTheme === null) {
-        console.log('System theme changed to:', e.matches ? 'dark' : 'light');
-        dispatch({ type: 'TOGGLE_DARK_MODE' });
+      // Check if we should follow system theme changes
+      const savedData = localStorage.getItem('businessData');
+      if (savedData) {
+        try {
+          const parsedData = JSON.parse(savedData);
+          // Only follow system changes if user hasn't manually overridden
+          const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (parsedData.darkMode === systemPreference) {
+            console.log('Following system theme change to:', e.matches ? 'dark' : 'light');
+            dispatch({ type: 'LOAD_DATA', payload: { ...parsedData, darkMode: e.matches } });
+          }
+        } catch (error) {
+          console.error('Error parsing saved data for theme change:', error);
+        }
       }
     };
     
@@ -444,12 +436,12 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     console.log('Saving state with darkMode:', state.darkMode);
     localStorage.setItem('businessData', JSON.stringify(state));
-    // Only save theme preference if user has manually changed it
-    if (state.darkMode !== window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      localStorage.setItem('darkMode', JSON.stringify(state.darkMode));
-    }
+  }, [state]);
+
+  // Update stats when relevant data changes
+  useEffect(() => {
     dispatch({ type: 'UPDATE_STATS' });
-  }, [state.products, state.services, state.sales, state.comandas, state.stockMovements, state.notifications, state.showValues]);
+  }, [state.products, state.services, state.sales, state.comandas, state.stockMovements]);
 
   // Apply dark mode to document
   useEffect(() => {
