@@ -236,6 +236,7 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#131416]">
       <Header
+        )
         title={getPageTitle()}
         onNotificationsClick={() => setShowNotifications(true)}
       />
@@ -267,6 +268,9 @@ function AppContent() {
 }
 
 function App() {
+      }
+    }
+  }
   return (
     <BusinessProvider>
       <AppContent />
