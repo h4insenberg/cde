@@ -221,16 +221,16 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
                         <button
                           key={product.id}
                           onClick={() => addProductToCart(product)}
-                          className="text-left p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
+                         className="text-left p-2 sm:p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
                         >
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <p className="font-medium text-gray-900 dark:text-white">{product.name}</p>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                         <div className="flex justify-between items-start gap-2">
+                           <div className="flex-1 min-w-0">
+                             <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">{product.name}</p>
+                             <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                                 Estoque: {product.quantity} {product.unit}
                               </p>
                             </div>
-                            <p className="font-semibold text-green-600 dark:text-green-400">
+                           <p className="font-semibold text-green-600 dark:text-green-400 text-sm sm:text-base flex-shrink-0">
                               {formatCurrency(product.salePrice)}
                             </p>
                           </div>
@@ -238,9 +238,9 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
                       ))}
                       
                       {products.filter(p => p.quantity > 0).length === 0 && (
-                        <div className="text-center py-8">
+                       <div className="text-center py-6 sm:py-8">
                           <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                          <p className="text-gray-500 dark:text-gray-400">
+                         <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base px-4">
                             Nenhum produto disponível em estoque
                           </p>
                         </div>
@@ -256,18 +256,18 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
                         <button
                           key={service.id}
                           onClick={() => addServiceToCart(service)}
-                          className="text-left p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:border-purple-300 dark:hover:border-purple-600 transition-colors"
+                         className="text-left p-2 sm:p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:border-purple-300 dark:hover:border-purple-600 transition-colors"
                         >
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <p className="font-medium text-gray-900 dark:text-white">{service.name}</p>
+                         <div className="flex justify-between items-start gap-2">
+                           <div className="flex-1 min-w-0">
+                             <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">{service.name}</p>
                               {service.description && (
-                                <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                               <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">
                                   {service.description}
                                 </p>
                               )}
                             </div>
-                            <p className="font-semibold text-purple-600 dark:text-purple-400">
+                           <p className="font-semibold text-purple-600 dark:text-purple-400 text-sm sm:text-base flex-shrink-0">
                               {formatCurrency(service.price)}
                             </p>
                           </div>
@@ -275,9 +275,9 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
                       ))}
                       
                       {services.length === 0 && (
-                        <div className="text-center py-8">
+                       <div className="text-center py-6 sm:py-8">
                           <Wrench className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                          <p className="text-gray-500 dark:text-gray-400">
+                         <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base px-4">
                             Nenhum serviço cadastrado
                           </p>
                         </div>
