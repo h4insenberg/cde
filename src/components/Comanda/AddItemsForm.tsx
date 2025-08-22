@@ -122,7 +122,7 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <div className="p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Items Selection */}
             <div className="space-y-6">
@@ -274,7 +274,7 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
               Cancelar
             </button>
             <button
-              type="submit"
+              onClick={handleSubmit}
               disabled={cartItems.length === 0}
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2"
             >
@@ -282,7 +282,7 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
               <span>Adicionar Itens</span>
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

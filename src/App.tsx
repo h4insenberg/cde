@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Cog, Database, Download, Upload, RefreshCw, Trash2 } from 'lucide-react';
+import { Settings, Cog, Database, Download, Upload, RefreshCw, Trash2, X } from 'lucide-react';
 import { BusinessProvider } from './context/BusinessContext';
 import { Header } from './components/Layout/Header';
 import { BottomNavigation } from './components/Layout/BottomNavigation';
@@ -67,7 +67,19 @@ function AppContent() {
         return <ComandaSection />;
       case 'settings':
         return (
-          <div className="max-w-7xl mx-auto space-y-6 pb-20">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Configurações</h2>
+                <button
+                  onClick={() => setActiveTab('dashboard')}
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-6">
             {/* Dados do Negócio */}
             <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
@@ -213,6 +225,7 @@ function AppContent() {
                   <span>Resetar Sistema</span>
                 </button>
               </div>
+            </div>
             </div>
           </div>
         );
