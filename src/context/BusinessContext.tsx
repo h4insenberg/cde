@@ -413,6 +413,10 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
     console.log('Saving state with darkMode:', state.darkMode);
     localStorage.setItem('businessData', JSON.stringify(state));
     localStorage.setItem('darkMode', JSON.stringify(state.darkMode));
+  }, [state]);
+
+  // Update stats separately to avoid infinite loops
+  useEffect(() => {
     dispatch({ type: 'UPDATE_STATS' });
   }, [state.products, state.services, state.sales, state.comandas, state.stockMovements, state.notifications, state.showValues]);
 
