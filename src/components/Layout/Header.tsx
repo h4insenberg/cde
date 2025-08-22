@@ -46,7 +46,7 @@ export function Header({ title, onMenuClick, onNotificationsClick }: HeaderProps
           <button
             onClick={() => dispatch({ type: 'TOGGLE_DARK_MODE' })}
             className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
-            title={state.darkMode ? 'Modo claro' : 'Modo escuro'}
+            title={state.darkMode ? 'Alternar para modo claro' : 'Alternar para modo escuro'}
           >
             {state.darkMode ? (
               <Sun className="h-5 w-5 text-gray-500 dark:text-gray-400" />

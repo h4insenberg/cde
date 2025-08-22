@@ -369,11 +369,24 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
 
   // Load data from localStorage on mount
   useEffect(() => {
-    // Load theme preference first
+    // Detect system theme preference
+    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    console.log('System prefers dark mode:', prefersDarkMode);
+    
+    // Load theme preference (user override or system preference)
     const savedTheme = localStorage.getItem('darkMode');
     console.log('Saved theme from localStorage:', savedTheme);
-    const isDarkMode = savedTheme ? JSON.parse(savedTheme) : false;
-    console.log('Parsed darkMode:', isDarkMode);
+    
+    let isDarkMode: boolean;
+    if (savedTheme !== null) {
+      // User has manually set a preference
+      isDarkMode = JSON.parse(savedTheme);
+      console.log('Using saved user preference:', isDarkMode);
+    } else {
+      // Use system preference
+      isDarkMode = prefersDarkMode;
+      console.log('Using system preference:', isDarkMode);
+    }
     
     const savedData = localStorage.getItem('businessData');
     
@@ -408,11 +421,33 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Listen for system theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleThemeChange = (e: MediaQueryListEvent) => {
+      // Only auto-update if user hasn't manually set a preference
+      const savedTheme = localStorage.getItem('darkMode');
+      if (savedTheme === null) {
+        console.log('System theme changed to:', e.matches ? 'dark' : 'light');
+        dispatch({ type: 'TOGGLE_DARK_MODE' });
+      }
+    };
+    
+    mediaQuery.addEventListener('change', handleThemeChange);
+    
+    return () => {
+      mediaQuery.removeEventListener('change', handleThemeChange);
+    };
+  }, []);
   // Save data to localStorage whenever state changes
   useEffect(() => {
     console.log('Saving state with darkMode:', state.darkMode);
     localStorage.setItem('businessData', JSON.stringify(state));
-    localStorage.setItem('darkMode', JSON.stringify(state.darkMode));
+    // Only save theme preference if user has manually changed it
+    if (state.darkMode !== window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      localStorage.setItem('darkMode', JSON.stringify(state.darkMode));
+    }
     dispatch({ type: 'UPDATE_STATS' });
   }, [state.products, state.services, state.sales, state.comandas, state.stockMovements, state.notifications, state.showValues]);
 
