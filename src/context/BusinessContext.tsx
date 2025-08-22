@@ -30,53 +30,8 @@ type BusinessAction =
   | { type: 'MARK_NOTIFICATION_READ'; payload: string }
   | { type: 'UPDATE_STATS' }
   | { type: 'TOGGLE_DARK_MODE' }
-  | { type: 'SET_DARK_MODE'; payload: boolean }
   | { type: 'TOGGLE_SHOW_VALUES' }
   | { type: 'LOAD_DATA'; payload: BusinessState };
-
-// Função para detectar preferência do sistema
-const getSystemThemePreference = (): boolean => {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches;
-};
-
-// Função para carregar tema salvo
-const getSavedTheme = (): boolean | null => {
-  if (typeof window === 'undefined') return null;
-  const saved = localStorage.getItem('darkMode');
-  return saved !== null ? JSON.parse(saved) : null;
-};
-
-// Função para salvar tema
-const saveTheme = (darkMode: boolean) => {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem('darkMode', JSON.stringify(darkMode));
-};
-
-// Função para aplicar tema no HTML
-const applyTheme = (darkMode: boolean) => {
-  if (typeof window === 'undefined') return;
-  const html = document.documentElement;
-  if (darkMode) {
-    html.classList.add('dark');
-  } else {
-    html.classList.remove('dark');
-  }
-  console.log('Theme applied:', darkMode ? 'dark' : 'light');
-};
-
-// Determina tema inicial
-const getInitialTheme = (): boolean => {
-  const savedTheme = getSavedTheme();
-  if (savedTheme !== null) {
-    console.log('Using saved theme:', savedTheme);
-    return savedTheme;
-  }
-  
-  const systemTheme = getSystemThemePreference();
-  console.log('Using system theme:', systemTheme);
-  return systemTheme;
-};
 
 const initialState: BusinessState = {
   products: [],
@@ -93,7 +48,7 @@ const initialState: BusinessState = {
     lowStockAlerts: 0,
   },
   showValues: true,
-  darkMode: getInitialTheme(),
+  darkMode: false,
 };
 
 // Sample data for testing
@@ -398,14 +353,8 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       return { ...state, showValues: !state.showValues };
     
     case 'TOGGLE_DARK_MODE':
-      const newDarkMode = !state.darkMode;
-      console.log('Toggling dark mode to:', newDarkMode);
-      saveTheme(newDarkMode);
-      return { ...state, darkMode: newDarkMode };
-    
-    case 'SET_DARK_MODE':
-      console.log('Setting dark mode to:', action.payload);
-      return { ...state, darkMode: action.payload };
+      console.log('Toggling dark mode from', state.darkMode, 'to', !state.darkMode);
+      return { ...state, darkMode: !state.darkMode };
     
     case 'LOAD_DATA':
       return action.payload;
@@ -418,58 +367,68 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
 export function BusinessProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(businessReducer, initialState);
 
-  // Aplica tema inicial imediatamente
+  // Load data from localStorage on mount
   useEffect(() => {
-    console.log('Applying initial theme:', state.darkMode);
-    applyTheme(state.darkMode);
-  }, []);
-
-  // Load data on mount
-  useEffect(() => {
+    // Load theme preference first
+    const savedTheme = localStorage.getItem('darkMode');
+    console.log('Saved theme from localStorage:', savedTheme);
+    const isDarkMode = savedTheme ? JSON.parse(savedTheme) : false;
+    console.log('Parsed darkMode:', isDarkMode);
+    
     const savedData = localStorage.getItem('businessData');
     
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
-        console.log('Loading saved data');
+        // Ensure theme is applied from saved data or localStorage
+        parsedData.darkMode = parsedData.darkMode !== undefined ? parsedData.darkMode : isDarkMode;
+        console.log('Loading data with darkMode:', parsedData.darkMode);
         dispatch({ type: 'LOAD_DATA', payload: parsedData });
       } catch (error) {
         console.error('Error loading saved data:', error);
-        // Use initial data with samples if saved data is corrupted
+        // Load sample data if saved data is corrupted
         const initialDataWithSamples = {
           ...initialState,
           products: sampleProducts,
           services: sampleServices,
+          darkMode: isDarkMode,
         };
         dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
       }
     } else {
-      // First time user - use initial data with samples
-      console.log('First time user - loading sample data');
+      // Load sample data (will be replaced with real data in the future)
       const initialDataWithSamples = {
         ...initialState,
         products: sampleProducts,
         services: sampleServices,
+        darkMode: isDarkMode,
       };
+      console.log('Loading initial data with darkMode:', isDarkMode);
       dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
     }
   }, []);
 
   // Save data to localStorage whenever state changes
   useEffect(() => {
-    console.log('Saving state to localStorage');
+    console.log('Saving state with darkMode:', state.darkMode);
     localStorage.setItem('businessData', JSON.stringify(state));
-  }, [state]);
-
-  // Update stats when relevant data changes
-  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(state.darkMode));
     dispatch({ type: 'UPDATE_STATS' });
-  }, [state.products, state.services, state.sales, state.comandas, state.stockMovements]);
+  }, [state.products, state.services, state.sales, state.comandas, state.stockMovements, state.notifications, state.showValues]);
 
-  // Apply theme whenever darkMode changes
+  // Apply dark mode to document
   useEffect(() => {
-    console.log('Theme changed, applying:', state.darkMode);
-    applyTheme(state.darkMode);
+    const htmlElement = document.documentElement;
+    console.log('Current theme state:', state.darkMode);
+    console.log('HTML classes before:', htmlElement.className);
+    
+    if (state.darkMode) {
+      htmlElement.classList.add('dark');
+    } else {
+      htmlElement.classList.remove('dark');
+    }
+    
+    console.log('HTML classes after:', htmlElement.className);
   }, [state.darkMode]);
 
   return (
