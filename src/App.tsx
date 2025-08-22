@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Cog, Database, Download, Upload, RefreshCw, Trash2, X } from 'lucide-react';
+import { Settings, Cog, Database, Download, Upload, RefreshCw, Trash2 } from 'lucide-react';
 import { BusinessProvider } from './context/BusinessContext';
 import { Header } from './components/Layout/Header';
 import { BottomNavigation } from './components/Layout/BottomNavigation';
@@ -226,7 +226,6 @@ function AppContent() {
                 </button>
               </div>
             </div>
-            </div>
           </div>
         );
       default:
@@ -237,6 +236,7 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#131416]">
       <Header
+        )
         title={getPageTitle()}
         onNotificationsClick={() => setShowNotifications(true)}
       />
@@ -268,6 +268,9 @@ function AppContent() {
 }
 
 function App() {
+      }
+    }
+  }
   return (
     <BusinessProvider>
       <AppContent />
