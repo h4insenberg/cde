@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, ClipboardList, Filter, Users, DollarSign, Clock } from 'lucide-react';
+import { Plus, ClipboardList, Filter } from 'lucide-react';
 import { ComandaForm } from './ComandaForm';
 import { ComandaCard } from './ComandaCard';
 import { AddItemsForm } from './AddItemsForm';
@@ -124,108 +124,67 @@ export function ComandaSection() {
   const totalOpenValue = openComandas.reduce((sum, c) => sum + c.total, 0);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-20">
-      {/* Modern Header */}
-      <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-red-600/10 rounded-3xl"></div>
-        <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-white/20 dark:border-gray-700/50 shadow-xl">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                Sistema de Comandas
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400 text-lg">
-                Gerencie pedidos e atendimentos de forma organizada
-              </p>
-            </div>
-            
-            <button
-              onClick={() => setShowComandaForm(true)}
-              className="group relative overflow-hidden bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-            >
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-              <div className="relative flex items-center space-x-3">
-                <Plus className="h-5 w-5" />
-                <span className="font-semibold">Nova Comanda</span>
-              </div>
-            </button>
-          </div>
+    <div className="max-w-7xl mx-auto space-y-6 pb-20">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Comandas</h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            {openComandas.length} comanda{openComandas.length !== 1 ? 's' : ''} aberta{openComandas.length !== 1 ? 's' : ''} • {state.showValues ? formatCurrency(totalOpenValue) : '••••'} em aberto
+          </p>
         </div>
+        
+        <button
+          onClick={() => setShowComandaForm(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Nova Comanda</span>
+        </button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl p-6 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-orange-100 text-sm font-medium uppercase tracking-wide">Comandas Abertas</p>
-              <p className="text-3xl font-bold mt-2">{openComandas.length}</p>
-              <p className="text-orange-200 text-sm mt-1">Aguardando pagamento</p>
-            </div>
-            <div className="bg-orange-400/20 p-4 rounded-xl">
-              <ClipboardList className="h-8 w-8" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl p-6 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-blue-100 text-sm font-medium uppercase tracking-wide">Total em Aberto</p>
-              <p className="text-3xl font-bold mt-2">
-                {state.showValues ? formatCurrency(totalOpenValue) : '••••'}
-              </p>
-              <p className="text-blue-200 text-sm mt-1">Valor a receber</p>
-            </div>
-            <div className="bg-blue-400/20 p-4 rounded-xl">
-              <DollarSign className="h-8 w-8" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl p-6 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-green-100 text-sm font-medium uppercase tracking-wide">Total de Comandas</p>
-              <p className="text-3xl font-bold mt-2">{state.comandas.length}</p>
-              <p className="text-green-200 text-sm mt-1">Histórico completo</p>
-            </div>
-            <div className="bg-green-400/20 p-4 rounded-xl">
-              <Users className="h-8 w-8" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-lg border border-gray-200/50 dark:border-gray-700/50">
+      {/* Filter */}
+      <div className="bg-white dark:bg-[#18191c] rounded-xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-4">
-          <Filter className="h-5 w-5 text-gray-400" />
-          <div className="flex space-x-2 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
-            {[
-              { key: 'all', label: `Todas (${state.comandas.length})`, color: 'blue' },
-              { key: 'open', label: `Abertas (${openComandas.length})`, color: 'orange' },
-              { key: 'paid', label: `Pagas (${state.comandas.filter(c => c.status === 'PAID').length})`, color: 'green' }
-            ].map((filterOption) => (
-              <button
-                key={filterOption.key}
-                onClick={() => setFilter(filterOption.key as any)}
-                className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
-                  filter === filterOption.key
-                    ? `bg-white dark:bg-gray-700 text-${filterOption.color}-600 dark:text-${filterOption.color}-400 shadow-sm`
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-                }`}
-              >
-                {filterOption.label}
-              </button>
-            ))}
+          <Filter className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
+          <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1 overflow-x-auto">
+            <button
+              onClick={() => setFilter('all')}
+              className={`px-2 sm:px-3 py-1 rounded-md transition-colors text-xs sm:text-sm whitespace-nowrap ${
+                filter === 'all'
+                  ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+              }`}
+            >
+              Todas ({state.comandas.length})
+            </button>
+            <button
+              onClick={() => setFilter('open')}
+              className={`px-2 sm:px-3 py-1 rounded-md transition-colors text-xs sm:text-sm whitespace-nowrap ${
+                filter === 'open'
+                  ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+              }`}
+            >
+              Abertas ({openComandas.length})
+            </button>
+            <button
+              onClick={() => setFilter('paid')}
+              className={`px-2 sm:px-3 py-1 rounded-md transition-colors text-xs sm:text-sm whitespace-nowrap ${
+                filter === 'paid'
+                  ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+              }`}
+            >
+              Pagas ({state.comandas.filter(c => c.status === 'PAID').length})
+            </button>
           </div>
         </div>
       </div>
 
       {/* Comandas List */}
       {filteredComandas.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {filteredComandas.map((comanda) => (
             <ComandaCard
               key={comanda.id}
@@ -236,25 +195,23 @@ export function ComandaSection() {
           ))}
         </div>
       ) : (
-        <div className="bg-white dark:bg-gray-900 rounded-2xl p-12 shadow-lg border border-gray-200/50 dark:border-gray-700/50">
+        <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-200 dark:bg-[#18191c] dark:border-gray-700">
           <div className="text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-              <ClipboardList className="h-10 w-10 text-orange-600 dark:text-orange-400" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+            <ClipboardList className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               {filter === 'all' ? 'Nenhuma comanda registrada' : 
                filter === 'open' ? 'Nenhuma comanda aberta' : 'Nenhuma comanda paga'}
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
-              {filter === 'all' ? 'Comece criando sua primeira comanda digital para organizar os pedidos' :
-               filter === 'open' ? 'Todas as comandas foram pagas ou não há comandas abertas' : 'Nenhuma comanda foi paga ainda'}
+            <p className="text-gray-500 dark:text-gray-400 mb-4">
+              {filter === 'all' ? 'Comece criando sua primeira comanda digital' :
+               filter === 'open' ? 'Todas as comandas foram pagas' : 'Nenhuma comanda foi paga ainda'}
             </p>
             {filter === 'all' && (
               <button
                 onClick={() => setShowComandaForm(true)}
-                className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl flex items-center space-x-3 mx-auto"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 mx-auto"
               >
-                <Plus className="h-5 w-5" />
+                <Plus className="h-4 w-4" />
                 <span>Criar Primeira Comanda</span>
               </button>
             )}
