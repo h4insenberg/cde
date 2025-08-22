@@ -9,6 +9,7 @@ interface SalesListProps {
 }
 
 export function SalesList({ sales }: SalesListProps) {
+  const { state } = useBusiness();
   const sortedSales = sales.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   if (sortedSales.length === 0) {
