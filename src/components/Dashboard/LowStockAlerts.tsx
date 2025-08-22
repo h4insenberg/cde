@@ -65,24 +65,3 @@ export function LowStockAlerts({ products }: LowStockAlertsProps) {
     </div>
   );
 }
-                {product.name}
-              </p>
-              <p className="text-xs text-red-600 dark:text-red-400">
-                Estoque mínimo: {product.minQuantity} {product.unit}
-              </p>
-            </div>
-            
-            <div className="text-right">
-              <p className="text-sm font-bold text-red-600 dark:text-red-400">
-                {product.quantity} {product.unit}
-              </p>
-              <p className="text-xs text-red-500 dark:text-red-400">
-                Repor estoque
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
