@@ -369,20 +369,25 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
 
   // Load data from localStorage on mount
   useEffect(() => {
-    // Load theme preference first
+    // Load theme preference first - check both sources
+    let isDarkMode = false;
+    
+    // First check if there's a saved preference
     const savedTheme = localStorage.getItem('darkMode');
-    console.log('Saved theme from localStorage:', savedTheme);
-    const isDarkMode = savedTheme ? JSON.parse(savedTheme) : false;
-    console.log('Parsed darkMode:', isDarkMode);
+    if (savedTheme !== null) {
+      isDarkMode = JSON.parse(savedTheme);
+    } else {
+      // If no saved preference, check system preference
+      isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
     
     const savedData = localStorage.getItem('businessData');
     
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
-        // Ensure theme is applied from saved data or localStorage
-        parsedData.darkMode = parsedData.darkMode !== undefined ? parsedData.darkMode : isDarkMode;
-        console.log('Loading data with darkMode:', parsedData.darkMode);
+        // Use the theme preference we determined above
+        parsedData.darkMode = isDarkMode;
         dispatch({ type: 'LOAD_DATA', payload: parsedData });
       } catch (error) {
         console.error('Error loading saved data:', error);
@@ -403,14 +408,12 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         services: sampleServices,
         darkMode: isDarkMode,
       };
-      console.log('Loading initial data with darkMode:', isDarkMode);
       dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
     }
   }, []);
 
   // Save data to localStorage whenever state changes
   useEffect(() => {
-    console.log('Saving state with darkMode:', state.darkMode);
     localStorage.setItem('businessData', JSON.stringify(state));
     localStorage.setItem('darkMode', JSON.stringify(state.darkMode));
   }, [state]);
@@ -423,16 +426,12 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
   // Apply dark mode to document
   useEffect(() => {
     const htmlElement = document.documentElement;
-    console.log('Current theme state:', state.darkMode);
-    console.log('HTML classes before:', htmlElement.className);
     
     if (state.darkMode) {
       htmlElement.classList.add('dark');
     } else {
       htmlElement.classList.remove('dark');
     }
-    
-    console.log('HTML classes after:', htmlElement.className);
   }, [state.darkMode]);
 
   return (
