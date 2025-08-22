@@ -11,6 +11,7 @@ interface BusinessState {
   notifications: Notification[];
   dashboardStats: DashboardStats;
   showValues: boolean;
+  darkMode: boolean;
 }
 
 type BusinessAction =
@@ -28,6 +29,8 @@ type BusinessAction =
   | { type: 'ADD_NOTIFICATION'; payload: Notification }
   | { type: 'MARK_NOTIFICATION_READ'; payload: string }
   | { type: 'UPDATE_STATS' }
+  | { type: 'TOGGLE_DARK_MODE' }
+  | { type: 'TOGGLE_SHOW_VALUES' }
   | { type: 'LOAD_DATA'; payload: BusinessState };
 
 const initialState: BusinessState = {
@@ -45,6 +48,7 @@ const initialState: BusinessState = {
     lowStockAlerts: 0,
   },
   showValues: true,
+  darkMode: false,
 };
 
 // Sample data for testing
@@ -348,6 +352,9 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
     case 'TOGGLE_SHOW_VALUES':
       return { ...state, showValues: !state.showValues };
     
+    case 'TOGGLE_DARK_MODE':
+      return { ...state, darkMode: !state.darkMode };
+    
     case 'LOAD_DATA':
       return action.payload;
     
@@ -392,6 +399,15 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('businessData', JSON.stringify(state));
     dispatch({ type: 'UPDATE_STATS' });
   }, [state.products, state.services, state.sales, state.comandas, state.stockMovements, state.notifications, state.showValues]);
+
+  // Apply dark mode to document
+  useEffect(() => {
+    if (state.darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [state.darkMode]);
 
   return (
     <BusinessContext.Provider value={{ state, dispatch }}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Menu, Eye, EyeOff } from 'lucide-react';
+import { Bell, Menu, Eye, EyeOff, Sun, Moon } from 'lucide-react';
 import { useNotifications } from '../../hooks/useNotifications';
 import { useBusiness } from '../../context/BusinessContext';
 
@@ -40,6 +40,18 @@ export function Header({ title, onMenuClick, onNotificationsClick }: HeaderProps
               <Eye className="h-5 w-5 text-gray-500 dark:text-gray-400" />
             ) : (
               <EyeOff className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            )}
+          </button>
+          
+          <button
+            onClick={() => dispatch({ type: 'TOGGLE_DARK_MODE' })}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
+            title={state.darkMode ? 'Modo claro' : 'Modo escuro'}
+          >
+            {state.darkMode ? (
+              <Sun className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            ) : (
+              <Moon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
             )}
           </button>
           
