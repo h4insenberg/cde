@@ -135,7 +135,7 @@ export function RecentSales({ sales, comandas, stockMovements }: ExtratoProps) {
         </h3>
       </div>
       
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Entradas */}
         <div>
           <div className="flex items-center space-x-2 mb-3">
