@@ -75,19 +75,17 @@ export function Dashboard({ onNewSale }: DashboardProps) {
       </div>
 
       {/* Content Grid */}
-      <div className="space-y-6">
-        {/* Low Stock Alerts - Full width on mobile, half on desktop */}
-        <div className="lg:max-w-md">
-          <LowStockAlerts products={products} />
-        </div>
-        
-        {/* Recent Sales - Full width */}
-        <div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Mobile: Low Stock first, Desktop: Recent Sales first */}
+        <div className="lg:order-1 order-2">
           <RecentSales 
             sales={sales} 
             comandas={comandas}
             stockMovements={stockMovements}
           />
+        </div>
+        <div className="lg:order-2 order-1">
+          <LowStockAlerts products={products} />
         </div>
       </div>
     </div>
