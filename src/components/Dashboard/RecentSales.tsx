@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, CreditCard, Package, Wrench, TrendingUp, TrendingDown } from 'lucide-react';
+import { Calendar, CreditCard, Package, Wrench, TrendingUp, TrendingDown, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 import { Sale, Comanda, StockMovement } from '../../types';
 import { formatCurrency, formatDate, getPaymentMethodLabel } from '../../utils/helpers';
 import { useBusiness } from '../../context/BusinessContext';
@@ -11,10 +11,12 @@ interface ExtratoProps {
 }
 
 type MovementType = 'sale' | 'comanda' | 'stock_in' | 'stock_out' | 'service';
+type MovementCategory = 'entry' | 'exit';
 
 interface Movement {
   id: string;
   type: MovementType;
+  category: MovementCategory;
   description: string;
   amount?: number;
   quantity?: number;
@@ -35,6 +37,7 @@ export function RecentSales({ sales, comandas, stockMovements }: ExtratoProps) {
       movements.push({
         id: `sale-${sale.id}-${item.id}`,
         type: item.type === 'product' ? 'sale' : 'service',
+        category: 'entry',
         description: `${item.name} (${item.quantity}x)`,
         amount: item.total,
         createdAt: new Date(sale.createdAt),
@@ -50,6 +53,7 @@ export function RecentSales({ sales, comandas, stockMovements }: ExtratoProps) {
       movements.push({
         id: `comanda-${comanda.id}-${item.id}`,
         type: item.type === 'product' ? 'sale' : 'service',
+        category: 'entry',
         description: `${item.name} (${item.quantity}x) - ${comanda.customerName}`,
         amount: item.total,
         createdAt: new Date(comanda.paidAt || comanda.createdAt),
@@ -63,15 +67,19 @@ export function RecentSales({ sales, comandas, stockMovements }: ExtratoProps) {
     movements.push({
       id: `stock-${movement.id}`,
       type: movement.type === 'IN' ? 'stock_in' : 'stock_out',
+      category: movement.type === 'IN' ? 'entry' : 'exit',
       description: `${movement.productName} (${movement.quantity}x)`,
       quantity: movement.quantity,
       createdAt: new Date(movement.createdAt),
     });
   });
 
-  const recentMovements = movements
+  const allMovements = movements
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 8);
+    .slice(0, 12);
+
+  const entries = allMovements.filter(m => m.category === 'entry').slice(0, 6);
+  const exits = allMovements.filter(m => m.category === 'exit').slice(0, 6);
 
   const getMovementIcon = (type: MovementType) => {
     switch (type) {
@@ -102,7 +110,7 @@ export function RecentSales({ sales, comandas, stockMovements }: ExtratoProps) {
     }
   };
 
-  if (recentMovements.length === 0) {
+  if (allMovements.length === 0) {
     return (
       <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-4">
@@ -127,46 +135,104 @@ export function RecentSales({ sales, comandas, stockMovements }: ExtratoProps) {
         </h3>
       </div>
       
-      <div className="space-y-3">
-        {recentMovements.map((movement) => (
-          <div key={movement.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-            <div className="flex-1">
-              <div className="flex items-center space-x-2">
-                {getMovementIcon(movement.type)}
-                <span className="text-sm font-medium text-gray-900 dark:text-white">
-                  {movement.description}
-                </span>
-                {movement.paymentMethod && (
-                  <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full">
-                    {getPaymentMethodLabel(movement.paymentMethod)}
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {formatDate(movement.createdAt)}
-              </p>
-            </div>
-            
-            <div className="text-right">
-              {movement.amount !== undefined ? (
-                <div>
-                  <p className={`text-sm font-semibold ${getMovementColor(movement.type)}`}>
-                    {showValues ? formatCurrency(movement.amount) : '••••'}
-                  </p>
-                  {movement.profit !== undefined && showValues && (
-                    <p className="text-xs text-green-600 dark:text-green-400">
-                      +{formatCurrency(movement.profit)}
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <p className={`text-sm font-semibold ${getMovementColor(movement.type)}`}>
-                  {movement.quantity} {movement.unit || 'un'}
-                </p>
-              )}
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Entradas */}
+        <div>
+          <div className="flex items-center space-x-2 mb-3">
+            <ArrowUpCircle className="h-4 w-4 text-green-500" />
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+              Entradas ({entries.length})
+            </h4>
           </div>
-        ))}
+          
+          {entries.length > 0 ? (
+            <div className="space-y-2">
+              {entries.map((movement) => (
+                <div key={movement.id} className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2">
+                      {getMovementIcon(movement.type)}
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">
+                        {movement.description}
+                      </span>
+                      {movement.paymentMethod && (
+                        <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full">
+                          {getPaymentMethodLabel(movement.paymentMethod)}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {formatDate(movement.createdAt)}
+                    </p>
+                  </div>
+                  
+                  <div className="text-right">
+                    {movement.amount !== undefined ? (
+                      <div>
+                        <p className="text-sm font-semibold text-green-600 dark:text-green-400">
+                          +{showValues ? formatCurrency(movement.amount) : '••••'}
+                        </p>
+                        {movement.profit !== undefined && showValues && (
+                          <p className="text-xs text-green-600 dark:text-green-400">
+                            Lucro: {formatCurrency(movement.profit)}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                        +{movement.quantity} {movement.unit || 'un'}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400 text-center py-4 text-sm">
+              Nenhuma entrada registrada
+            </p>
+          )}
+        </div>
+
+        {/* Saídas */}
+        <div>
+          <div className="flex items-center space-x-2 mb-3">
+            <ArrowDownCircle className="h-4 w-4 text-red-500" />
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+              Saídas ({exits.length})
+            </h4>
+          </div>
+          
+          {exits.length > 0 ? (
+            <div className="space-y-2">
+              {exits.map((movement) => (
+                <div key={movement.id} className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-900/20 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2">
+                      {getMovementIcon(movement.type)}
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">
+                        {movement.description}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {formatDate(movement.createdAt)}
+                    </p>
+                  </div>
+                  
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-red-600 dark:text-red-400">
+                      -{movement.quantity} {movement.unit || 'un'}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400 text-center py-4 text-sm">
+              Nenhuma saída registrada
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
