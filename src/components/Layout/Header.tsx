@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Menu, Eye, EyeOff, Sun, Moon } from 'lucide-react';
+import { Bell, Menu, Eye, EyeOff, Sun, Moon, Store } from 'lucide-react';
 import { useNotifications } from '../../hooks/useNotifications';
 import { useBusiness } from '../../context/BusinessContext';
 
@@ -17,17 +17,26 @@ export function Header({ title, onMenuClick, onNotificationsClick }: HeaderProps
     <header className="bg-white dark:bg-[#131416] border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
+            <div className="bg-blue-600 p-2 rounded-lg">
+              <Store className="h-5 w-5 text-white" />
+            </div>
+            <div className="hidden sm:block">
+              <h1 className="text-lg font-bold text-gray-900 dark:text-white">Meu Negócio</h1>
+            </div>
+          </div>
+          
           {onMenuClick && (
             <button
               onClick={onMenuClick}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors md:hidden"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors md:hidden ml-2"
             >
               <Menu className="h-5 w-5" />
             </button>
           )}
-          <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate">
             {title}
-          </h1>
+          </h2>
         </div>
         
         <div className="flex items-center space-x-2">
