@@ -1,6 +1,6 @@
 import React from 'react';
 import { Calendar, CreditCard, Package, Wrench, TrendingUp, TrendingDown, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
-import { Sale, Comanda, StockMovement, Loan } from '../../types';
+import { Sale, Comanda, StockMovement, Loan, FinancialEntry, FinancialExit } from '../../types';
 import { formatCurrency, formatDate, getPaymentMethodLabel } from '../../utils/helpers';
 import { useBusiness } from '../../context/BusinessContext';
 
@@ -9,9 +9,11 @@ interface ExtratoProps {
   comandas: Comanda[];
   stockMovements: StockMovement[];
   loans: Loan[];
+  financialEntries: FinancialEntry[];
+  financialExits: FinancialExit[];
 }
 
-type MovementType = 'sale' | 'comanda' | 'stock_in' | 'stock_out' | 'service' | 'loan';
+type MovementType = 'sale' | 'comanda' | 'stock_in' | 'stock_out' | 'service' | 'loan' | 'financial_entry' | 'financial_exit';
 type MovementCategory = 'entry' | 'exit';
 
 interface Movement {
@@ -27,7 +29,7 @@ interface Movement {
   profit?: number;
 }
 
-export function RecentSales({ sales, comandas, stockMovements, loans }: ExtratoProps) {
+export function RecentSales({ sales, comandas, stockMovements, loans, financialEntries, financialExits }: ExtratoProps) {
   const { state } = useBusiness();
   const { showValues } = state;
   const movements: Movement[] = [];
@@ -77,6 +79,31 @@ export function RecentSales({ sales, comandas, stockMovements, loans }: ExtratoP
     });
   });
 
+  // Add financial entries
+  const today = new Date();
+  today.setHours(23, 59, 59, 999);
+  financialEntries.filter(entry => new Date(entry.date) <= today).forEach(entry => {
+    movements.push({
+      id: `entry-${entry.id}`,
+      type: 'financial_entry',
+      category: 'entry',
+      description: entry.name,
+      amount: entry.amount,
+      createdAt: new Date(entry.date),
+    });
+  });
+
+  // Add financial exits
+  financialExits.filter(exit => new Date(exit.date) <= today).forEach(exit => {
+    movements.push({
+      id: `exit-${exit.id}`,
+      type: 'financial_exit',
+      category: 'exit',
+      description: exit.name,
+      amount: exit.amount,
+      createdAt: new Date(exit.date),
+    });
+  });
   // Add stock movements
   stockMovements.forEach(movement => {
     movements.push({
@@ -104,6 +131,10 @@ export function RecentSales({ sales, comandas, stockMovements, loans }: ExtratoP
         return <Wrench className="h-4 w-4 text-purple-500" />;
       case 'loan':
         return <CreditCard className="h-4 w-4 text-blue-500" />;
+      case 'financial_entry':
+        return <TrendingUp className="h-4 w-4 text-green-500" />;
+      case 'financial_exit':
+        return <TrendingDown className="h-4 w-4 text-red-500" />;
       case 'stock_in':
         return <TrendingUp className="h-4 w-4 text-blue-500" />;
       case 'stock_out':
