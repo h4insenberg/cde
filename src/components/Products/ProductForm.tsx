@@ -13,7 +13,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    unit: 'units' as Product['unit'],
+    unit: 'unidades' as Product['unit'],
     quantity: 0,
     costPrice: 0,
     salePrice: 0,
@@ -41,7 +41,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
       setDisplayCostPrice(formatCurrencyInput(product.costPrice));
       setDisplaySalePrice(formatCurrencyInput(product.salePrice));
       // Format based on unit type
-      if (product.unit === 'units') {
+      if (product.unit === 'unidades') {
         setDisplayQuantity(Math.floor(product.quantity).toString());
         setDisplayMinQuantity(Math.floor(product.minQuantity).toString());
       } else {
@@ -77,7 +77,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     if (value === 0) return '0,00';
     
     // For units, format as integer
-    if (formData.unit === 'units') {
+    if (formData.unit === 'unidades') {
       return Math.floor(value).toString();
     }
     
@@ -91,7 +91,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
 
   const parseFloatInput = (value: string): number => {
     // For units, parse as integer
-    if (formData.unit === 'units') {
+    if (formData.unit === 'unidades') {
       const numericValue = value.replace(/[^\d]/g, '');
       return parseInt(numericValue) || 0;
     }
@@ -103,7 +103,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
 
   const handleFloatChange = (value: string, field: 'quantity' | 'minQuantity') => {
     // For units, handle as integer
-    if (formData.unit === 'units') {
+    if (formData.unit === 'unidades') {
       const numericValue = value.replace(/[^\d]/g, '');
       const intValue = parseInt(numericValue) || 0;
       
@@ -179,7 +179,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
 
   // Update display format when unit changes
   useEffect(() => {
-    if (formData.unit === 'units') {
+    if (formData.unit === 'unidades') {
       // Convert to integer format
       setDisplayQuantity(Math.floor(formData.quantity).toString());
       setDisplayMinQuantity(Math.floor(formData.minQuantity).toString());
@@ -405,9 +405,9 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
   const getUnitAbbreviation = (unit: Product['unit']): string => {
     const abbreviations = {
       kg: 'kg',
-      liters: 'L',
-      meters: 'm',
-      units: 'un',
+      litros: 'L',
+      metros: 'm',
+      unidades: 'un',
     };
     return abbreviations[unit] || unit;
   };
@@ -473,10 +473,10 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               >
-                <option value="units">Unidades (un)</option>
+                <option value="unidades">Unidades (un)</option>
                 <option value="kg">Quilogramas (kg)</option>
-                <option value="liters">Litros (L)</option>
-                <option value="meters">Metros (m)</option>
+                <option value="litros">Litros (L)</option>
+                <option value="metros">Metros (m)</option>
               </select>
             </div>
 
@@ -576,16 +576,16 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                 onClick={handleFloatClick}
                 onFocus={(e) => {
                   handleFloatFocus(e);
-                  const isUnits = formData.unit === 'units';
+                  const isUnits = formData.unit === 'unidades';
                   if ((isUnits && e.target.value === '0') || (!isUnits && e.target.value === '0,00')) {
                     setDisplayMinQuantity('');
                     setFormData(prev => ({ ...prev, minQuantity: 0 }));
                   }
                 }}
-                className={`w-full pr-10 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                className={`w-full pr-12 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                   errors.minQuantity ? 'border-red-500' : 'border-gray-300'
                 }`}
-                placeholder={formData.unit === 'units' ? '0' : '0,00'}
+                placeholder={formData.unit === 'unidades' ? '0' : '0,00'}
                 inputMode="decimal"
               />
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">

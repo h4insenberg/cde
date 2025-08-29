@@ -2,7 +2,7 @@ export interface Product {
   id: string;
   name: string;
   description: string;
-  unit: 'kg' | 'liters' | 'meters' | 'units';
+  unit: 'kg' | 'litros' | 'metros' | 'unidades';
   quantity: number;
   costPrice: number;
   salePrice: number;
