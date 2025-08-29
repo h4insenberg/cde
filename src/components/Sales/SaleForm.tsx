@@ -25,7 +25,6 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('CASH');
   const [cardFeeRate, setCardFeeRate] = useState(3.5);
-  const [cardFeePayer, setCardFeePayer] = useState<'seller' | 'customer'>('seller');
   const [activeTab, setActiveTab] = useState<'products' | 'services'>('products');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -159,8 +158,7 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
   const total = calculateTotal();
   const totalProfit = calculateTotalProfit();
   const cardFeeAmount = paymentMethod === 'CARD' ? calculateCardFee(total, cardFeeRate) : 0;
-  const netAmount = paymentMethod === 'CARD' && cardFeePayer === 'seller' ? total - cardFeeAmount : total;
-  const customerTotal = paymentMethod === 'CARD' && cardFeePayer === 'customer' ? total + cardFeeAmount : total;
+  const netAmount = total - cardFeeAmount;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pb-24">
@@ -177,63 +175,8 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
 
         <div className="p-4 sm:p-6 overflow-y-auto flex-1">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Payment Method */}
+            {/* Products and Services Selection */}
             <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Forma de Pagamento</h3>
-                
-                <select
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
-                  className="w-full px-3 py-3 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white font-medium"
-                >
-                  <option value="CASH">Dinheiro (em espécie)</option>
-                  <option value="PIX">PIX</option>
-                  <option value="CARD">Cartão</option>
-                  <option value="CREDIT">Fiado</option>
-                </select>
-
-                {paymentMethod === 'CARD' && (
-                  <div className="mt-4 space-y-3">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Taxa da Maquininha (%)
-                      </label>
-                      <input
-                        type="number"
-                        value={cardFeeRate}
-                        onChange={(e) => setCardFeeRate(parseFloat(e.target.value) || 0)}
-                        min="0"
-                        max="20"
-                        step="0.1"
-                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                          errors.cardFeeRate ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                        placeholder="3.5"
-                      />
-                      {errors.cardFeeRate && (
-                        <p className="text-red-500 text-sm mt-1">{errors.cardFeeRate}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Quem paga a taxa?
-                      </label>
-                      <select
-                        value={cardFeePayer}
-                        onChange={(e) => setCardFeePayer(e.target.value as 'seller' | 'customer')}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                      >
-                        <option value="seller">Vendedor (desconta do valor)</option>
-                        <option value="customer">Cliente (adiciona ao valor)</option>
-                      </select>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Products and Services Selection */}
               {/* Tabs */}
               <div className="bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1">
                 <div className="flex space-x-1">
@@ -345,7 +288,7 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
               </div>
             </div>
 
-            {/* Cart */}
+            {/* Cart and Payment */}
             <div className="space-y-6">
               {/* Cart */}
               <div>
@@ -409,6 +352,45 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
                 </div>
               </div>
 
+              {/* Payment Method */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Forma de Pagamento</h3>
+                
+                <select
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+                  className="w-full px-3 py-3 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white font-medium"
+                >
+                  <option value="CASH">Dinheiro (em espécie)</option>
+                  <option value="PIX">PIX</option>
+                  <option value="CARD">Cartão</option>
+                  <option value="CREDIT">Fiado</option>
+                </select>
+
+                {paymentMethod === 'CARD' && (
+                  <div className="mt-3">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Taxa da Maquininha (%)
+                    </label>
+                    <input
+                      type="number"
+                      value={cardFeeRate}
+                      onChange={(e) => setCardFeeRate(parseFloat(e.target.value) || 0)}
+                      min="0"
+                      max="20"
+                      step="0.1"
+                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                        errors.cardFeeRate ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="3.5"
+                    />
+                    {errors.cardFeeRate && (
+                      <p className="text-red-500 text-sm mt-1">{errors.cardFeeRate}</p>
+                    )}
+                  </div>
+                )}
+              </div>
+
               {/* Summary */}
               {cartItems.length > 0 && (
                 <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg space-y-2">
@@ -417,17 +399,10 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
                     <span className="font-medium">{formatCurrency(total)}</span>
                   </div>
                   
-                  {paymentMethod === 'CARD' && cardFeeAmount > 0 && cardFeePayer === 'seller' && (
+                  {paymentMethod === 'CARD' && cardFeeAmount > 0 && (
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600 dark:text-gray-400">Taxa do cartão ({cardFeeRate}%):</span>
                       <span className="font-medium text-red-600">-{formatCurrency(cardFeeAmount)}</span>
-                    </div>
-                  )}
-                  
-                  {paymentMethod === 'CARD' && cardFeeAmount > 0 && cardFeePayer === 'customer' && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600 dark:text-gray-400">Taxa do cartão ({cardFeeRate}%):</span>
-                      <span className="font-medium text-blue-600">+{formatCurrency(cardFeeAmount)}</span>
                     </div>
                   )}
                   
@@ -439,10 +414,8 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
                   <hr className="my-2 border-gray-300 dark:border-gray-600" />
                   
                   <div className="flex justify-between text-lg font-bold">
-                    <span>{paymentMethod === 'CARD' && cardFeePayer === 'customer' ? 'Total do cliente:' : 'Valor líquido:'}</span>
-                    <span className="text-green-600 dark:text-green-400">
-                      {formatCurrency(paymentMethod === 'CARD' && cardFeePayer === 'customer' ? customerTotal : netAmount)}
-                    </span>
+                    <span>Valor líquido:</span>
+                    <span className="text-green-600 dark:text-green-400">{formatCurrency(netAmount)}</span>
                   </div>
                 </div>
               )}
@@ -462,10 +435,10 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
           <button
             onClick={handleSubmit}
             disabled={cartItems.length === 0}
-            className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base"
+            className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2"
           >
             <ShoppingCart className="h-4 w-4" />
-            <span>Finalizar Venda ({formatCurrency(paymentMethod === 'CARD' && cardFeePayer === 'customer' ? customerTotal : netAmount)})</span>
+            <span>Finalizar Venda ({formatCurrency(netAmount)})</span>
           </button>
         </div>
       </div>
