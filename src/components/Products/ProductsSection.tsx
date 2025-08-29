@@ -8,15 +8,26 @@ import { Product, Service } from '../../types';
 import { useBusiness } from '../../context/BusinessContext';
 import { useNotifications } from '../../hooks/useNotifications';
 
-export function ProductsSection() {
+interface ProductsSectionProps {
+  activeView?: 'products' | 'services';
+}
+
+export function ProductsSection({ activeView }: ProductsSectionProps) {
   const { state, dispatch } = useBusiness();
   const { addNotification } = useNotifications();
-  const [activeTab, setActiveTab] = useState<'products' | 'services'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'services'>(activeView || 'products');
   const [searchTerm, setSearchTerm] = useState('');
   const [showProductForm, setShowProductForm] = useState(false);
   const [showServiceForm, setShowServiceForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingService, setEditingService] = useState<Service | null>(null);
+
+  // Update active tab when activeView prop changes
+  React.useEffect(() => {
+    if (activeView) {
+      setActiveTab(activeView);
+    }
+  }, [activeView]);
 
   // Filter products and services based on search term
   const filteredProducts = state.products.filter(product =>
@@ -91,9 +102,14 @@ export function ProductsSection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Estoque & Serviços</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {activeTab === 'products' ? 'Produtos' : 'Serviços'}
+          </h2>
           <p className="text-gray-600 dark:text-gray-400">
-            {state.products.length} produto{state.products.length !== 1 ? 's' : ''} • {state.services.length} serviço{state.services.length !== 1 ? 's' : ''}
+            {activeTab === 'products' 
+              ? `${state.products.length} produto${state.products.length !== 1 ? 's' : ''} cadastrado${state.products.length !== 1 ? 's' : ''}`
+              : `${state.services.length} serviço${state.services.length !== 1 ? 's' : ''} cadastrado${state.services.length !== 1 ? 's' : ''}`
+            }
           </p>
         </div>
         
@@ -107,7 +123,8 @@ export function ProductsSection() {
       </div>
 
       {/* Header with Tabs */}
-      <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:bg-[#18191c] dark:border-gray-700">
+      {!activeView && (
+        <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:bg-[#18191c] dark:border-gray-700">
         <div className="space-y-4">
           <div>
             <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1 overflow-x-auto">
@@ -142,7 +159,8 @@ export function ProductsSection() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      )}
 
       {/* Search Bar */}
       <div className="bg-white dark:bg-[#18191c] rounded-xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:border-gray-700">
