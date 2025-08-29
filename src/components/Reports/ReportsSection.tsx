@@ -284,7 +284,7 @@ export function ReportsSection() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl p-3 md:p-4 shadow-lg">
+        <div className="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-xl p-3 md:p-4 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-red-100 text-xs md:text-sm font-medium">Despesas</p>
