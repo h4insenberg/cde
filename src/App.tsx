@@ -210,13 +210,13 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#131416]">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-[#0f1011] dark:to-[#131416]">
       <Header
         title={getPageTitle()}
         onNotificationsClick={() => setShowNotifications(true)}
       />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-6 pb-20">
         {renderContent()}
       </main>
 
