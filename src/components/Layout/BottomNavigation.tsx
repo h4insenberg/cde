@@ -31,7 +31,7 @@ export function BottomNavigation({ activeTab, onTabChange, onMenuClick }: Bottom
   return (
     <>
       {/* Mobile Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-[#131416]/80 backdrop-blur-xl border-t border-gray-200/50 dark:border-gray-700/50 px-3 py-1.5 z-50 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-[#131416]/80 backdrop-blur-xl border-t border-gray-200/50 dark:border-gray-700/50 px-2 py-1 z-50 md:hidden">
         <div className="flex justify-around items-center max-w-sm mx-auto">
           {mobileItems.map((item) => {
             const Icon = item.icon;
@@ -41,13 +41,13 @@ export function BottomNavigation({ activeTab, onTabChange, onMenuClick }: Bottom
               <button
                 key={item.id}
                 onClick={item.onClick || (() => onTabChange(item.id))}
-                className={`flex flex-col items-center px-3 py-1.5 rounded-xl transition-all duration-200 ${
+                className={`flex flex-col items-center px-2 py-1 rounded-lg transition-all duration-200 ${
                   isActive && item.id !== 'menu'
                     ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 scale-105'
                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50'
                 }`}
               >
-                <Icon className="h-5 w-5" />
+                <Icon className="h-4 w-4" />
                 <span className="text-xs mt-0.5 font-medium">{item.label}</span>
               </button>
             );
