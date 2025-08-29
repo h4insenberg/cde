@@ -105,9 +105,7 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
                     {getNotificationIcon(notification.type)}
                     <div className="flex-1 min-w-0">
                       <p className={`text-sm ${notification.read ? 'text-gray-600 dark:text-gray-400' : 'text-gray-900 dark:text-white font-medium'}`}>
-                onClick={() => {
-                  markAllAsRead();
-                }}
+                        {notification.message}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
                         {formatDate(new Date(notification.createdAt))}
@@ -116,7 +114,7 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
                     {!notification.read && (
                       <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>
                     )}
-                    clearAll();
+                  </div>
                 </div>
               ))}
             </div>
