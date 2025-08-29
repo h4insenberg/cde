@@ -1185,7 +1185,15 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
   }, [state.products, state.services, state.sales, state.comandas, state.loans, state.financialEntries, state.financialExits]);
 
   // Verificar notificações periodicamente
+  const checkNotificationsRef = React.useRef(false);
+  
   useEffect(() => {
+    // Evita execução durante carregamento inicial ou após ações de notificação
+    if (checkNotificationsRef.current === false) {
+      checkNotificationsRef.current = true;
+      return;
+    }
+    
     const checkNotifications = () => {
       const today = new Date();
       
@@ -1255,7 +1263,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [state.products, state.loans, state.notifications]);
+  }, [state.products, state.loans]);
 
   return (
     <BusinessContext.Provider value={{ state, dispatch }}>
