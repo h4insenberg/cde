@@ -22,10 +22,12 @@ export function useNotifications() {
   };
 
   const markAllAsRead = () => {
+    console.log('Marcando todas as notificações como lidas');
     dispatch({ type: 'MARK_ALL_NOTIFICATIONS_READ' });
   };
 
   const clearAll = () => {
+    console.log('Limpando todas as notificações');
     dispatch({ type: 'CLEAR_ALL_NOTIFICATIONS' });
   };
 
