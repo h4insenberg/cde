@@ -79,6 +79,10 @@ function AppContent() {
     setShowQuickSale(false);
   };
 
+  const handleNewSaleFromSalesPage = () => {
+    setShowQuickSale(true);
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
@@ -92,7 +96,7 @@ function AppContent() {
       case 'exits':
         return <ExitsSection />;
       case 'sales':
-        return <SalesSection />;
+        return <SalesSection onNewSale={handleNewSaleFromSalesPage} />;
       case 'comanda':
         return <ComandaSection />;
       case 'loans':

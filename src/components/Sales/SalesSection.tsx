@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Plus, ShoppingCart } from 'lucide-react';
-import { SaleForm } from './SaleForm';
 import { SalesList } from './SalesList';
 import { Sale, StockMovement } from '../../types';
 import { useBusiness } from '../../context/BusinessContext';
@@ -8,49 +7,13 @@ import { useNotifications } from '../../hooks/useNotifications';
 import { generateId } from '../../utils/helpers';
 
 export function SalesSection() {
+interface SalesSectionProps {
+  onNewSale: () => void;
+}
+
+export function SalesSection({ onNewSale }: SalesSectionProps) {
   const { state, dispatch } = useBusiness();
   const { addNotification } = useNotifications();
-  const [showSaleForm, setShowSaleForm] = useState(false);
-
-  const handleSaveSale = (sale: Sale) => {
-    // Add the sale
-    dispatch({ type: 'ADD_SALE', payload: sale });
-
-    // Update product stock and add stock movements
-    sale.items.forEach((item) => {
-      if (item.type === 'product' && item.productId) {
-        const product = state.products.find(p => p.id === item.productId);
-        if (product) {
-          const updatedProduct = {
-            ...product,
-            quantity: product.quantity - item.quantity,
-            updatedAt: new Date(),
-          };
-          
-          dispatch({ type: 'UPDATE_PRODUCT', payload: updatedProduct });
-
-          // Add stock movement
-          const stockMovement: StockMovement = {
-            id: generateId(),
-            productId: product.id,
-            productName: product.name,
-            type: 'OUT',
-            quantity: item.quantity,
-            reason: `Venda #${sale.id.slice(-6)}`,
-            createdAt: new Date(),
-          };
-          
-          dispatch({ type: 'ADD_STOCK_MOVEMENT', payload: stockMovement });
-        }
-      }
-    });
-
-    setShowSaleForm(false);
-  };
-
-  const handleCancelSale = () => {
-    setShowSaleForm(false);
-  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20">
@@ -64,7 +27,7 @@ export function SalesSection() {
         </div>
         
         <button
-          onClick={() => setShowSaleForm(true)}
+          onClick={onNewSale}
           className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 sm:px-4 rounded-lg shadow-lg transition-colors flex items-center space-x-1 sm:space-x-2"
         >
           <Plus className="h-4 w-4 sm:h-4 sm:w-4" />
@@ -86,7 +49,7 @@ export function SalesSection() {
               Comece registrando suas vendas para acompanhar o desempenho do seu negócio
             </p>
             <button
-              onClick={() => setShowSaleForm(true)}
+              onClick={onNewSale}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 mx-auto"
             >
               <Plus className="h-4 w-4" />
@@ -94,16 +57,6 @@ export function SalesSection() {
             </button>
           </div>
         </div>
-      )}
-
-      {/* Sale Form Modal */}
-      {showSaleForm && (
-        <SaleForm
-          products={state.products}
-          services={state.services}
-          onSave={handleSaveSale}
-          onCancel={handleCancelSale}
-        />
       )}
     </div>
   );
