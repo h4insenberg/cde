@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Plus, TrendingDown, Calendar, DollarSign, Tag, Search } from 'lucide-react';
+import { ConfirmModal } from '../Common/ConfirmModal';
 import { FinancialExit } from '../../types';
 import { ExitForm } from './ExitForm';
 import { formatCurrency, formatDate } from '../../utils/helpers';
 import { useBusiness } from '../../context/BusinessContext';
 import { useNotifications } from '../../hooks/useNotifications';
+import { useConfirm } from '../../hooks/useConfirm';
 
 export function ExitsSection() {
   const { state, dispatch } = useBusiness();
@@ -12,6 +14,7 @@ export function ExitsSection() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showExitForm, setShowExitForm] = useState(false);
   const [editingExit, setEditingExit] = useState<FinancialExit | null>(null);
+  const { confirm, confirmState, closeConfirm } = useConfirm();
 
   // Filter exits based on search term
   const filteredExits = state.financialExits.filter(exit =>
@@ -36,9 +39,19 @@ export function ExitsSection() {
     setShowExitForm(true);
   };
 
-  const handleDeleteExit = (id: string) => {
+  const handleDeleteExit = async (id: string) => {
     const exit = state.financialExits.find(e => e.id === id);
-    if (exit && window.confirm(`Tem certeza que deseja excluir "${exit.name}"?`)) {
+    if (!exit) return;
+
+    const confirmed = await confirm({
+      title: 'Excluir Saída',
+      message: `Tem certeza que deseja excluir "${exit.name}"? Esta ação não pode ser desfeita.`,
+      confirmText: 'Excluir',
+      cancelText: 'Cancelar',
+      type: 'danger'
+    });
+    
+    if (confirmed) {
       dispatch({ type: 'DELETE_FINANCIAL_EXIT', payload: id });
     }
   };
@@ -184,6 +197,17 @@ export function ExitsSection() {
           onCancel={handleCancelForm}
         />
       )}
+
+      <ConfirmModal
+        isOpen={confirmState.isOpen}
+        onClose={closeConfirm}
+        onConfirm={confirmState.onConfirm}
+        title={confirmState.title}
+        message={confirmState.message}
+        confirmText={confirmState.confirmText}
+        cancelText={confirmState.cancelText}
+        type={confirmState.type}
+      />
     </div>
   );
 }

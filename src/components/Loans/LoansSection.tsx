@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Plus, HandCoins, Calendar, DollarSign, User, AlertTriangle, CheckCircle, Clock, Edit2, Filter } from 'lucide-react';
+import { ConfirmModal } from '../Common/ConfirmModal';
 import { Loan } from '../../types';
 import { LoanForm } from './LoanForm';
 import { formatCurrency, formatDateOnly } from '../../utils/helpers';
 import { useBusiness } from '../../context/BusinessContext';
 import { useNotifications } from '../../hooks/useNotifications';
+import { useConfirm } from '../../hooks/useConfirm';
 
 export function LoansSection() {
   const { state, dispatch } = useBusiness();
@@ -12,6 +14,7 @@ export function LoansSection() {
   const [filter, setFilter] = useState<'all' | 'active' | 'paid' | 'overdue'>('all');
   const [showLoanForm, setShowLoanForm] = useState(false);
   const [editingLoan, setEditingLoan] = useState<Loan | null>(null);
+  const { confirm, confirmState, closeConfirm } = useConfirm();
 
   const getFilteredLoans = () => {
     return state.loans.filter(loan => {
@@ -42,8 +45,16 @@ export function LoansSection() {
     setShowLoanForm(true);
   };
 
-  const handleMarkAsPaid = (loan: Loan) => {
-    if (window.confirm(`Confirmar pagamento do empréstimo de ${loan.customerName}?`)) {
+  const handleMarkAsPaid = async (loan: Loan) => {
+    const confirmed = await confirm({
+      title: 'Confirmar Pagamento',
+      message: `Confirmar pagamento do empréstimo de ${loan.customerName} no valor de ${formatCurrency(loan.totalAmount)}?`,
+      confirmText: 'Confirmar Pagamento',
+      cancelText: 'Cancelar',
+      type: 'info'
+    });
+    
+    if (confirmed) {
       const paidLoan: Loan = {
         ...loan,
         status: 'PAID',
@@ -302,6 +313,17 @@ export function LoansSection() {
           onCancel={handleCancelForm}
         />
       )}
+
+      <ConfirmModal
+        isOpen={confirmState.isOpen}
+        onClose={closeConfirm}
+        onConfirm={confirmState.onConfirm}
+        title={confirmState.title}
+        message={confirmState.message}
+        confirmText={confirmState.confirmText}
+        cancelText={confirmState.cancelText}
+        type={confirmState.type}
+      />
     </div>
   );
 }

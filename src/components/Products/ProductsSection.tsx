@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Package, Wrench, Search } from 'lucide-react';
+import { ConfirmModal } from '../Common/ConfirmModal';
 import { ProductCard } from './ProductCard';
 import { ServiceCard } from '../Services/ServiceCard';
 import { ProductForm } from './ProductForm';
@@ -7,6 +8,7 @@ import { ServiceForm } from '../Services/ServiceForm';
 import { Product, Service } from '../../types';
 import { useBusiness } from '../../context/BusinessContext';
 import { useNotifications } from '../../hooks/useNotifications';
+import { useConfirm } from '../../hooks/useConfirm';
 
 export function ProductsSection() {
   const { state, dispatch } = useBusiness();
@@ -14,6 +16,8 @@ export function ProductsSection() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const { confirm, confirmState, closeConfirm } = useConfirm();
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
 
   // Filter products and services based on search term
   const filteredProducts = state.products.filter(product =>
@@ -39,9 +43,19 @@ export function ProductsSection() {
   };
 
 
-  const handleDeleteProduct = (id: string) => {
+  const handleDeleteProduct = async (id: string) => {
     const product = state.products.find(p => p.id === id);
-    if (product && window.confirm(`Tem certeza que deseja excluir "${product.name}"?`)) {
+    if (!product) return;
+
+    const confirmed = await confirm({
+      title: 'Excluir Produto',
+      message: `Tem certeza que deseja excluir "${product.name}"? Esta ação não pode ser desfeita.`,
+      confirmText: 'Excluir',
+      cancelText: 'Cancelar',
+      type: 'danger'
+    });
+    
+    if (confirmed) {
       dispatch({ type: 'DELETE_PRODUCT', payload: id });
     }
   };
@@ -151,6 +165,17 @@ export function ProductsSection() {
           onCancel={handleCancelForm}
         />
       )}
+
+      <ConfirmModal
+        isOpen={confirmState.isOpen}
+        onClose={closeConfirm}
+        onConfirm={confirmState.onConfirm}
+        title={confirmState.title}
+        message={confirmState.message}
+        confirmText={confirmState.confirmText}
+        cancelText={confirmState.cancelText}
+        type={confirmState.type}
+      />
     </div>
   );
 }

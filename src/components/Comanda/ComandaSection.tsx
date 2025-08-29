@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Plus, ClipboardList, Filter } from 'lucide-react';
+import { ConfirmModal } from '../Common/ConfirmModal';
 import { ComandaForm } from './ComandaForm';
 import { ComandaCard } from './ComandaCard';
 import { AddItemsForm } from './AddItemsForm';
 import { Comanda, Sale, SaleItem } from '../../types';
 import { useBusiness } from '../../context/BusinessContext';
 import { useNotifications } from '../../hooks/useNotifications';
+import { useConfirm } from '../../hooks/useConfirm';
 import { generateId, formatCurrency } from '../../utils/helpers';
 
 export function ComandaSection() {
@@ -15,6 +17,7 @@ export function ComandaSection() {
   const [showAddItemsForm, setShowAddItemsForm] = useState(false);
   const [selectedComanda, setSelectedComanda] = useState<Comanda | null>(null);
   const [filter, setFilter] = useState<'all' | 'open' | 'paid'>('all');
+  const { confirm, confirmState, closeConfirm } = useConfirm();
 
   const filteredComandas = state.comandas.filter(comanda => {
     if (filter === 'open') return comanda.status === 'OPEN';
@@ -64,8 +67,16 @@ export function ComandaSection() {
     setSelectedComanda(null);
   };
 
-  const handlePayComanda = (comanda: Comanda) => {
-    if (window.confirm(`Confirmar pagamento da comanda de ${comanda.customerName}?`)) {
+  const handlePayComanda = async (comanda: Comanda) => {
+    const confirmed = await confirm({
+      title: 'Confirmar Pagamento',
+      message: `Confirmar pagamento da comanda de ${comanda.customerName} no valor de ${formatCurrency(comanda.total)}?`,
+      confirmText: 'Confirmar Pagamento',
+      cancelText: 'Cancelar',
+      type: 'info'
+    });
+    
+    if (confirmed) {
       // Update comanda status
       const paidComanda: Comanda = {
         ...comanda,
@@ -235,6 +246,17 @@ export function ComandaSection() {
           onCancel={handleCancelForms}
         />
       )}
+
+      <ConfirmModal
+        isOpen={confirmState.isOpen}
+        onClose={closeConfirm}
+        onConfirm={confirmState.onConfirm}
+        title={confirmState.title}
+        message={confirmState.message}
+        confirmText={confirmState.confirmText}
+        cancelText={confirmState.cancelText}
+        type={confirmState.type}
+      />
     </div>
   );
 }

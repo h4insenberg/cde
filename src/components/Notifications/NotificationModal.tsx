@@ -1,8 +1,10 @@
 import React from 'react';
 import { X, AlertTriangle, CheckCircle, XCircle, Bell, Check, Trash2 } from 'lucide-react';
+import { ConfirmModal } from '../Common/ConfirmModal';
 import { Notification } from '../../types';
 import { formatDate } from '../../utils/helpers';
 import { useNotifications } from '../../hooks/useNotifications';
+import { useConfirm } from '../../hooks/useConfirm';
 
 interface NotificationModalProps {
   isOpen: boolean;
@@ -11,6 +13,7 @@ interface NotificationModalProps {
 
 export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
   const { notifications, markAsRead, markAllAsRead, clearAll } = useNotifications();
+  const { confirm, confirmState, closeConfirm } = useConfirm();
 
   if (!isOpen) return null;
 
@@ -54,8 +57,16 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
     markAllAsRead();
   };
 
-  const handleClearAll = () => {
-    if (window.confirm('Tem certeza que deseja limpar todas as notificações?')) {
+  const handleClearAll = async () => {
+    const confirmed = await confirm({
+      title: 'Limpar Notificações',
+      message: 'Tem certeza que deseja limpar todas as notificações? Esta ação não pode ser desfeita.',
+      confirmText: 'Limpar Todas',
+      cancelText: 'Cancelar',
+      type: 'warning'
+    });
+    
+    if (confirmed) {
       clearAll();
     }
   };
@@ -132,6 +143,17 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
           )}
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={confirmState.isOpen}
+        onClose={closeConfirm}
+        onConfirm={confirmState.onConfirm}
+        title={confirmState.title}
+        message={confirmState.message}
+        confirmText={confirmState.confirmText}
+        cancelText={confirmState.cancelText}
+        type={confirmState.type}
+      />
     </div>
   );
 }
