@@ -7,6 +7,7 @@ import { Dashboard } from './components/Dashboard/Dashboard';
 import { ProductsSection } from './components/Products/ProductsSection';
 import { SalesSection } from './components/Sales/SalesSection';
 import { ComandaSection } from './components/Comanda/ComandaSection';
+import { LoansSection } from './components/Loans/LoansSection';
 import { NotificationModal } from './components/Notifications/NotificationModal';
 import { SaleForm } from './components/Sales/SaleForm';
 import { useBusiness } from './context/BusinessContext';
@@ -27,6 +28,8 @@ function AppContent() {
         return 'Vendas';
       case 'comanda':
         return 'Comandas';
+      case 'loans':
+        return 'Empréstimos';
       case 'settings':
         return 'Configurações';
       default:
@@ -65,6 +68,8 @@ function AppContent() {
         return <SalesSection />;
       case 'comanda':
         return <ComandaSection />;
+      case 'loans':
+        return <LoansSection />;
       case 'settings':
         return (
           <div className="max-w-7xl mx-auto space-y-6 pb-20">
