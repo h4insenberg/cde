@@ -191,38 +191,42 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
           
           return (
             <div key={movement.id} className={`p-3 sm:p-4 rounded-xl transition-all duration-200 hover:shadow-sm ${bgColor} border border-transparent hover:border-gray-200 dark:hover:border-gray-600`}>
-              {/* Mobile Layout */}
-              <div className="block sm:hidden">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center space-x-2 flex-1 min-w-0">
-                    {getMovementIcon(movement.type)}
+              {/* Unified Layout - Works for both mobile and desktop */}
+              <div className="space-y-3">
+                {/* Header Row - Icon, Description and Amount */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start space-x-2 flex-1 min-w-0">
+                    <div className="flex-shrink-0 mt-0.5">
+                      {getMovementIcon(movement.type)}
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white leading-tight break-words">
                         {movement.description}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {formatDate(movement.createdAt)}
                       </p>
                     </div>
                   </div>
                   
-                  <div className="text-right flex-shrink-0 ml-2">
+                  <div className="text-right flex-shrink-0">
                     {movement.amount !== undefined ? (
-                      <p className={`text-base font-bold ${getMovementColor(movement.type)}`}>
+                      <p className={`text-sm sm:text-base font-bold ${getMovementColor(movement.type)} leading-tight`}>
                         {isEntry ? '+' : '-'}{showValues ? formatCurrency(movement.amount) : '••••'}
                       </p>
                     ) : (
-                      <p className={`text-base font-bold ${getMovementColor(movement.type)}`}>
+                      <p className={`text-sm sm:text-base font-bold ${getMovementColor(movement.type)} leading-tight`}>
                         {isEntry ? '+' : '-'}{movement.quantity} {movement.unit || 'un'}
                       </p>
                     )}
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
+                {/* Details Row - Date, Payment Method, and Profit */}
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                      {formatDate(movement.createdAt)}
+                    </p>
                     {movement.paymentMethod && (
-                      <span className="text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full font-medium">
+                      <span className="text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full font-medium whitespace-nowrap">
                         {getPaymentMethodLabel(movement.paymentMethod)}
                       </span>
                     )}
@@ -230,51 +234,10 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
                   
                   {movement.profit !== undefined && showValues && isEntry && (
                     <div className="text-right">
-                      <p className="text-xs text-green-600 dark:text-green-400 font-medium">
+                      <p className="text-xs text-green-600 dark:text-green-400 font-medium whitespace-nowrap">
                         Lucro: {formatCurrency(movement.profit)}
                       </p>
                     </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Desktop Layout */}
-              <div className="hidden sm:flex items-center justify-between">
-                <div className="flex items-center space-x-3 flex-1 min-w-0">
-                  {getMovementIcon(movement.type)}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white break-words">
-                      {movement.description}
-                    </p>
-                    <div className="flex items-center space-x-2 mt-1">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {formatDate(movement.createdAt)}
-                      </p>
-                      {movement.paymentMethod && (
-                        <span className="text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full font-medium">
-                          {getPaymentMethodLabel(movement.paymentMethod)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="text-right flex-shrink-0">
-                  {movement.amount !== undefined ? (
-                    <div>
-                      <p className={`text-sm font-bold ${getMovementColor(movement.type)}`}>
-                        {isEntry ? '+' : '-'}{showValues ? formatCurrency(movement.amount) : '••••'}
-                      </p>
-                      {movement.profit !== undefined && showValues && isEntry && (
-                        <p className="text-xs text-green-600 dark:text-green-400 font-medium">
-                          Lucro: {formatCurrency(movement.profit)}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <p className={`text-sm font-bold ${getMovementColor(movement.type)}`}>
-                      {isEntry ? '+' : '-'}{movement.quantity} {movement.unit || 'un'}
-                    </p>
                   )}
                 </div>
               </div>
