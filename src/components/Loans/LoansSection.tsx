@@ -107,7 +107,7 @@ export function LoansSection() {
         <div>
           <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">Empréstimos</h2>
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-            {activeLoans.length} empréstimo{activeLoans.length !== 1 ? 's' : ''} ativo{activeLoans.length !== 1 ? 's' : ''} • {state.showValues ? formatCurrency(totalToReceive) : '••••'} a receber
+            {state.showValues ? formatCurrency(totalToReceive) : '••••'} a receber
           </p>
         </div>
         
