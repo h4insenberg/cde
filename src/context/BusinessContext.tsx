@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { Product, Service, Sale, StockMovement, DashboardStats, Notification, Comanda, Loan } from '../types';
+import { Product, Service, Sale, StockMovement, DashboardStats, Notification, Comanda } from '../types';
 import { generateId } from '../utils/helpers';
 
 interface BusinessState {
@@ -7,7 +7,6 @@ interface BusinessState {
   services: Service[];
   sales: Sale[];
   comandas: Comanda[];
-  loans: Loan[];
   stockMovements: StockMovement[];
   notifications: Notification[];
   dashboardStats: DashboardStats;
@@ -26,9 +25,6 @@ type BusinessAction =
   | { type: 'ADD_COMANDA'; payload: Comanda }
   | { type: 'UPDATE_COMANDA'; payload: Comanda }
   | { type: 'DELETE_COMANDA'; payload: string }
-  | { type: 'ADD_LOAN'; payload: Loan }
-  | { type: 'UPDATE_LOAN'; payload: Loan }
-  | { type: 'DELETE_LOAN'; payload: string }
   | { type: 'ADD_STOCK_MOVEMENT'; payload: StockMovement }
   | { type: 'ADD_NOTIFICATION'; payload: Notification }
   | { type: 'MARK_NOTIFICATION_READ'; payload: string }
@@ -42,7 +38,6 @@ const initialState: BusinessState = {
   services: [],
   sales: [],
   comandas: [],
-  loans: [],
   stockMovements: [],
   notifications: [],
   dashboardStats: {
@@ -316,21 +311,6 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       return {
         ...state,
         comandas: state.comandas.filter(c => c.id !== action.payload)
-      };
-    
-    case 'ADD_LOAN':
-      return { ...state, loans: [...state.loans, action.payload] };
-    
-    case 'UPDATE_LOAN':
-      return {
-        ...state,
-        loans: state.loans.map(l => l.id === action.payload.id ? action.payload : l)
-      };
-    
-    case 'DELETE_LOAN':
-      return {
-        ...state,
-        loans: state.loans.filter(l => l.id !== action.payload)
       };
     
     case 'ADD_STOCK_MOVEMENT':

@@ -7,33 +7,34 @@ import { Dashboard } from './components/Dashboard/Dashboard';
 import { ProductsSection } from './components/Products/ProductsSection';
 import { SalesSection } from './components/Sales/SalesSection';
 import { ComandaSection } from './components/Comanda/ComandaSection';
-import { LoansSection } from './components/Loans/LoansSection';
+import { SettingsSection } from './components/Settings/SettingsSection';
 import { NotificationModal } from './components/Notifications/NotificationModal';
 import { SaleForm } from './components/Sales/SaleForm';
+import { Plus, Search } from 'lucide-react';
 import { useBusiness } from './context/BusinessContext';
+import { useNotifications } from './hooks/useNotifications';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showQuickSale, setShowQuickSale] = useState(false);
   const { state, dispatch } = useBusiness();
+  const { addNotification } = useNotifications();
 
   const getPageTitle = () => {
     switch (activeTab) {
       case 'dashboard':
         return 'Dashboard';
       case 'products':
-        return 'Estoque & Serviços';
+        return 'Produtos';
+      case 'services':
+        return 'Serviços';
+      case 'services':
+        return 'Serviços';
       case 'sales':
         return 'Vendas';
       case 'comanda':
         return 'Comandas';
-      case 'loans':
-        return 'Empréstimos';
-      case 'loans':
-        return 'Empréstimos';
-      case 'loans':
-        return 'Empréstimos';
       case 'settings':
         return 'Configurações';
       default:
@@ -67,102 +68,17 @@ function AppContent() {
       case 'dashboard':
         return <Dashboard onNewSale={() => setShowQuickSale(true)} />;
       case 'products':
-        return <ProductsSection />;
+        return <ProductsSection activeTab="products" />;
+      case 'services':
+        return <ProductsSection activeTab="services" />;
+      case 'services':
+        return <ProductsSection activeTab="services" />;
       case 'sales':
         return <SalesSection />;
       case 'comanda':
         return <ComandaSection />;
-      case 'loans':
-        return <LoansSection />;
-      case 'loans':
-        return <LoansSection />;
-      case 'loans':
-        return <LoansSection />;
       case 'settings':
-        return (
-          <div className="max-w-7xl mx-auto space-y-6 pb-20">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Configurações</h2>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Gerencie as informações do seu negócio
-                </p>
-              </div>
-            </div>
-
-            {/* Dados do Negócio */}
-            <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                <Database className="h-5 w-5 mr-2 text-blue-500" />
-                Dados do Negócio
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Nome da Empresa
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Minha Empresa Ltda"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    CNPJ/CPF
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="00.000.000/0000-00"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Telefone
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="(11) 99999-9999"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="contato@empresa.com"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-                
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Endereço
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Rua das Flores, 123 - Centro - São Paulo/SP"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-              </div>
-              
-              <div className="mt-6">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
-                  Salvar Dados
-                </button>
-              </div>
-            </div>
-          </div>
-        );
+        return <SettingsSection />;
       default:
         return <Dashboard onNewSale={() => setShowQuickSale(true)} />;
     }
