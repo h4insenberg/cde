@@ -124,7 +124,7 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
         </div>
 
         <div className="overflow-y-auto flex-1 min-h-0">
-          <div className="p-3 sm:p-6">
+          <div className="p-3 sm:p-6 overflow-y-auto flex-1 min-h-0">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Items Selection */}
             <div className="space-y-6">
@@ -322,7 +322,6 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
             </div>
           </div>
 
-          </div>
         </div>
         
         {/* Actions */}

@@ -27,19 +27,19 @@ export function MenuModal({ isOpen, onClose, activeTab, onTabChange }: MenuModal
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center z-50 md:hidden p-0">
-      <div className="bg-white dark:bg-[#18191c] rounded-t-3xl w-full max-h-[85vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 md:hidden">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-4xl max-h-[98vh] overflow-hidden flex flex-col">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Menu</h2>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="p-4 overflow-y-auto max-h-[calc(85vh-88px)]">
+        <div className="p-3 sm:p-6 overflow-y-auto flex-1 min-h-0">
           <div className="grid grid-cols-2 gap-3">
             {menuItems.map((item) => {
               const Icon = item.icon;
@@ -49,10 +49,10 @@ export function MenuModal({ isOpen, onClose, activeTab, onTabChange }: MenuModal
                 <button
                   key={item.id}
                   onClick={() => handleItemClick(item.id)}
-                  className={`p-4 rounded-2xl border-2 transition-all duration-200 text-left ${
+                  className={`p-4 rounded-xl border transition-all duration-200 text-left ${
                     isActive
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50'
                   }`}
                 >
                   <div className="flex flex-col items-center text-center space-y-2">

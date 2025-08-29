@@ -183,8 +183,8 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4">
-      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-lg max-h-[95vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-4xl max-h-[98vh] overflow-hidden flex flex-col">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             {service ? 'Editar Serviço' : 'Novo Serviço'}
@@ -197,8 +197,8 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
           </button>
         </div>
 
-        <div className="overflow-y-auto flex-1 min-h-0">
-          <div className="p-4 sm:p-6 space-y-4">
+        <div className="p-3 sm:p-6 overflow-y-auto flex-1 min-h-0">
+          <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Nome do Serviço *
@@ -260,8 +260,8 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
           </div>
 
           </div>
-        </div>
         
+        {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3 p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#18191c] flex-shrink-0">
           <button
             type="button"
