@@ -34,9 +34,6 @@ export function Header({ title, onMenuClick, onNotificationsClick }: HeaderProps
               <Menu className="h-5 w-5" />
             </button>
           )}
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate">
-            {title}
-          </h2>
         </div>
         
         <div className="flex items-center space-x-2">
