@@ -5,6 +5,7 @@ import { Header } from './components/Layout/Header';
 import { BottomNavigation } from './components/Layout/BottomNavigation';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { ProductsSection } from './components/Products/ProductsSection';
+import { ServicesSection } from './components/Services/ServicesSection';
 import { SalesSection } from './components/Sales/SalesSection';
 import { ComandaSection } from './components/Comanda/ComandaSection';
 import { LoansSection } from './components/Loans/LoansSection';
@@ -23,7 +24,9 @@ function AppContent() {
       case 'dashboard':
         return 'Dashboard';
       case 'products':
-        return 'Estoque & Serviços';
+        return 'Produtos';
+      case 'services':
+        return 'Serviços';
       case 'sales':
         return 'Vendas';
       case 'comanda':
@@ -64,6 +67,8 @@ function AppContent() {
         return <Dashboard onNewSale={() => setShowQuickSale(true)} />;
       case 'products':
         return <ProductsSection />;
+      case 'services':
+        return <ServicesSection />;
       case 'sales':
         return <SalesSection />;
       case 'comanda':
