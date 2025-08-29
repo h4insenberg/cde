@@ -105,18 +105,18 @@ export function LoansSection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Empréstimos</h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">Empréstimos</h2>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             {activeLoans.length} empréstimo{activeLoans.length !== 1 ? 's' : ''} ativo{activeLoans.length !== 1 ? 's' : ''} • {state.showValues ? formatCurrency(totalToReceive) : '••••'} a receber
           </p>
         </div>
         
         <button
           onClick={() => setShowLoanForm(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 sm:px-4 rounded-lg shadow-lg transition-colors flex items-center space-x-1 sm:space-x-2"
         >
-          <Plus className="h-4 w-4" />
-          <span>Novo Empréstimo</span>
+          <Plus className="h-4 w-4 sm:h-4 sm:w-4" />
+          <span className="text-sm sm:text-base">Novo Empréstimo</span>
         </button>
       </div>
 

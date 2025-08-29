@@ -56,18 +56,18 @@ export function EntriesSection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Entradas</h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">Entradas</h2>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             {filteredEntries.length} entrada{filteredEntries.length !== 1 ? 's' : ''} • {state.showValues ? formatCurrency(totalEntries) : '••••'} total
           </p>
         </div>
         
         <button
           onClick={() => setShowEntryForm(true)}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
+          className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 sm:px-4 rounded-lg shadow-lg transition-colors flex items-center space-x-1 sm:space-x-2"
         >
-          <Plus className="h-4 w-4" />
-          <span>Nova Entrada</span>
+          <Plus className="h-4 w-4 sm:h-4 sm:w-4" />
+          <span className="text-sm sm:text-base">Nova Entrada</span>
         </button>
       </div>
 
