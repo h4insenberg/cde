@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Plus, Minus, Save } from 'lucide-react';
+import { X, Plus, Minus, Save, Package, Wrench } from 'lucide-react';
 import { Product, Service, Comanda, ComandaItem } from '../../types';
 import { generateId, formatCurrency } from '../../utils/helpers';
 
@@ -23,6 +23,7 @@ interface CartItem {
 
 export function AddItemsForm({ comanda, products, services, onSave, onCancel }: AddItemsFormProps) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [activeTab, setActiveTab] = useState<'products' | 'services'>('products');
 
   const addProductToCart = (product: Product) => {
     const existingItem = cartItems.find(item => item.productId === product.id);
@@ -127,32 +128,81 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Items Selection */}
             <div className="space-y-6">
-              {/* Products */}
+              {/* Tabs */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Produtos</h3>
-                <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
-                  {products.filter(p => p.quantity > 0).map(product => (
+                <div className="bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1">
+                  <div className="flex space-x-1">
                     <button
-                      key={product.id}
                       type="button"
-                      onClick={() => addProductToCart(product)}
-                      className="text-left p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
+                      onClick={() => setActiveTab('products')}
+                      className={`flex-1 px-3 py-2 rounded-md transition-colors flex items-center justify-center space-x-2 text-sm font-medium ${
+                        activeTab === 'products'
+                          ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                      }`}
                     >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900 dark:text-white">{product.name}</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            Estoque: {product.quantity} {product.unit}
-                          </p>
-                        </div>
-                        <p className="font-semibold text-green-600 dark:text-green-400">
-                          {formatCurrency(product.salePrice)}
-                        </p>
-                      </div>
+                      <Package className="h-4 w-4" />
+                      <span>Produtos</span>
+                      <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs">
+                        {products.filter(p => p.quantity > 0).length}
+                      </span>
                     </button>
-                  ))}
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('services')}
+                      className={`flex-1 px-3 py-2 rounded-md transition-colors flex items-center justify-center space-x-2 text-sm font-medium ${
+                        activeTab === 'services'
+                          ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                      }`}
+                    >
+                      <Wrench className="h-4 w-4" />
+                      <span>Serviços</span>
+                      <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs">
+                        {services.length}
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </div>
+              
+              {/* Tab Content */}
+              <div className="min-h-[300px]">
+                {activeTab === 'products' && (
+                  <div>
+                    <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+                      {products.filter(p => p.quantity > 0).map(product => (
+                        <button
+                          key={product.id}
+                          type="button"
+                          onClick={() => addProductToCart(product)}
+                          className="text-left p-2 sm:p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
+                        >
+                          <div className="flex justify-between items-start gap-2">
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">{product.name}</p>
+                              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                Estoque: {product.quantity} {product.unit}
+                              </p>
+                            </div>
+                            <p className="font-semibold text-green-600 dark:text-green-400 text-sm sm:text-base flex-shrink-0">
+                              {formatCurrency(product.salePrice)}
+                            </p>
+                          </div>
+                        </button>
+                      ))}
+                      
+                      {products.filter(p => p.quantity > 0).length === 0 && (
+                        <div className="text-center py-6 sm:py-8">
+                          <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base px-4">
+                            Nenhum produto disponível em estoque
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
 
               {/* Services */}
               <div>
@@ -206,39 +256,43 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
                           type="button"
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
                           className="p-1 text-gray-400 hover:text-red-600 transition-colors"
-                        >
-                          <Minus className="h-4 w-4" />
-                        </button>
-                        
-                        <span className="text-sm font-medium text-gray-900 dark:text-white min-w-[2rem] text-center">
-                          {item.quantity}
-                        </span>
-                        
+                {activeTab === 'services' && (
+                  <div>
+                    <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+                      {services.map(service => (
                         <button
+                          key={service.id}
                           type="button"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="p-1 text-gray-400 hover:text-green-600 transition-colors"
+                          onClick={() => addServiceToCart(service)}
+                          className="text-left p-2 sm:p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:border-purple-300 dark:hover:border-purple-600 transition-colors"
                         >
-                          <Plus className="h-4 w-4" />
+                          <div className="flex justify-between items-start gap-2">
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">{service.name}</p>
+                              {service.description && (
+                                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">
+                                  {service.description}
+                                </p>
+                              )}
+                            </div>
+                            <p className="font-semibold text-purple-600 dark:text-purple-400 text-sm sm:text-base flex-shrink-0">
+                              {formatCurrency(service.price)}
+                            </p>
+                          </div>
                         </button>
-                        
-                        <button
-                          type="button"
-                          onClick={() => removeFromCart(item.id)}
-                          className="p-1 text-gray-400 hover:text-red-600 transition-colors ml-2"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
+                      ))}
+                      
+                      {services.length === 0 && (
+                        <div className="text-center py-6 sm:py-8">
+                          <Wrench className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base px-4">
+                            Nenhum serviço cadastrado
+                          </p>
+                        </div>
+                      )}
                     </div>
-                  ))}
-                  
-                  {cartItems.length === 0 && (
-                    <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                      Nenhum item adicionado
-                    </p>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
 
               {/* Summary */}
