@@ -142,40 +142,37 @@ export function ComandaSection() {
 
       {/* Filter */}
       <div className="bg-white dark:bg-[#18191c] rounded-xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-4">
-          <Filter className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
-          <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1 overflow-x-auto">
-            <button
-              onClick={() => setFilter('all')}
-              className={`px-2 sm:px-3 py-1 rounded-md transition-colors text-xs sm:text-sm whitespace-nowrap ${
-                filter === 'all'
-                  ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-              }`}
-            >
-              Todas ({state.comandas.length})
-            </button>
-            <button
-              onClick={() => setFilter('open')}
-              className={`px-2 sm:px-3 py-1 rounded-md transition-colors text-xs sm:text-sm whitespace-nowrap ${
-                filter === 'open'
-                  ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-              }`}
-            >
-              Abertas ({openComandas.length})
-            </button>
-            <button
-              onClick={() => setFilter('paid')}
-              className={`px-2 sm:px-3 py-1 rounded-md transition-colors text-xs sm:text-sm whitespace-nowrap ${
-                filter === 'paid'
-                  ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-              }`}
-            >
-              Pagas ({state.comandas.filter(c => c.status === 'PAID').length})
-            </button>
-          </div>
+        <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1 overflow-x-auto">
+          <button
+            onClick={() => setFilter('all')}
+            className={`px-3 py-2 rounded-md transition-colors text-sm whitespace-nowrap ${
+              filter === 'all'
+                ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+            }`}
+          >
+            Todas ({state.comandas.length})
+          </button>
+          <button
+            onClick={() => setFilter('open')}
+            className={`px-3 py-2 rounded-md transition-colors text-sm whitespace-nowrap ${
+              filter === 'open'
+                ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+            }`}
+          >
+            Abertas ({openComandas.length})
+          </button>
+          <button
+            onClick={() => setFilter('paid')}
+            className={`px-3 py-2 rounded-md transition-colors text-sm whitespace-nowrap ${
+              filter === 'paid'
+                ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+            }`}
+          >
+            Pagas ({state.comandas.filter(c => c.status === 'PAID').length})
+          </button>
         </div>
       </div>
 
