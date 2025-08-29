@@ -68,6 +68,8 @@ export function useNotifications() {
         }
       }
     });
+  }
+  )
 
   return {
     notifications: state.notifications,
