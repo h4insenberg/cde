@@ -276,7 +276,7 @@ export function ReportsSection() {
       </div>
 
       {/* Resumo Financeiro */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
         <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-3 md:p-4 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
@@ -284,16 +284,6 @@ export function ReportsSection() {
               <p className="text-lg md:text-2xl font-bold">{state.showValues ? formatCurrency(totalRevenue) : '••••'}</p>
             </div>
             <TrendingUp className="h-6 w-6 md:h-8 md:w-8 text-green-200" />
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-xl p-3 md:p-4 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-red-100 text-xs md:text-sm font-medium">Custos</p>
-              <p className="text-lg md:text-2xl font-bold">{state.showValues ? formatCurrency(totalCosts) : '••••'}</p>
-            </div>
-            <TrendingUp className="h-6 w-6 md:h-8 md:w-8 text-red-200 rotate-180" />
           </div>
         </div>
 
