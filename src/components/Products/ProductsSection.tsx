@@ -8,14 +8,10 @@ import { Product, Service } from '../../types';
 import { useBusiness } from '../../context/BusinessContext';
 import { useNotifications } from '../../hooks/useNotifications';
 
-interface ProductsSectionProps {
-  activeTab?: 'products' | 'services';
-}
-
-export function ProductsSection({ activeTab: initialTab = 'products' }: ProductsSectionProps) {
+export function ProductsSection() {
   const { state, dispatch } = useBusiness();
   const { addNotification } = useNotifications();
-  const [activeTab, setActiveTab] = useState<'products' | 'services'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'products' | 'services'>('products');
   const [searchTerm, setSearchTerm] = useState('');
   const [showProductForm, setShowProductForm] = useState(false);
   const [showServiceForm, setShowServiceForm] = useState(false);
@@ -95,14 +91,9 @@ export function ProductsSection({ activeTab: initialTab = 'products' }: Products
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {activeTab === 'products' ? 'Produtos' : 'Serviços'}
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Estoque & Serviços</h2>
           <p className="text-gray-600 dark:text-gray-400">
-            {activeTab === 'products' 
-              ? `${state.products.length} produto${state.products.length !== 1 ? 's' : ''} cadastrado${state.products.length !== 1 ? 's' : ''}`
-              : `${state.services.length} serviço${state.services.length !== 1 ? 's' : ''} cadastrado${state.services.length !== 1 ? 's' : ''}`
-            }
+            {state.products.length} produto{state.products.length !== 1 ? 's' : ''} • {state.services.length} serviço{state.services.length !== 1 ? 's' : ''}
           </p>
         </div>
         
@@ -116,6 +107,43 @@ export function ProductsSection({ activeTab: initialTab = 'products' }: Products
       </div>
 
       {/* Header with Tabs */}
+      <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:bg-[#18191c] dark:border-gray-700">
+        <div className="space-y-4">
+          <div>
+            <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1 overflow-x-auto">
+              <button
+                onClick={() => setActiveTab('products')}
+                className={`px-3 sm:px-4 py-2 rounded-md transition-colors flex items-center space-x-2 whitespace-nowrap ${
+                  activeTab === 'products'
+                    ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                }`}
+              >
+                <Package className="h-4 w-4 flex-shrink-0" />
+                <span>Produtos</span>
+                <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs flex-shrink-0">
+                  {filteredProducts.length}
+                </span>
+              </button>
+              <button
+                onClick={() => setActiveTab('services')}
+                className={`px-3 sm:px-4 py-2 rounded-md transition-colors flex items-center space-x-2 whitespace-nowrap ${
+                  activeTab === 'services'
+                    ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                }`}
+              >
+                <Wrench className="h-4 w-4 flex-shrink-0" />
+                <span>Serviços</span>
+                <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs flex-shrink-0">
+                  {filteredServices.length}
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Search Bar */}
       <div className="bg-white dark:bg-[#18191c] rounded-xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="relative">
