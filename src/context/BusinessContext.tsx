@@ -1335,11 +1335,6 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
 
   // Save data to localStorage whenever state changes
   useEffect(() => {
-    // Skip saving during initial load
-    if (state === initialState) {
-      return;
-    }
-    
     // Save data to localStorage
     try {
       const dataToSave = {
@@ -1394,10 +1389,6 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
 
   // Update stats separately to avoid infinite loops
   useEffect(() => {
-    // Skip stats update during initial load
-    if (state === initialState) {
-      return;
-    }
     dispatch({ type: 'UPDATE_STATS' });
   }, [state.products, state.services, state.sales, state.comandas, state.loans, state.stockMovements, state.notifications, state.showValues]);
 
