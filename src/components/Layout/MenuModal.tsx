@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Package, Wrench, TrendingUp, TrendingDown, ShoppingCart, HandCoins, ClipboardList } from 'lucide-react';
+import { X, Package, Wrench, TrendingUp, TrendingDown, ShoppingCart, HandCoins, ClipboardList, BarChart3 } from 'lucide-react';
 
 interface MenuModalProps {
   isOpen: boolean;
@@ -19,6 +19,7 @@ export function MenuModal({ isOpen, onClose, activeTab, onTabChange }: MenuModal
     { id: 'sales', label: 'Vendas', icon: ShoppingCart, description: 'Histórico de vendas' },
     { id: 'loans', label: 'Empréstimos', icon: HandCoins, description: 'Controlar empréstimos' },
     { id: 'comanda', label: 'Comandas', icon: ClipboardList, description: 'Comandas digitais' },
+    { id: 'reports', label: 'Relatórios', icon: BarChart3, description: 'Análises e relatórios' },
   ];
 
   const handleItemClick = (tabId: string) => {
