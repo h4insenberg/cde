@@ -19,7 +19,6 @@ import { useBusiness } from './context/BusinessContext';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [activeTab, setActiveTab] = useState('dashboard');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showQuickSale, setShowQuickSale] = useState(false);
   const [showMenuModal, setShowMenuModal] = useState(false);
