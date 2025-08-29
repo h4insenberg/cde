@@ -178,8 +178,10 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
 
         <div className="p-4 sm:p-6 overflow-y-auto flex-1">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Payment Method */}
+            {/* Primeira Coluna: Products/Services e Payment Method */}
             <div className="space-y-6">
+              {/* Products and Services Selection */}
+              <div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Forma de Pagamento</h3>
                 
@@ -334,58 +336,6 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
                 
                 {errors.items && (
                   <p className="text-red-500 text-sm mb-3">{errors.items}</p>
-                )}
-                
-                {errors.stock && (
-                  <p className="text-red-500 text-sm mb-3">{errors.stock}</p>
-                )}
-
-                <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {cartItems.map(item => (
-                    <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {formatCurrency(item.unitPrice)} x {item.quantity} = {formatCurrency(item.unitPrice * item.quantity)}
-                        </p>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="p-1 text-gray-400 hover:text-red-600 transition-colors"
-                        >
-                          <Minus className="h-4 w-4" />
-                        </button>
-                        
-                        <span className="text-sm font-medium text-gray-900 dark:text-white min-w-[2rem] text-center">
-                          {item.quantity}
-                        </span>
-                        
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="p-1 text-gray-400 hover:text-green-600 transition-colors"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </button>
-                        
-                        <button
-                          onClick={() => removeFromCart(item.id)}
-                          className="p-1 text-gray-400 hover:text-red-600 transition-colors ml-2"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {cartItems.length === 0 && (
-                    <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                      Carrinho vazio
-                    </p>
-                  )}
-                </div>
-              </div>
 
               {/* Summary */}
               {cartItems.length > 0 && (
@@ -422,9 +372,63 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
                   </div>
                 </div>
               )}
+              </div>
+
+              {/* Payment Method */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Forma de Pagamento</h3>
+                
+                <select
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+                  className="w-full px-3 py-3 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white font-medium"
+                >
+                  <option value="CASH">Dinheiro (em espécie)</option>
+                  <option value="PIX">PIX</option>
+                  <option value="CARD">Cartão</option>
+                  <option value="CREDIT">Fiado</option>
+                </select>
+
+                {paymentMethod === 'CARD' && (
+                  <div className="mt-3 space-y-3">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Taxa da Maquininha (%)
+                    </label>
+                    <input
+                      type="number"
+                      value={cardFeeRate}
+                      onChange={(e) => setCardFeeRate(parseFloat(e.target.value) || 0)}
+                      min="0"
+                      max="20"
+                      step="0.1"
+                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                        errors.cardFeeRate ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="3.5"
+                    />
+                    {errors.cardFeeRate && (
+                      <p className="text-red-500 text-sm mt-1">{errors.cardFeeRate}</p>
+                    )}
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Quem paga a taxa?
+                      </label>
+                      <select
+                        value={cardFeePayer}
+                        onChange={(e) => setCardFeePayer(e.target.value as 'seller' | 'customer')}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                      >
+                        <option value="seller">Vendedor (desconta do valor)</option>
+                        <option value="customer">Cliente (adiciona ao valor)</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+            {/* Segunda Coluna: Cart */}
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#18191c] p-4 sm:p-6">
