@@ -976,9 +976,9 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       const comandasCosts = state.comandas
         .filter(c => c.status === 'PAID')
         .reduce((sum, comanda) => {
-          dueDate.setHours(0, 0, 0, 0); // Início do dia de vencimento
+          return sum + comanda.items.reduce((itemSum, item) => {
             if (item.type === 'product' && item.productId) {
-          if (dueDate <= today) { // Vencido quando a data atual é igual ou posterior
+              const product = state.products.find(p => p.id === item.productId);
               return itemSum + (product ? product.costPrice * item.quantity : 0);
             }
             return itemSum; // Services have no cost
