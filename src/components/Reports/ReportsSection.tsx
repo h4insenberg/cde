@@ -349,6 +349,8 @@ export function ReportsSection() {
         </div>
       </div>
 
+      {/* Produtos e Serviços Mais Vendidos */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Produtos Mais Vendidos */}
         <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
           <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
