@@ -473,10 +473,10 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               >
-                <option value="units">Unidades</option>
-                <option value="kg">Quilogramas</option>
-                <option value="liters">Litros</option>
-                <option value="meters">Metros</option>
+                <option value="units">Unidades (un)</option>
+                <option value="kg">Quilogramas (kg)</option>
+                <option value="liters">Litros (L)</option>
+                <option value="meters">Metros (m)</option>
               </select>
             </div>
 
