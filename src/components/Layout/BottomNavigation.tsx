@@ -13,6 +13,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
     { id: 'sales', label: 'Vendas', icon: ShoppingCart },
     { id: 'comanda', label: 'Comanda', icon: ClipboardList },
     { id: 'loans', label: 'Empréstimos', icon: HandCoins },
+    { id: 'loans', label: 'Empréstimos', icon: HandCoins },
     { id: 'settings', label: 'Config', icon: Settings },
   ];
 
