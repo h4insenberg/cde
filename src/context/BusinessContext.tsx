@@ -1184,15 +1184,6 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'UPDATE_STATS' });
   }, [state.products, state.services, state.sales, state.comandas, state.loans, state.financialEntries, state.financialExits]);
 
-  // Aplicar modo escuro
-  useEffect(() => {
-    if (state.darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [state.darkMode]);
-
   return (
     <BusinessContext.Provider value={{ state, dispatch }}>
       {children}

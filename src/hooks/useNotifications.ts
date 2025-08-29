@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { useBusiness } from '../context/BusinessContext';
 import { Notification } from '../types';
 import { generateId } from '../utils/helpers';
@@ -6,7 +6,7 @@ import { generateId } from '../utils/helpers';
 export function useNotifications() {
   const { state, dispatch } = useBusiness();
 
-  const addNotification = (type: Notification['type'], message: string) => {
+  const addNotification = useCallback((type: Notification['type'], message: string) => {
     const notification: Notification = {
       id: generateId(),
       type,
@@ -15,62 +15,57 @@ export function useNotifications() {
       read: false,
     };
     dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
-  };
+  }, [dispatch]);
 
-  const markAsRead = (id: string) => {
+  const markAsRead = useCallback((id: string) => {
     dispatch({ type: 'MARK_NOTIFICATION_READ', payload: id });
-  };
+  }, [dispatch]);
 
-  const markAllAsRead = () => {
+  const markAllAsRead = useCallback(() => {
     dispatch({ type: 'MARK_ALL_NOTIFICATIONS_READ' });
-  };
+  }, [dispatch]);
 
-  const clearAll = () => {
+  const clearAll = useCallback(() => {
     dispatch({ type: 'CLEAR_ALL_NOTIFICATIONS' });
-  };
+  }, [dispatch]);
 
-  // Check for notifications only when needed
-  useEffect(() => {
-    const checkNotifications = () => {
-      // Clear existing notifications first
-      dispatch({ type: 'CLEAR_ALL_NOTIFICATIONS' });
+  const checkAndUpdateNotifications = useCallback(() => {
+    // Limpa todas as notificações existentes
+    dispatch({ type: 'CLEAR_ALL_NOTIFICATIONS' });
 
-      // Check for low stock products
-      state.products.forEach(product => {
-        if (product.quantity <= product.minQuantity) {
+    // Verifica produtos com estoque baixo
+    state.products.forEach(product => {
+      if (product.quantity <= product.minQuantity) {
+        addNotification(
+          'LOW_STOCK', 
+          `Estoque baixo: ${product.name} (${product.quantity} ${product.unit})`
+        );
+      }
+    });
+
+    // Verifica empréstimos vencidos
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    
+    state.loans.forEach(loan => {
+      if (loan.status === 'ACTIVE') {
+        const dueDate = new Date(loan.dueDate);
+        dueDate.setHours(23, 59, 59, 999);
+        
+        if (dueDate < today) {
+          // Atualiza status do empréstimo para vencido
+          const overdueLoan = { ...loan, status: 'OVERDUE' as const };
+          dispatch({ type: 'UPDATE_LOAN', payload: overdueLoan });
+          
+          // Adiciona notificação
           addNotification(
-            'LOW_STOCK', 
-            `Estoque baixo: ${product.name} (${product.quantity} ${product.unit})`
+            'ERROR', 
+            `Empréstimo vencido: ${loan.customerName} - R$ ${loan.totalAmount.toFixed(2).replace('.', ',')}`
           );
         }
-      });
-
-      // Check for overdue loans
-      const today = new Date();
-      today.setHours(23, 59, 59, 999); // End of today
-      
-      state.loans.forEach(loan => {
-        if (loan.status === 'ACTIVE') {
-          const dueDate = new Date(loan.dueDate);
-          dueDate.setHours(23, 59, 59, 999);
-          
-          // Check if loan is overdue (due date has passed)
-          if (dueDate < today) {
-            // Update loan status to OVERDUE
-            const overdueLoan = { ...loan, status: 'OVERDUE' as const };
-            dispatch({ type: 'UPDATE_LOAN', payload: overdueLoan });
-            
-            addNotification(
-              'ERROR', 
-              `Empréstimo vencido: ${loan.customerName} - R$ ${loan.totalAmount.toFixed(2).replace('.', ',')}`
-            );
-          }
-        }
-      });
-    };
-
-    checkNotifications();
-  }, [state.products, state.loans]);
+      }
+    });
+  }, [state.products, state.loans, dispatch, addNotification]);
 
   return {
     notifications: state.notifications,
@@ -79,5 +74,6 @@ export function useNotifications() {
     markAsRead,
     markAllAsRead,
     clearAll,
+    checkAndUpdateNotifications,
   };
 }
