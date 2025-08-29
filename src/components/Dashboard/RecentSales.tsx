@@ -13,7 +13,7 @@ interface ExtratoProps {
   financialExits: FinancialExit[];
 }
 
-type MovementType = 'sale' | 'comanda' | 'stock_in' | 'stock_out' | 'service' | 'loan' | 'financial_entry' | 'financial_exit';
+type MovementType = 'sale' | 'comanda' | 'service' | 'loan' | 'financial_entry' | 'financial_exit';
 type MovementCategory = 'entry' | 'exit';
 
 interface Movement {
@@ -104,17 +104,6 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
       createdAt: new Date(exit.date),
     });
   });
-  // Add stock movements
-  stockMovements.forEach(movement => {
-    movements.push({
-      id: `stock-${movement.id}`,
-      type: movement.type === 'IN' ? 'stock_in' : 'stock_out',
-      category: movement.type === 'IN' ? 'entry' : 'exit',
-      description: `${movement.productName} (${movement.quantity}x)`,
-      quantity: movement.quantity,
-      createdAt: new Date(movement.createdAt),
-    });
-  });
 
   const allMovements = movements
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -133,10 +122,6 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
         return <TrendingUp className="h-4 w-4 text-green-500" />;
       case 'financial_exit':
         return <TrendingDown className="h-4 w-4 text-red-500" />;
-      case 'stock_in':
-        return <Package className="h-4 w-4 text-blue-500" />;
-      case 'stock_out':
-        return <Package className="h-4 w-4 text-red-500" />;
       default:
         return <CreditCard className="h-4 w-4 text-gray-400" />;
     }
@@ -148,10 +133,6 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
       case 'service':
       case 'loan':
         return 'text-green-600 dark:text-green-400';
-      case 'stock_in':
-        return 'text-blue-600 dark:text-blue-400';
-      case 'stock_out':
-        return 'text-red-600 dark:text-red-400';
       default:
         return 'text-gray-600 dark:text-gray-400';
     }
