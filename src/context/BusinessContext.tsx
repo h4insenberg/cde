@@ -955,7 +955,7 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       
       // Only count entries that have reached their date
       const today = new Date();
-      today.setHours(23, 59, 59, 999); // End of today
+      today.setHours(0, 0, 0, 0); // Início do dia para comparação de empréstimos
       const entriesRevenue = state.financialEntries
         .filter(entry => new Date(entry.date) <= today)
         .reduce((sum, entry) => sum + entry.amount, 0);
@@ -976,9 +976,9 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       const comandasCosts = state.comandas
         .filter(c => c.status === 'PAID')
         .reduce((sum, comanda) => {
-          return sum + comanda.items.reduce((itemSum, item) => {
+          dueDate.setHours(0, 0, 0, 0); // Início do dia de vencimento
             if (item.type === 'product' && item.productId) {
-              const product = state.products.find(p => p.id === item.productId);
+          if (dueDate <= today) { // Vencido quando a data atual é igual ou posterior
               return itemSum + (product ? product.costPrice * item.quantity : 0);
             }
             return itemSum; // Services have no cost
