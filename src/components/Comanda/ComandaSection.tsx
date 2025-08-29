@@ -128,18 +128,18 @@ export function ComandaSection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Comandas</h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">Comandas</h2>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             {openComandas.length} comanda{openComandas.length !== 1 ? 's' : ''} aberta{openComandas.length !== 1 ? 's' : ''} • {state.showValues ? formatCurrency(totalOpenValue) : '••••'} em aberto
           </p>
         </div>
         
         <button
           onClick={() => setShowComandaForm(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 sm:px-4 rounded-lg shadow-lg transition-colors flex items-center space-x-1 sm:space-x-2"
         >
-          <Plus className="h-4 w-4" />
-          <span>Nova Comanda</span>
+          <Plus className="h-4 w-4 sm:h-4 sm:w-4" />
+          <span className="text-sm sm:text-base">Nova Comanda</span>
         </button>
       </div>
 
