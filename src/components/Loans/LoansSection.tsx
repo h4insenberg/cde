@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { Plus, HandCoins, Calendar, DollarSign, User, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 import { Loan } from '../../types';
+import { LoanForm } from './LoanForm';
 import { formatCurrency, formatDateOnly } from '../../utils/helpers';
 import { useBusiness } from '../../context/BusinessContext';
+import { useNotifications } from '../../hooks/useNotifications';
 
 export function LoansSection() {
-  const { state } = useBusiness();
+  const { state, dispatch } = useBusiness();
+  const { addNotification } = useNotifications();
   const [filter, setFilter] = useState<'all' | 'active' | 'paid' | 'overdue'>('all');
+  const [showLoanForm, setShowLoanForm] = useState(false);
+  const [editingLoan, setEditingLoan] = useState<Loan | null>(null);
 
   const getFilteredLoans = () => {
     return state.loans.filter(loan => {
@@ -20,6 +25,40 @@ export function LoansSection() {
   const filteredLoans = getFilteredLoans();
   const activeLoans = state.loans.filter(l => l.status === 'ACTIVE');
   const totalActiveAmount = activeLoans.reduce((sum, loan) => sum + loan.amount, 0);
+
+  const handleSaveLoan = (loan: Loan) => {
+    if (editingLoan) {
+      dispatch({ type: 'UPDATE_LOAN', payload: loan });
+      addNotification('SUCCESS', `Empréstimo de ${loan.customerName} atualizado com sucesso`);
+    } else {
+      dispatch({ type: 'ADD_LOAN', payload: loan });
+      addNotification('SUCCESS', `Empréstimo de ${loan.customerName} registrado com sucesso`);
+    }
+    setShowLoanForm(false);
+    setEditingLoan(null);
+  };
+
+  const handleEditLoan = (loan: Loan) => {
+    setEditingLoan(loan);
+    setShowLoanForm(true);
+  };
+
+  const handleMarkAsPaid = (loan: Loan) => {
+    if (window.confirm(`Confirmar pagamento do empréstimo de ${loan.customerName}?`)) {
+      const paidLoan: Loan = {
+        ...loan,
+        status: 'PAID',
+        paidAt: new Date(),
+      };
+      dispatch({ type: 'UPDATE_LOAN', payload: paidLoan });
+      addNotification('SUCCESS', `Empréstimo de ${loan.customerName} marcado como pago`);
+    }
+  };
+
+  const handleCancelForm = () => {
+    setShowLoanForm(false);
+    setEditingLoan(null);
+  };
 
   const getStatusColor = (status: Loan['status']) => {
     switch (status) {
@@ -72,7 +111,7 @@ export function LoansSection() {
         </div>
         
         <button
-          onClick={() => {/* TODO: Implement add loan */}}
+          onClick={() => setShowLoanForm(true)}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
         >
           <Plus className="h-4 w-4" />
@@ -182,7 +221,7 @@ export function LoansSection() {
                 
                 {loan.status === 'ACTIVE' && (
                   <button
-                    onClick={() => {/* TODO: Implement mark as paid */}}
+                    onClick={() => handleMarkAsPaid(loan)}
                     className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
                   >
                     Marcar como Pago
@@ -208,7 +247,7 @@ export function LoansSection() {
             </p>
             {filter === 'all' && (
               <button
-                onClick={() => {/* TODO: Implement add loan */}}
+                onClick={() => setShowLoanForm(true)}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 mx-auto"
               >
                 <Plus className="h-4 w-4" />
@@ -217,6 +256,15 @@ export function LoansSection() {
             )}
           </div>
         </div>
+      )}
+
+      {/* Loan Form Modal */}
+      {showLoanForm && (
+        <LoanForm
+          loan={editingLoan}
+          onSave={handleSaveLoan}
+          onCancel={handleCancelForm}
+        />
       )}
     </div>
   );
