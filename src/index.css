@@ -17,3 +17,7 @@
 .space-y-6 > * + * {
   margin-top: calc(-0.5rem * calc(1 - var(--tw-space-y-reverse)));
 }
+
+.space-y-6 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: calc(-0.5rem * calc(1 - var(--tw-space-y-reverse)));
+}
