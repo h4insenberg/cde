@@ -154,53 +154,55 @@ export function RecentSales({ sales, comandas, stockMovements, loans }: ExtratoP
       </div>
       
       <div className="space-y-6">
-    <div className="space-y-2">
-      {allMovements.map((movement) => {
-        const isEntry = movement.category === 'entry';
-        const bgColor = isEntry 
-          ? 'bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30' 
-          : 'bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30';
-        
-        return (
-          <div key={movement.id} className={`flex items-center justify-between p-2 rounded-lg transition-colors ${bgColor}`}>
-            <div className="flex-1">
-              <div className="flex items-center space-x-2">
-                {getMovementIcon(movement.type)}
-                <span className="text-sm font-medium text-gray-900 dark:text-white">
-                  {movement.description}
-                </span>
-                {movement.paymentMethod && (
-                  <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full">
-                    {getPaymentMethodLabel(movement.paymentMethod)}
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {formatDate(movement.createdAt)}
-              </p>
-            </div>
+        <div className="space-y-2">
+          {allMovements.map((movement) => {
+            const isEntry = movement.category === 'entry';
+            const bgColor = isEntry 
+              ? 'bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30' 
+              : 'bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30';
             
-            <div className="text-right">
-              {movement.amount !== undefined ? (
-                <div>
-                  <p className={`text-sm font-semibold ${getMovementColor(movement.type)}`}>
-                    {isEntry ? '+' : '-'}{showValues ? formatCurrency(movement.amount) : '••••'}
+            return (
+              <div key={movement.id} className={`flex items-center justify-between p-2 rounded-lg transition-colors ${bgColor}`}>
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2">
+                    {getMovementIcon(movement.type)}
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {movement.description}
+                    </span>
+                    {movement.paymentMethod && (
+                      <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full">
+                        {getPaymentMethodLabel(movement.paymentMethod)}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {formatDate(movement.createdAt)}
                   </p>
-                  {movement.profit !== undefined && showValues && isEntry && (
-                    <p className="text-xs text-green-600 dark:text-green-400">
-                      Lucro: {formatCurrency(movement.profit)}
+                </div>
+                
+                <div className="text-right">
+                  {movement.amount !== undefined ? (
+                    <div>
+                      <p className={`text-sm font-semibold ${getMovementColor(movement.type)}`}>
+                        {isEntry ? '+' : '-'}{showValues ? formatCurrency(movement.amount) : '••••'}
+                      </p>
+                      {movement.profit !== undefined && showValues && isEntry && (
+                        <p className="text-xs text-green-600 dark:text-green-400">
+                          Lucro: {formatCurrency(movement.profit)}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className={`text-sm font-semibold ${getMovementColor(movement.type)}`}>
+                      {isEntry ? '+' : '-'}{movement.quantity} {movement.unit || 'un'}
                     </p>
                   )}
                 </div>
-              ) : (
-                <p className={`text-sm font-semibold ${getMovementColor(movement.type)}`}>
-                  {isEntry ? '+' : '-'}{movement.quantity} {movement.unit || 'un'}
-                </p>
-              )}
-            </div>
-          </div>
-        );
-      })}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
