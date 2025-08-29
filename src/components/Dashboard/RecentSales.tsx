@@ -243,7 +243,7 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
                   {getMovementIcon(movement.type)}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white break-words">
                       {movement.description}
                     </p>
                     <div className="flex items-center space-x-2 mt-1">
