@@ -32,6 +32,8 @@ function AppContent() {
         return 'Empréstimos';
       case 'loans':
         return 'Empréstimos';
+      case 'loans':
+        return 'Empréstimos';
       case 'settings':
         return 'Configurações';
       default:
@@ -70,6 +72,8 @@ function AppContent() {
         return <SalesSection />;
       case 'comanda':
         return <ComandaSection />;
+      case 'loans':
+        return <LoansSection />;
       case 'loans':
         return <LoansSection />;
       case 'loans':
