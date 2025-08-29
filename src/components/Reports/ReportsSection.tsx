@@ -287,7 +287,7 @@ export function ReportsSection() {
         <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl p-3 md:p-4 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-orange-100 text-xs md:text-sm font-medium">Despesas</p>
+              <p className="text-red-100 text-xs md:text-sm font-medium">Despesas</p>
               <p className="text-lg md:text-2xl font-bold">{state.showValues ? formatCurrency(totalExpenses) : '••••'}</p>
             </div>
             <TrendingUp className="h-6 w-6 md:h-8 md:w-8 text-red-200 rotate-180" />
