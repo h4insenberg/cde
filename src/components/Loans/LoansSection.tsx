@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, HandCoins, Calendar, DollarSign, User, AlertTriangle, CheckCircle, Clock, Edit2 } from 'lucide-react';
+import { Plus, HandCoins, Calendar, DollarSign, User, AlertTriangle, CheckCircle, Clock, Edit2, Filter } from 'lucide-react';
 import { Loan } from '../../types';
 import { LoanForm } from './LoanForm';
 import { formatCurrency, formatDateOnly } from '../../utils/helpers';
