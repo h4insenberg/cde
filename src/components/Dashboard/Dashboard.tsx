@@ -1,5 +1,5 @@
 import React from 'react';
-import { DollarSign, TrendingUp, ShoppingCart, AlertTriangle, Plus, ArrowUp, ArrowDown, Eye, EyeOff } from 'lucide-react';
+import { DollarSign, TrendingUp, ShoppingCart, AlertTriangle, Plus, ArrowUp, ArrowDown, Eye, EyeOff, Target } from 'lucide-react';
 import { StatsCard } from './StatsCard';
 import { RecentSales } from './RecentSales';
 import { LowStockAlerts } from './LowStockAlerts';
@@ -67,7 +67,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
         <StatsCard
           title="Margem de Lucro"
           value={dashboardStats.profitMargin}
-          icon={TrendingUp}
+          icon={Target}
           color="purple"
           isCurrency={false}
           showValue={state.showValues}
