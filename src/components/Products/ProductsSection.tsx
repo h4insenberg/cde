@@ -25,10 +25,8 @@ export function ProductsSection() {
   const handleSaveProduct = (product: Product) => {
     if (editingProduct) {
       dispatch({ type: 'UPDATE_PRODUCT', payload: product });
-      addNotification('SUCCESS', `Produto "${product.name}" atualizado com sucesso`);
     } else {
       dispatch({ type: 'ADD_PRODUCT', payload: product });
-      addNotification('SUCCESS', `Produto "${product.name}" adicionado com sucesso`);
     }
     setShowProductForm(false);
     setEditingProduct(null);
@@ -45,7 +43,6 @@ export function ProductsSection() {
     const product = state.products.find(p => p.id === id);
     if (product && window.confirm(`Tem certeza que deseja excluir "${product.name}"?`)) {
       dispatch({ type: 'DELETE_PRODUCT', payload: id });
-      addNotification('SUCCESS', `Produto "${product.name}" excluído com sucesso`);
     }
   };
 

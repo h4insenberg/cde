@@ -21,8 +21,9 @@ export function useNotifications() {
     dispatch({ type: 'MARK_NOTIFICATION_READ', payload: id });
   };
 
-  // Check for low stock alerts
+  // Check for low stock alerts and overdue loans
   useEffect(() => {
+    // Check for low stock products
     state.products.forEach(product => {
       if (product.quantity <= product.minQuantity) {
         const existingAlert = state.notifications.find(
@@ -39,7 +40,40 @@ export function useNotifications() {
         }
       }
     });
-  }, [state.products]);
+
+    // Check for overdue loans
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Start of today
+    
+    state.loans.forEach(loan => {
+      if (loan.status === 'ACTIVE') {
+        const dueDate = new Date(loan.dueDate);
+        dueDate.setHours(0, 0, 0, 0);
+        
+        // Check if loan is overdue (due date has passed)
+        if (dueDate < today) {
+          // Update loan status to OVERDUE
+          const overdueLoan = { ...loan, status: 'OVERDUE' as const };
+          dispatch({ type: 'UPDATE_LOAN', payload: overdueLoan });
+          
+          // Check if we already have an overdue notification for this loan
+          const existingAlert = state.notifications.find(
+            n => n.type === 'ERROR' && 
+                 n.message.includes(loan.customerName) && 
+                 n.message.includes('vencido') &&
+                 !n.read
+          );
+          
+          if (!existingAlert) {
+            addNotification(
+              'ERROR', 
+              `Empréstimo vencido: ${loan.customerName} - ${loan.totalAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`
+            );
+          }
+        }
+      }
+    });
+  }, [state.products, state.loans]);
 
   return {
     notifications: state.notifications,

@@ -30,10 +30,8 @@ export function LoansSection() {
   const handleSaveLoan = (loan: Loan) => {
     if (editingLoan) {
       dispatch({ type: 'UPDATE_LOAN', payload: loan });
-      addNotification('SUCCESS', `Empréstimo de ${loan.customerName} atualizado com sucesso`);
     } else {
       dispatch({ type: 'ADD_LOAN', payload: loan });
-      addNotification('SUCCESS', `Empréstimo de ${loan.customerName} registrado com sucesso`);
     }
     setShowLoanForm(false);
     setEditingLoan(null);
@@ -52,7 +50,6 @@ export function LoansSection() {
         paidAt: new Date(),
       };
       dispatch({ type: 'UPDATE_LOAN', payload: paidLoan });
-      addNotification('SUCCESS', `Empréstimo de ${loan.customerName} marcado como pago`);
     }
   };
 

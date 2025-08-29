@@ -24,10 +24,8 @@ export function EntriesSection() {
   const handleSaveEntry = (entry: FinancialEntry) => {
     if (editingEntry) {
       dispatch({ type: 'UPDATE_FINANCIAL_ENTRY', payload: entry });
-      addNotification('SUCCESS', `Entrada "${entry.name}" atualizada com sucesso`);
     } else {
       dispatch({ type: 'ADD_FINANCIAL_ENTRY', payload: entry });
-      addNotification('SUCCESS', `Entrada "${entry.name}" adicionada com sucesso`);
     }
     setShowEntryForm(false);
     setEditingEntry(null);
@@ -42,7 +40,6 @@ export function EntriesSection() {
     const entry = state.financialEntries.find(e => e.id === id);
     if (entry && window.confirm(`Tem certeza que deseja excluir "${entry.name}"?`)) {
       dispatch({ type: 'DELETE_FINANCIAL_ENTRY', payload: id });
-      addNotification('SUCCESS', `Entrada "${entry.name}" excluída com sucesso`);
     }
   };
 

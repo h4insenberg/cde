@@ -45,7 +45,6 @@ export function SalesSection() {
       }
     });
 
-    addNotification('SUCCESS', `Venda realizada com sucesso! Total: ${sale.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`);
     setShowSaleForm(false);
   };
 

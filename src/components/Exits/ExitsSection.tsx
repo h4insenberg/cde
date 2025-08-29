@@ -24,10 +24,8 @@ export function ExitsSection() {
   const handleSaveExit = (exit: FinancialExit) => {
     if (editingExit) {
       dispatch({ type: 'UPDATE_FINANCIAL_EXIT', payload: exit });
-      addNotification('SUCCESS', `Saída "${exit.name}" atualizada com sucesso`);
     } else {
       dispatch({ type: 'ADD_FINANCIAL_EXIT', payload: exit });
-      addNotification('SUCCESS', `Saída "${exit.name}" registrada com sucesso`);
     }
     setShowExitForm(false);
     setEditingExit(null);
@@ -42,7 +40,6 @@ export function ExitsSection() {
     const exit = state.financialExits.find(e => e.id === id);
     if (exit && window.confirm(`Tem certeza que deseja excluir "${exit.name}"?`)) {
       dispatch({ type: 'DELETE_FINANCIAL_EXIT', payload: id });
-      addNotification('SUCCESS', `Saída "${exit.name}" excluída com sucesso`);
     }
   };
 

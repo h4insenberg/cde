@@ -29,7 +29,6 @@ export function ComandaSection() {
 
   const handleSaveComanda = (comanda: Comanda) => {
     dispatch({ type: 'ADD_COMANDA', payload: comanda });
-    addNotification('SUCCESS', `Comanda de ${comanda.customerName} criada com sucesso!`);
     setShowComandaForm(false);
   };
 
@@ -61,7 +60,6 @@ export function ComandaSection() {
     });
 
     const addedItemsTotal = newItems.reduce((sum, item) => sum + item.total, 0);
-    addNotification('SUCCESS', `Itens adicionados à comanda! Total: ${formatCurrency(addedItemsTotal)}`);
     setShowAddItemsForm(false);
     setSelectedComanda(null);
   };
@@ -110,7 +108,6 @@ export function ComandaSection() {
       };
 
       dispatch({ type: 'ADD_SALE', payload: sale });
-      addNotification('SUCCESS', `Comanda de ${comanda.customerName} paga! Total: ${formatCurrency(comanda.total)}`);
     }
   };
 

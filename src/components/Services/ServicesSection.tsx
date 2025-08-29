@@ -22,10 +22,8 @@ export function ServicesSection() {
   const handleSaveService = (service: Service) => {
     if (editingService) {
       dispatch({ type: 'UPDATE_SERVICE', payload: service });
-      addNotification('SUCCESS', `Serviço "${service.name}" atualizado com sucesso`);
     } else {
       dispatch({ type: 'ADD_SERVICE', payload: service });
-      addNotification('SUCCESS', `Serviço "${service.name}" adicionado com sucesso`);
     }
     setShowServiceForm(false);
     setEditingService(null);
@@ -40,7 +38,6 @@ export function ServicesSection() {
     const service = state.services.find(s => s.id === id);
     if (service && window.confirm(`Tem certeza que deseja excluir "${service.name}"?`)) {
       dispatch({ type: 'DELETE_SERVICE', payload: id });
-      addNotification('SUCCESS', `Serviço "${service.name}" excluído com sucesso`);
     }
   };
 
