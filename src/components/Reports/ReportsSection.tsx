@@ -349,89 +349,6 @@ export function ReportsSection() {
         </div>
       </div>
 
-      {/* Gráficos e Análises */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {/* Vendas Diárias */}
-        <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-            <BarChart3 className="h-5 w-5 mr-2 text-blue-500" />
-            Vendas dos Últimos 7 Dias
-          </h4>
-          
-          <div className="space-y-3">
-            {dailySales.map((day) => {
-              const maxRevenue = Math.max(...dailySales.map(d => d.revenue));
-              const widthPercentage = maxRevenue > 0 ? (day.revenue / maxRevenue) * 100 : 0;
-              
-              return (
-                <div key={day.date} className="space-y-1">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-400">{day.date}</span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {day.sales} venda{day.sales !== 1 ? 's' : ''}
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${widthPercentage}%` }}
-                    ></div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-                      {state.showValues ? formatCurrency(day.revenue) : '••••'}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Formas de Pagamento */}
-        <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-            <PieChart className="h-5 w-5 mr-2 text-green-500" />
-            Formas de Pagamento
-          </h4>
-          
-          {paymentStats.length > 0 ? (
-            <div className="space-y-4">
-              {paymentStats.map((stat) => (
-                <div key={stat.method} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {getPaymentMethodLabel(stat.method)}
-                    </span>
-                    <div className="text-right">
-                      <span className="text-sm font-bold text-gray-900 dark:text-white">
-                        {stat.percentage}%
-                      </span>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {state.showValues ? formatCurrency(stat.revenue) : '••••'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div 
-                      className={`h-2 rounded-full transition-all duration-300 ${
-                        stat.method === 'PIX' ? 'bg-green-500' : 
-                        stat.method === 'CARD' ? 'bg-blue-500' : 
-                        stat.method === 'CASH' ? 'bg-yellow-500' : 'bg-orange-500'
-                      }`}
-                      style={{ width: `${stat.percentage}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500 dark:text-gray-400 text-center py-4">
-              Nenhuma venda no período
-            </p>
-          )}
-        </div>
-
         {/* Produtos Mais Vendidos */}
         <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
           <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
@@ -580,37 +497,6 @@ export function ReportsSection() {
           </div>
         </div>
       </div>
-
-      {/* Horários de Maior Movimento */}
-      {hourlyStats.length > 0 && (
-        <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-            <Clock className="h-5 w-5 mr-2 text-orange-500" />
-            Horários de Maior Movimento
-          </h4>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {hourlyStats.map((stat) => (
-              <div key={stat.hour} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div>
-                  <p className="font-medium text-gray-900 dark:text-white text-sm">
-                    {stat.hour.toString().padStart(2, '0')}:00 - {(stat.hour + 1).toString().padStart(2, '0')}:00
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {stat.sales} venda{stat.sales !== 1 ? 's' : ''}
-                  </p>
-                </div>
-                <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                  <div 
-                    className="bg-orange-500 h-2 rounded-full"
-                    style={{ width: `${(stat.sales / Math.max(...hourlyStats.map(h => h.sales))) * 100}%` }}
-                  ></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Resumo de Entradas e Saídas */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
