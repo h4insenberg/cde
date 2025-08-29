@@ -75,6 +75,21 @@ export function ComandaForm({ products, services, onSave, onCancel }: ComandaFor
     return cartItems.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
   };
 
+  const calculateTotalProfit = () => {
+    return cartItems.reduce((sum, item) => {
+      if (item.type === 'product' && item.productId) {
+        const product = products.find(p => p.id === item.productId);
+        if (product) {
+          return sum + ((item.unitPrice - product.costPrice) * item.quantity);
+        }
+      } else {
+        // For services, consider the full price as profit
+        return sum + (item.unitPrice * item.quantity);
+      }
+      return sum;
+    }, 0);
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -337,9 +352,23 @@ export function ComandaForm({ products, services, onSave, onCancel }: ComandaFor
               {/* Total */}
               {total > 0 && (
                 <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <div className="flex justify-between text-lg font-bold">
-                    <span>Total da Comanda:</span>
-                    <span className="text-blue-600 dark:text-blue-400">{formatCurrency(total)}</span>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600 dark:text-gray-400">Subtotal:</span>
+                      <span className="font-medium">{formatCurrency(total)}</span>
+                    </div>
+                    
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600 dark:text-gray-400">Lucro estimado:</span>
+                      <span className="font-medium text-green-600">+{formatCurrency(calculateTotalProfit())}</span>
+                    </div>
+                    
+                    <hr className="my-2 border-gray-300 dark:border-gray-600" />
+                    
+                    <div className="flex justify-between text-lg font-bold">
+                      <span>Valor líquido:</span>
+                      <span className="text-blue-600 dark:text-blue-400">{formatCurrency(total)}</span>
+                    </div>
                   </div>
                 </div>
               )}
