@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Package, Wrench, ShoppingCart, ClipboardList, Settings } from 'lucide-react';
+import { Home, Package, ShoppingCart, ClipboardList, Settings } from 'lucide-react';
 
 interface BottomNavigationProps {
   activeTab: string;
@@ -8,17 +8,16 @@ interface BottomNavigationProps {
 
 export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
   const tabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'products', label: 'Produtos', icon: Package },
-    { id: 'services', label: 'Serviços', icon: Wrench },
+    { id: 'dashboard', label: 'Início', icon: Home },
+    { id: 'products', label: 'Estoque', icon: Package },
     { id: 'sales', label: 'Vendas', icon: ShoppingCart },
-    { id: 'comanda', label: 'Comandas', icon: ClipboardList },
+    { id: 'comanda', label: 'Comanda', icon: ClipboardList },
     { id: 'settings', label: 'Config', icon: Settings },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#18191c] border-t border-gray-200 dark:border-gray-700 px-4 py-2 z-40">
-      <div className="flex justify-around max-w-md mx-auto">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#131416] border-t border-gray-200 dark:border-gray-700 px-2 py-2 z-50">
+      <div className="flex justify-around max-w-lg mx-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -27,14 +26,14 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex flex-col items-center space-y-1 px-2 py-2 rounded-lg transition-all duration-200 ${
+              className={`flex flex-col items-center px-2 sm:px-3 py-1 rounded-lg transition-colors min-w-0 flex-1 ${
                 isActive
                   ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
               }`}
             >
-              <Icon className={`h-5 w-5 ${isActive ? 'scale-110' : ''} transition-transform duration-200`} />
-              <span className="text-xs font-medium">{tab.label}</span>
+              <Icon className={`h-4 w-4 sm:h-5 sm:w-5 ${isActive ? 'text-blue-600 dark:text-blue-400' : ''}`} />
+              <span className="text-xs mt-1 font-medium truncate">{tab.label}</span>
             </button>
           );
         })}

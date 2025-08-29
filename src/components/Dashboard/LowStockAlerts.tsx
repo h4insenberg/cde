@@ -80,7 +80,7 @@ export function LowStockAlerts({ products }: LowStockAlertsProps) {
       </div>
 
       {/* Tab Content */}
-      <div className="min-h-[240px]">
+      <div className="min-h-[300px]">
         {activeTab === 'alerts' && (
           <div>
             {lowStockProducts.length > 0 ? (
