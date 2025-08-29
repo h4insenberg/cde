@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Menu, Settings, Package, Wrench, TrendingUp, TrendingDown, ShoppingCart, HandCoins, ClipboardList } from 'lucide-react';
+import { Home, Grid3X3, Settings, Package, Wrench, TrendingUp, TrendingDown, ShoppingCart, HandCoins, ClipboardList } from 'lucide-react';
 
 interface BottomNavigationProps {
   activeTab: string;
@@ -11,7 +11,7 @@ export function BottomNavigation({ activeTab, onTabChange, onMenuClick }: Bottom
   // Mobile navigation (3 items only)
   const mobileItems = [
     { id: 'dashboard', label: 'Início', icon: Home },
-    { id: 'menu', label: 'Menu', icon: Menu, onClick: onMenuClick },
+    { id: 'menu', label: 'Menu', icon: Grid3X3, onClick: onMenuClick },
     { id: 'settings', label: 'Config', icon: Settings },
   ];
 
@@ -36,14 +36,17 @@ export function BottomNavigation({ activeTab, onTabChange, onMenuClick }: Bottom
           {mobileItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
+            const isMenuButton = item.id === 'menu';
             
             return (
               <button
                 key={item.id}
                 onClick={item.onClick || (() => onTabChange(item.id))}
                 className={`flex flex-col items-center px-2 py-1 rounded-lg transition-all duration-200 ${
-                  isActive && item.id !== 'menu'
-                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 scale-105'
+                  isMenuButton
+                    ? 'text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 shadow-sm scale-105'
+                    : isActive
+                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50'
                 }`}
               >
