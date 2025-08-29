@@ -1184,6 +1184,80 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'UPDATE_STATS' });
   }, [state.products, state.services, state.sales, state.comandas, state.loans, state.financialEntries, state.financialExits]);
 
+  // Verificar notificações periodicamente
+  useEffect(() => {
+    const checkNotifications = () => {
+      const today = new Date();
+      
+      // Verificar produtos com estoque baixo
+      state.products.forEach(product => {
+        if (product.quantity <= product.minQuantity && product.quantity >= 0) {
+          // Verificar se já existe uma notificação para este produto
+          const existingNotification = state.notifications.find(n => 
+            n.type === 'LOW_STOCK' && 
+            n.message.includes(product.name) && 
+            !n.read
+          );
+
+          if (!existingNotification) {
+            const notification: Notification = {
+              id: generateId(),
+              type: 'LOW_STOCK',
+              title: 'Estoque Baixo',
+              message: `O produto "${product.name}" está com estoque baixo (${product.quantity} ${product.unit})`,
+              read: false,
+              createdAt: new Date(),
+            };
+            dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
+          }
+        }
+      });
+
+      // Verificar empréstimos vencidos
+      state.loans.forEach(loan => {
+        if (loan.status === 'ACTIVE') {
+          const today = new Date();
+          const dueDate = new Date(loan.dueDate);
+          
+          // Comparar apenas as datas (sem horário)
+          today.setHours(0, 0, 0, 0);
+          dueDate.setHours(0, 0, 0, 0);
+          
+          if (today >= dueDate) {
+            // Atualizar status do empréstimo para vencido
+            const overdueLoan = { ...loan, status: 'OVERDUE' as const };
+            dispatch({ type: 'UPDATE_LOAN', payload: overdueLoan });
+
+            // Verificar se já existe uma notificação para este empréstimo
+            const existingNotification = state.notifications.find(n => 
+              n.type === 'OVERDUE_LOAN' && 
+              n.message.includes(loan.customerName) &&
+              !n.read
+            );
+
+            if (!existingNotification) {
+              const notification: Notification = {
+                id: generateId(),
+                type: 'OVERDUE_LOAN',
+                title: 'Empréstimo Vencido',
+                message: `O empréstimo de ${loan.customerName} venceu em ${dueDate.toLocaleDateString()}`,
+                read: false,
+                createdAt: new Date(),
+              };
+              dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
+            }
+          }
+        }
+      });
+    };
+
+    // Verificar imediatamente e depois a cada 5 minutos
+    checkNotifications();
+    const interval = setInterval(checkNotifications, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [state.products, state.loans, state.notifications]);
+
   return (
     <BusinessContext.Provider value={{ state, dispatch }}>
       {children}
