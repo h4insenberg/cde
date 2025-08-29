@@ -83,6 +83,8 @@ export function Dashboard({ onNewSale }: DashboardProps) {
             comandas={comandas}
             stockMovements={stockMovements}
             loans={state.loans}
+            financialEntries={state.financialEntries}
+            financialExits={state.financialExits}
           />
         </div>
         <div className="lg:order-2 order-1">
