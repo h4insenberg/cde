@@ -178,7 +178,7 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
           <Calendar className="h-5 w-5 mr-2 text-blue-500" />
-          Extrato Completo
+          Extrato
         </h3>
       </div>
       
