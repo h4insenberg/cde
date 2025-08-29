@@ -154,7 +154,7 @@ export function ComandaSection() {
       {/* Filter */}
       <div className="bg-white dark:bg-[#18191c] rounded-xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-4">
-          <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1 overflow-x-auto">
+          <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-2 overflow-x-auto">
             <button
               onClick={() => setFilter('all')}
               className={`px-2 sm:px-3 py-1 rounded-md transition-colors text-xs sm:text-sm whitespace-nowrap ${
