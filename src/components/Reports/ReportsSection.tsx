@@ -64,15 +64,14 @@ export function ReportsSection() {
   };
 
   const getTotalExpenses = () => {
-    return exits.reduce((sum, exit) => sum + exit.amount, 0);
-  };
-
-  const getTotalGrossProfit = () => {
-    return getTotalRevenue() - getTotalCosts();
+    // All expenses = costs + financial exits
+    const costs = getTotalCosts();
+    const financialExits = exits.reduce((sum, exit) => sum + exit.amount, 0);
+    return costs + financialExits;
   };
 
   const getTotalNetProfit = () => {
-    return getTotalGrossProfit() - getTotalExpenses();
+    return getTotalRevenue() - getTotalExpenses();
   };
 
   // Produtos mais vendidos
@@ -246,9 +245,7 @@ export function ReportsSection() {
   const loansAnalysis = getLoansAnalysis();
   
   const totalRevenue = getTotalRevenue();
-  const totalCosts = getTotalCosts();
   const totalExpenses = getTotalExpenses();
-  const grossProfit = getTotalGrossProfit();
   const netProfit = getTotalNetProfit();
   const profitMargin = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : '0';
   const averageTicket = (sales.length + comandas.length) > 0 ? (totalRevenue / (sales.length + comandas.length)) : 0;

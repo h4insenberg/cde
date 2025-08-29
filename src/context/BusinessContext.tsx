@@ -948,7 +948,7 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       
       const revenue = salesRevenue + comandasRevenue + loansRevenue + entriesRevenue;
       
-      // Calculate expenses (only financial exits and costs from sales)
+      // Calculate expenses (includes all costs and financial exits)
       const salesCosts = state.sales.reduce((sum, sale) => {
         return sum + sale.items.reduce((itemSum, item) => {
           if (item.type === 'product' && item.productId) {
@@ -975,19 +975,16 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
         .filter(l => l.status === 'PAID')
         .reduce((sum, loan) => sum + loan.amount, 0); // Original loan amount is the cost
       
-      // Only count exits that have reached their date
+      // Financial exits
       const financialExits = state.financialExits
         .filter(exit => new Date(exit.date) <= today)
         .reduce((sum, exit) => sum + exit.amount, 0);
       
-      const totalCosts = salesCosts + comandasCosts + loansCosts;
-      const totalExpenses = financialExits;
+      // Total expenses = all costs + financial exits
+      const totalExpenses = salesCosts + comandasCosts + loansCosts + financialExitsAmount;
       
-      // Calculate gross profit (revenue - costs)
-      const grossProfit = revenue - totalCosts;
-      
-      // Calculate net profit (gross profit - expenses)
-      const netProfit = grossProfit - totalExpenses;
+      // Calculate net profit (revenue - all expenses)
+      const netProfit = revenue - totalExpenses;
       
       // Calculate profit margin based on revenue
       const profitMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
