@@ -25,14 +25,6 @@ export function Dashboard({ onNewSale }: DashboardProps) {
             Bem-vindo ao seu painel de controle
           </p>
         </div>
-        
-        <button
-          onClick={onNewSale}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors flex items-center space-x-2"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Nova Venda</span>
-        </button>
       </div>
 
       {/* Stats Cards */}
