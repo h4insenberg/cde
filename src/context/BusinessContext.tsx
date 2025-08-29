@@ -1306,24 +1306,19 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
           darkMode: isDarkMode,
         };
         
-        console.log('Data loaded from localStorage:', restoredData);
         dispatch({ type: 'LOAD_DATA', payload: restoredData });
       } catch (error) {
         console.error('Error loading saved data:', error);
-        // Load sample data if saved data is corrupted
-        const initialDataWithSamples = {
-          ...initialState,
-          products: sampleProducts,
-          services: sampleServices,
-          sales: sampleSales,
-          comandas: sampleComandas,
-          loans: sampleLoans,
-          darkMode: isDarkMode,
-        };
-        dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
+        // Clear corrupted data and load sample data
+        localStorage.removeItem('businessData');
+        loadSampleData(isDarkMode);
       }
     } else {
-      // Load sample data (will be replaced with real data in the future)
+      // No saved data, load sample data
+      loadSampleData(isDarkMode);
+    }
+    
+    function loadSampleData(isDarkMode: boolean) {
       const initialDataWithSamples = {
         ...initialState,
         products: sampleProducts,
@@ -1333,15 +1328,89 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         loans: sampleLoans,
         darkMode: isDarkMode,
       };
+      console.log('Loading sample data:', initialDataWithSamples);
       dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
     }
   }, []);
 
   // Save data to localStorage whenever state changes
   useEffect(() => {
-    // Only save if state is not the initial empty state
-    if (state.products.length > 0 || state.services.length > 0 || state.sales.length > 0 || 
-        state.comandas.length > 0 || state.loans.length > 0) {
+    // Skip saving during initial load
+    if (state === initialState) {
+      return;
+    }
+    
+    // Save data to localStorage
+    try {
+      const dataToSave = {
+        ...state,
+        // Convert dates to strings for JSON serialization
+        userSettings: state.userSettings,
+        products: state.products.map(p => ({
+          ...p,
+          createdAt: p.createdAt.toISOString(),
+          updatedAt: p.updatedAt.toISOString(),
+        })),
+        services: state.services.map(s => ({
+          ...s,
+          createdAt: s.createdAt.toISOString(),
+          updatedAt: s.updatedAt.toISOString(),
+        })),
+        sales: state.sales.map(s => ({
+          ...s,
+          createdAt: s.createdAt.toISOString(),
+        })),
+        comandas: state.comandas.map(c => ({
+          ...c,
+          createdAt: c.createdAt.toISOString(),
+          paidAt: c.paidAt?.toISOString(),
+          items: c.items.map(item => ({
+            ...item,
+            addedAt: item.addedAt.toISOString(),
+          })),
+        })),
+        loans: state.loans.map(l => ({
+          ...l,
+          createdAt: l.createdAt.toISOString(),
+          dueDate: l.dueDate.toISOString(),
+          paidAt: l.paidAt?.toISOString(),
+        })),
+        stockMovements: state.stockMovements.map(sm => ({
+          ...sm,
+          createdAt: sm.createdAt.toISOString(),
+        })),
+        notifications: state.notifications.map(n => ({
+          ...n,
+          createdAt: n.createdAt.toISOString(),
+        })),
+      };
+      
+      localStorage.setItem('businessData', JSON.stringify(dataToSave));
+      localStorage.setItem('darkMode', JSON.stringify(state.darkMode));
+    } catch (error) {
+      console.error('Error saving data to localStorage:', error);
+    }
+  }, [state]);
+
+  // Update stats separately to avoid infinite loops
+  useEffect(() => {
+    // Skip stats update during initial load
+    if (state === initialState) {
+      return;
+    }
+    dispatch({ type: 'UPDATE_STATS' });
+  }, [state.products, state.services, state.sales, state.comandas, state.loans, state.stockMovements, state.notifications, state.showValues]);
+
+  // Apply dark mode to document
+  useEffect(() => {
+    const htmlElement = document.documentElement;
+    
+    if (state.darkMode) {
+      htmlElement.classList.add('dark');
+    } else {
+      htmlElement.classList.remove('dark');
+    }
+  }, [state.darkMode]);
       try {
         const dataToSave = {
           ...state,
