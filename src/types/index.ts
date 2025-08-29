@@ -93,3 +93,16 @@ export interface ComandaItem {
   total: number;
   addedAt: Date;
 }
+
+export interface Loan {
+  id: string;
+  customerName: string;
+  customerPhone?: string;
+  amount: number;
+  description: string;
+  status: 'ACTIVE' | 'PAID' | 'OVERDUE';
+  dueDate: Date;
+  createdAt: Date;
+  paidAt?: Date;
+  notes?: string;
+}
