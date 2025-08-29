@@ -60,7 +60,7 @@ export function ProductCard({ product, onEdit, onDelete }: ProductCardProps) {
               ? 'text-red-600 dark:text-red-400' 
               : 'text-gray-900 dark:text-white'
           }`}>
-            {product.quantity} {product.unit}
+            {product.quantity} {getUnitLabel(product.unit)}
           </span>
         </div>
 

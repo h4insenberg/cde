@@ -33,10 +33,10 @@ export function calculateProfit(costPrice: number, salePrice: number, quantity: 
 
 export function getUnitLabel(unit: string): string {
   const labels = {
-    kg: 'Quilogramas',
-    litros: 'Litros',
-    metros: 'Metros',
-    unidades: 'Unidades',
+    kg: 'kg',
+    litros: 'L',
+    metros: 'm', 
+    unidades: 'un',
   };
   return labels[unit as keyof typeof labels] || unit;
 }
