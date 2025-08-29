@@ -6,7 +6,6 @@ import { useBusiness } from '../../context/BusinessContext';
 import { useNotifications } from '../../hooks/useNotifications';
 import { generateId } from '../../utils/helpers';
 
-export function SalesSection() {
 interface SalesSectionProps {
   onNewSale: () => void;
 }
