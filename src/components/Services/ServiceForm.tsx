@@ -250,9 +250,7 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
                 className={`w-full pl-10 pr-3 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                   errors.price ? 'border-red-500' : 'border-gray-300'
                 }`}
-                placeholder="0
-  )
-},00"
+                placeholder="0,00"
                 inputMode="numeric"
               />
             </div>
