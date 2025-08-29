@@ -27,8 +27,8 @@ export function MenuModal({ isOpen, onClose, activeTab, onTabChange }: MenuModal
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center z-50 md:hidden p-0">
-      <div className="bg-white dark:bg-[#18191c] rounded-t-3xl w-full max-h-[85vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center z-50 md:hidden">
+      <div className="bg-white dark:bg-[#18191c] rounded-t-3xl w-full max-h-[80vh] overflow-hidden animate-slide-up">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Menu</h2>
           <button
@@ -39,7 +39,7 @@ export function MenuModal({ isOpen, onClose, activeTab, onTabChange }: MenuModal
           </button>
         </div>
 
-        <div className="p-4 overflow-y-auto max-h-[calc(85vh-88px)]">
+        <div className="p-4 overflow-y-auto max-h-[calc(80vh-80px)]">
           <div className="grid grid-cols-2 gap-3">
             {menuItems.map((item) => {
               const Icon = item.icon;
@@ -51,7 +51,7 @@ export function MenuModal({ isOpen, onClose, activeTab, onTabChange }: MenuModal
                   onClick={() => handleItemClick(item.id)}
                   className={`p-4 rounded-2xl border-2 transition-all duration-200 text-left ${
                     isActive
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg scale-105'
                       : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
                   }`}
                 >
@@ -66,7 +66,7 @@ export function MenuModal({ isOpen, onClose, activeTab, onTabChange }: MenuModal
                     <div>
                       <p className={`font-semibold text-sm ${
                         isActive 
-                          ? 'text-blue-700 dark:text-blue-400' 
+                          ? 'text-blue-600 dark:text-blue-400' 
                           : 'text-gray-900 dark:text-white'
                       }`}>
                         {item.label}
