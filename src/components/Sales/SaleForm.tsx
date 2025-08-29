@@ -292,7 +292,39 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
                           </div>
                         </button>
                       ))}
-                      
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'services' && (
+                  <div>
+                    <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+                      {services.map(service => (
+                        <button
+                          key={service.id}
+                          onClick={() => addServiceToCart(service)}
+                          className="text-left p-2 sm:p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
+                        >
+                          <div className="flex justify-between items-start gap-2">
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">{service.name}</p>
+                              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                Serviço
+                              </p>
+                            </div>
+                            <p className="font-semibold text-green-600 dark:text-green-400 text-sm sm:text-base flex-shrink-0">
+                              {formatCurrency(service.price)}
+                            </p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-6">
               {/* Cart */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
@@ -353,59 +385,6 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
                     </p>
                   )}
                 </div>
-              </div>
-
-              {/* Payment Method */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Forma de Pagamento</h3>
-                
-                <select
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
-                  className="w-full px-3 py-3 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white font-medium"
-                >
-                  <option value="CASH">Dinheiro (em espécie)</option>
-                  <option value="PIX">PIX</option>
-                  <option value="CARD">Cartão</option>
-                  <option value="CREDIT">Fiado</option>
-                </select>
-
-                {paymentMethod === 'CARD' && (
-                  <div className="mt-3 space-y-3">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Taxa da Maquininha (%)
-                    </label>
-                    <input
-                      type="number"
-                      value={cardFeeRate}
-                      onChange={(e) => setCardFeeRate(parseFloat(e.target.value) || 0)}
-                      min="0"
-                      max="20"
-                      step="0.1"
-                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                        errors.cardFeeRate ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      placeholder="3.5"
-                    />
-                    {errors.cardFeeRate && (
-                      <p className="text-red-500 text-sm mt-1">{errors.cardFeeRate}</p>
-                    )}
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Quem paga a taxa?
-                      </label>
-                      <select
-                        value={cardFeePayer}
-                        onChange={(e) => setCardFeePayer(e.target.value as 'seller' | 'customer')}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                      >
-                        <option value="seller">Vendedor (desconta do valor)</option>
-                        <option value="customer">Cliente (adiciona ao valor)</option>
-                      </select>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Summary */}
