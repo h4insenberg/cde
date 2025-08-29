@@ -947,15 +947,32 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       
       const revenue = salesRevenue + comandasRevenue + loansRevenue + entriesRevenue;
       
-      const salesExpenses = state.sales.reduce((sum, sale) => sum + (sale.total - sale.profit), 0);
+      // Calculate profit correctly
+      const salesProfit = state.sales.reduce((sum, sale) => sum + sale.profit, 0);
+      const comandasProfit = state.comandas
+        .filter(c => c.status === 'PAID')
+        .reduce((sum, comanda) => {
+          return sum + comanda.items.reduce((itemSum, item) => {
+            if (item.type === 'product' && item.productId) {
+              const product = state.products.find(p => p.id === item.productId);
+              return itemSum + (product ? (item.unitPrice - product.costPrice) * item.quantity : item.total);
+            }
+            return itemSum + item.total;
+          }, 0);
+        }, 0);
+      const loansProfit = state.loans
+        .filter(l => l.status === 'PAID')
+        .reduce((sum, loan) => sum + (loan.totalAmount - loan.amount), 0);
+      const entriesProfit = entriesRevenue; // Entries are pure profit
       
       // Only count exits that have reached their date
       const financialExits = state.financialExits
         .filter(exit => new Date(exit.date) <= today)
         .reduce((sum, exit) => sum + exit.amount, 0);
       
-      const expenses = salesExpenses + financialExits;
-      const netProfit = revenue - expenses;
+      const totalProfit = salesProfit + comandasProfit + loansProfit + entriesProfit;
+      const expenses = financialExits;
+      const netProfit = totalProfit - expenses;
       const profitMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
       const lowStockAlerts = state.products.filter(p => p.quantity <= p.minQuantity).length;
       
