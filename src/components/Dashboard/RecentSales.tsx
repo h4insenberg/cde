@@ -118,10 +118,6 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
 
   const allMovements = movements
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 12);
-
-  const entries = allMovements.filter(m => m.category === 'entry').slice(0, 6);
-  const exits = allMovements.filter(m => m.category === 'exit').slice(0, 6);
 
   const getMovementIcon = (type: MovementType) => {
     switch (type) {
@@ -182,12 +178,11 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
           <Calendar className="h-5 w-5 mr-2 text-blue-500" />
-          Extrato
+          Extrato Completo
         </h3>
       </div>
       
-      <div className="space-y-6">
-        <div className="space-y-2">
+      <div className="space-y-2 max-h-96 overflow-y-auto">
           {allMovements.map((movement) => {
             const isEntry = movement.category === 'entry';
             const bgColor = isEntry 
@@ -234,7 +229,6 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
               </div>
             );
           })}
-        </div>
       </div>
     </div>
   );
