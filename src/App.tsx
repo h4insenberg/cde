@@ -11,6 +11,7 @@ import { ExitsSection } from './components/Exits/ExitsSection';
 import { SalesSection } from './components/Sales/SalesSection';
 import { ComandaSection } from './components/Comanda/ComandaSection';
 import { LoansSection } from './components/Loans/LoansSection';
+import { ReportsSection } from './components/Reports/ReportsSection';
 import { NotificationModal } from './components/Notifications/NotificationModal';
 import { SaleForm } from './components/Sales/SaleForm';
 import { MenuModal } from './components/Layout/MenuModal';
