@@ -13,3 +13,7 @@
 .animate-scale-in {
   animation: scale-in 0.2s ease-out;
 }
+
+.space-y-6 > * + * {
+  margin-top: calc(-0.5rem * calc(1 - var(--tw-space-y-reverse)));
+}
