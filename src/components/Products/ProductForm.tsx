@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
 import { Product } from '../../types';
-import { generateId } from '../../utils/helpers';
+import { generateId, formatCurrency } from '../../utils/helpers';
 
 interface ProductFormProps {
   product?: Product | null;
@@ -13,12 +13,17 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    unit: 'unidades',
-    quantity: '',
-    costPrice: '',
-    salePrice: '',
-    minQuantity: '',
+    unit: 'unidades' as Product['unit'],
+    quantity: 0,
+    costPrice: 0,
+    salePrice: 0,
+    minQuantity: 5,
   });
+
+  const [displayCostPrice, setDisplayCostPrice] = useState('0,00');
+  const [displaySalePrice, setDisplaySalePrice] = useState('0,00');
+  const [displayQuantity, setDisplayQuantity] = useState('0,00');
+  const [displayMinQuantity, setDisplayMinQuantity] = useState('5,00');
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -26,106 +31,339 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     if (product) {
       setFormData({
         name: product.name,
-        description: product.description || '',
+        description: product.description,
         unit: product.unit,
-        quantity: product.quantity.toString(),
-        costPrice: product.costPrice.toFixed(2).replace('.', ','),
-        salePrice: product.salePrice.toFixed(2).replace('.', ','),
-        minQuantity: product.minQuantity.toString(),
+        quantity: product.quantity,
+        costPrice: product.costPrice,
+        salePrice: product.salePrice,
+        minQuantity: product.minQuantity,
       });
+      setDisplayCostPrice(formatCurrencyInput(product.costPrice));
+      setDisplaySalePrice(formatCurrencyInput(product.salePrice));
+      // Format based on unit type
+      if (product.unit === 'unidades') {
+        setDisplayQuantity(Math.floor(product.quantity).toString());
+        setDisplayMinQuantity(Math.floor(product.minQuantity).toString());
+      } else {
+        setDisplayQuantity(formatFloatInput(product.quantity));
+        setDisplayMinQuantity(formatFloatInput(product.minQuantity));
+      }
+    } else {
+      setDisplayCostPrice('0,00');
+      setDisplaySalePrice('0,00');
+      setDisplayQuantity('0');
+      setDisplayMinQuantity('5');
     }
   }, [product]);
 
-  const formatCurrency = (value: string): string => {
-    // Remove tudo que não é dígito
-    const numbers = value.replace(/\D/g, '');
+  const formatCurrencyInput = (value: number): string => {
+    if (value === 0) return '0,00';
     
-    if (!numbers) return '';
+    const cents = Math.round(value * 100);
+    const reais = Math.floor(cents / 100);
+    const centavos = cents % 100;
     
-    // Converte para número e divide por 100 para ter os centavos
-    const amount = parseInt(numbers) / 100;
-    
-    // Formata como moeda brasileira
-    return amount.toLocaleString('pt-BR', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
+    const reaisFormatted = reais.toLocaleString('pt-BR');
+    return `${reaisFormatted},${centavos.toString().padStart(2, '0')}`;
   };
 
-  const formatQuantity = (value: string, unit: string): string => {
-    if (unit === 'unidades') {
-      // Para unidades, apenas números inteiros
-      return value.replace(/\D/g, '');
-    } else {
-      // Para outras unidades, permite decimais
-      const numbers = value.replace(/[^\d,]/g, '');
-      const parts = numbers.split(',');
-      if (parts.length > 2) {
-        return parts[0] + ',' + parts[1];
+  const parseCurrencyInput = (value: string): number => {
+    const numericValue = value.replace(/[^\d]/g, '');
+    if (!numericValue) return 0;
+    return parseInt(numericValue) / 100;
+  };
+
+  const formatFloatInput = (value: number): string => {
+    if (value === 0) return '0,00';
+    
+    // For units, format as integer
+    if (formData.unit === 'unidades') {
+      return Math.floor(value).toString();
+    }
+    
+    const cents = Math.round(value * 100);
+    const integerPart = Math.floor(cents / 100);
+    const decimalPart = cents % 100;
+    
+    const integerFormatted = integerPart.toLocaleString('pt-BR');
+    return `${integerFormatted},${decimalPart.toString().padStart(2, '0')}`;
+  };
+
+  const parseFloatInput = (value: string): number => {
+    // For units, parse as integer
+    if (formData.unit === 'unidades') {
+      const numericValue = value.replace(/[^\d]/g, '');
+      return parseInt(numericValue) || 0;
+    }
+    
+    const numericValue = value.replace(/[^\d]/g, '');
+    if (!numericValue) return 0;
+    return parseInt(numericValue) / 100;
+  };
+
+  const handleFloatChange = (value: string, field: 'quantity' | 'minQuantity') => {
+    // For units, handle as integer
+    if (formData.unit === 'unidades') {
+      const numericValue = value.replace(/[^\d]/g, '');
+      const intValue = parseInt(numericValue) || 0;
+      
+      if (field === 'quantity') {
+        setDisplayQuantity(intValue.toString());
+        setFormData(prev => ({ ...prev, quantity: intValue }));
+      } else {
+        setDisplayMinQuantity(intValue.toString());
+        setFormData(prev => ({ ...prev, minQuantity: intValue }));
       }
-      return numbers;
+      
+      // Clear error when user starts typing
+      if (errors[field]) {
+        setErrors(prev => ({ ...prev, [field]: '' }));
+      }
+      return;
     }
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    let formattedValue = value;
-
-    if (field === 'costPrice' || field === 'salePrice') {
-      formattedValue = formatCurrency(value);
-    } else if (field === 'quantity' || field === 'minQuantity') {
-      formattedValue = formatQuantity(value, formData.unit);
-    }
-
-    setFormData(prev => ({ ...prev, [field]: formattedValue }));
     
-    // Limpar erro do campo quando o usuário começar a digitar
+    // Pega o valor atual sem formatação
+    const currentValue = field === 'quantity' ? displayQuantity : displayMinQuantity;
+    const currentNumeric = currentValue.replace(/[^\d]/g, '');
+    
+    // Remove tudo que não é dígito do novo valor
+    const inputNumeric = value.replace(/[^\d]/g, '');
+    
+    // Se o input tem mais dígitos que o atual, adiciona no final
+    // Se tem menos, remove do final
+    let finalNumeric = '';
+    if (inputNumeric.length > currentNumeric.length) {
+      // Adiciona apenas o último dígito digitado
+      const newDigit = inputNumeric[inputNumeric.length - 1];
+      finalNumeric = currentNumeric + newDigit;
+    } else if (inputNumeric.length < currentNumeric.length) {
+      // Remove do final
+      finalNumeric = currentNumeric.slice(0, -1);
+    } else {
+      finalNumeric = inputNumeric;
+    }
+    
+    // Se vazio, define como 0
+    if (!finalNumeric) {
+      if (field === 'quantity') {
+        setDisplayQuantity('0,00');
+        setFormData(prev => ({ ...prev, quantity: 0 }));
+      } else {
+        setDisplayMinQuantity('0,00');
+        setFormData(prev => ({ ...prev, minQuantity: 0 }));
+      }
+      return;
+    }
+    
+    // Limita a 10 dígitos (máximo 99.999.999,99)
+    const limitedValue = finalNumeric.slice(0, 10);
+    const numericValue = parseInt(limitedValue, 10) / 100;
+    
+    // Formata o valor
+    const formattedValue = formatFloatInput(numericValue);
+    
+    // Atualiza o display
+    if (field === 'quantity') {
+      setDisplayQuantity(formattedValue);
+      setFormData(prev => ({ ...prev, quantity: numericValue }));
+    } else {
+      setDisplayMinQuantity(formattedValue);
+      setFormData(prev => ({ ...prev, minQuantity: numericValue }));
+    }
+
+    // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
 
-  const parseNumber = (value: string): number => {
-    if (!value) return 0;
-    return parseFloat(value.replace(',', '.'));
+  // Update display format when unit changes
+  useEffect(() => {
+    if (formData.unit === 'unidades') {
+      // Convert to integer format
+      setDisplayQuantity(Math.floor(formData.quantity).toString());
+      setDisplayMinQuantity(Math.floor(formData.minQuantity).toString());
+      setFormData(prev => ({
+        ...prev,
+        quantity: Math.floor(prev.quantity),
+        minQuantity: Math.floor(prev.minQuantity)
+      }));
+    } else {
+      // Convert to float format
+      setDisplayQuantity(formatFloatInput(formData.quantity));
+      setDisplayMinQuantity(formatFloatInput(formData.minQuantity));
+    }
+  }, [formData.unit]);
+
+  const handleFloatKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Para teclas de navegação, força o cursor para o final
+    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+      e.preventDefault();
+      setTimeout(() => {
+        const target = e.target as HTMLInputElement;
+        target.setSelectionRange(target.value.length, target.value.length);
+      }, 0);
+      return;
+    }
+    
+    // Permite apenas números, vírgula, backspace, delete, tab, escape, enter
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter'];
+    const isNumber = /^[0-9]$/.test(e.key);
+    
+    if (!isNumber && !allowedKeys.includes(e.key)) {
+      e.preventDefault();
+    }
   };
 
-  const validateForm = (): boolean => {
+  const handleFloatInput = (e: React.FormEvent<HTMLInputElement>) => {
+    // Move o cursor para o final sempre que houver input
+    setTimeout(() => {
+      const target = e.target as HTMLInputElement;
+      target.setSelectionRange(target.value.length, target.value.length);
+    }, 0);
+  };
+
+  const handleFloatClick = (e: React.MouseEvent<HTMLInputElement>) => {
+    // Move o cursor para o final sempre que clicar
+    setTimeout(() => {
+      const target = e.target as HTMLInputElement;
+      target.setSelectionRange(target.value.length, target.value.length);
+    }, 0);
+  };
+
+  const handleFloatFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Move o cursor para o final sempre
+    setTimeout(() => {
+      e.target.setSelectionRange(e.target.value.length, e.target.value.length);
+    }, 0);
+  };
+
+  const handleCurrencyChange = (value: string, field: 'costPrice' | 'salePrice') => {
+    // Pega o valor atual sem formatação
+    const currentValue = field === 'costPrice' ? displayCostPrice : displaySalePrice;
+    const currentNumeric = currentValue.replace(/[^\d]/g, '');
+    
+    // Remove tudo que não é dígito do novo valor
+    const inputNumeric = value.replace(/[^\d]/g, '');
+    
+    // Se o input tem mais dígitos que o atual, adiciona no final
+    // Se tem menos, remove do final
+    let finalNumeric = '';
+    if (inputNumeric.length > currentNumeric.length) {
+      // Adiciona apenas o último dígito digitado
+      const newDigit = inputNumeric[inputNumeric.length - 1];
+      finalNumeric = currentNumeric + newDigit;
+    } else if (inputNumeric.length < currentNumeric.length) {
+      // Remove do final
+      finalNumeric = currentNumeric.slice(0, -1);
+    } else {
+      finalNumeric = inputNumeric;
+    }
+    
+    // Se vazio, define como 0
+    if (!finalNumeric) {
+      if (field === 'costPrice') {
+        setDisplayCostPrice('0,00');
+      } else {
+        setDisplaySalePrice('0,00');
+      }
+      setFormData(prev => ({ ...prev, [field]: 0 }));
+      return;
+    }
+    
+    // Limita a 10 dígitos (máximo R$ 99.999.999,99)
+    const limitedValue = finalNumeric.slice(0, 10);
+    const numericPrice = parseInt(limitedValue, 10) / 100;
+    
+    // Formata o valor
+    const formattedValue = formatCurrencyInput(numericPrice);
+    
+    // Atualiza o display
+    if (field === 'costPrice') {
+      setDisplayCostPrice(formattedValue);
+    } else {
+      setDisplaySalePrice(formattedValue);
+    }
+    
+    // Atualiza o valor numérico no formData
+    setFormData(prev => ({
+      ...prev,
+      [field]: numericPrice
+    }));
+
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const handleCurrencyKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, field: 'costPrice' | 'salePrice') => {
+    // Para teclas de navegação, força o cursor para o final
+    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+      e.preventDefault();
+      setTimeout(() => {
+        const target = e.target as HTMLInputElement;
+        target.setSelectionRange(target.value.length, target.value.length);
+      }, 0);
+      return;
+    }
+    
+    // Permite apenas números, backspace, delete, tab, escape, enter
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter'];
+    const isNumber = /^[0-9]$/.test(e.key);
+    
+    if (!isNumber && !allowedKeys.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  const handleCurrencyInput = (e: React.FormEvent<HTMLInputElement>, field: 'costPrice' | 'salePrice') => {
+    // Move o cursor para o final sempre que houver input
+    setTimeout(() => {
+      const target = e.target as HTMLInputElement;
+      target.setSelectionRange(target.value.length, target.value.length);
+    }, 0);
+  };
+
+  const handleCurrencyClick = (e: React.MouseEvent<HTMLInputElement>) => {
+    // Move o cursor para o final sempre que clicar
+    setTimeout(() => {
+      const target = e.target as HTMLInputElement;
+      target.setSelectionRange(target.value.length, target.value.length);
+    }, 0);
+  };
+
+  const handleCurrencyFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Move o cursor para o final sempre
+    setTimeout(() => {
+      e.target.setSelectionRange(e.target.value.length, e.target.value.length);
+    }, 0);
+  };
+  const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
       newErrors.name = 'Nome é obrigatório';
     }
 
-    if (!formData.quantity) {
-      newErrors.quantity = 'Quantidade é obrigatória';
-    } else if (parseNumber(formData.quantity) < 0) {
+    if (formData.quantity < 0) {
       newErrors.quantity = 'Quantidade deve ser positiva';
     }
 
-    if (!formData.costPrice) {
-      newErrors.costPrice = 'Preço de custo é obrigatório';
-    } else if (parseNumber(formData.costPrice) <= 0) {
-      newErrors.costPrice = 'Preço de custo deve ser maior que zero';
+    if (formData.costPrice < 0) {
+      newErrors.costPrice = 'Preço de custo deve ser positivo';
     }
 
-    if (!formData.salePrice) {
-      newErrors.salePrice = 'Preço de venda é obrigatório';
-    } else if (parseNumber(formData.salePrice) <= 0) {
-      newErrors.salePrice = 'Preço de venda deve ser maior que zero';
+    if (formData.salePrice < 0) {
+      newErrors.salePrice = 'Preço de venda deve ser positivo';
     }
 
-    if (!formData.minQuantity) {
-      newErrors.minQuantity = 'Estoque mínimo é obrigatório';
-    } else if (parseNumber(formData.minQuantity) < 0) {
+    if (formData.salePrice <= formData.costPrice) {
+      newErrors.salePrice = 'Preço de venda deve ser maior que o custo';
+    }
+
+    if (formData.minQuantity < 0) {
       newErrors.minQuantity = 'Estoque mínimo deve ser positivo';
-    }
-
-    // Validar se preço de venda é maior que preço de custo
-    const costPrice = parseNumber(formData.costPrice);
-    const salePrice = parseNumber(formData.salePrice);
-    
-    if (costPrice > 0 && salePrice > 0 && salePrice <= costPrice) {
-      newErrors.salePrice = 'Preço de venda deve ser maior que o preço de custo';
     }
 
     setErrors(newErrors);
@@ -141,13 +379,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
 
     const productData: Product = {
       id: product?.id || generateId(),
-      name: formData.name.trim(),
-      description: formData.description.trim(),
-      unit: formData.unit,
-      quantity: parseNumber(formData.quantity),
-      costPrice: parseNumber(formData.costPrice),
-      salePrice: parseNumber(formData.salePrice),
-      minQuantity: parseNumber(formData.minQuantity),
+      ...formData,
       createdAt: product?.createdAt || new Date(),
       updatedAt: new Date(),
     };
@@ -155,134 +387,149 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     onSave(productData);
   };
 
-  const unitOptions = [
-    { value: 'unidades', label: 'Unidades' },
-    { value: 'kg', label: 'Quilogramas (kg)' },
-    { value: 'litros', label: 'Litros' },
-    { value: 'metros', label: 'Metros' },
-    { value: 'pacotes', label: 'Pacotes' },
-    { value: 'caixas', label: 'Caixas' },
-  ];
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: name.includes('Price') || name.includes('quantity') || name.includes('Quantity') 
+        ? parseFloat(value) || 0 
+        : value
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const getUnitAbbreviation = (unit: Product['unit']): string => {
+    const abbreviations = {
+      kg: 'kg',
+      litros: 'L',
+      metros: 'm',
+      unidades: 'un',
+    };
+    return abbreviations[unit] || unit;
+  };
 
   return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
-    >
-      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pb-24">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-lg max-h-full overflow-hidden flex flex-col">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             {product ? 'Editar Produto' : 'Novo Produto'}
           </h2>
           <button
             onClick={onCancel}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
           >
-            <X className="h-5 w-5 sm:h-6 sm:w-6" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
-          {/* Nome */}
+        <div className="overflow-y-auto flex-1">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Nome do Produto *
             </label>
             <input
               type="text"
+              name="name"
               value={formData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm sm:text-base ${
-                errors.name 
-                  ? 'border-red-500 dark:border-red-500' 
-                  : 'border-gray-300 dark:border-gray-600'
+              onChange={handleChange}
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                errors.name ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="Digite o nome do produto"
+              placeholder="Ex: Açúcar cristal"
             />
             {errors.name && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p>
+              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
             )}
           </div>
 
-          {/* Descrição */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Descrição
             </label>
             <textarea
+              name="description"
               value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
+              onChange={handleChange}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm sm:text-base"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               placeholder="Descrição opcional do produto"
             />
           </div>
 
-          {/* Unidade */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Unidade de Medida *
-            </label>
-            <select
-              value={formData.unit}
-              onChange={(e) => handleInputChange('unit', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm sm:text-base"
-            >
-              {unitOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Unidade de Medida *
+              </label>
+              <select
+                name="unit"
+                value={formData.unit}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              >
+                <option value="unidades">Unidades (un)</option>
+                <option value="kg">Quilogramas (kg)</option>
+                <option value="litros">Litros (L)</option>
+                <option value="metros">Metros (m)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Quantidade Atual *
+              </label>
+              <input
+                type="text"
+                value={displayQuantity}
+                onChange={(e) => handleFloatChange(e.target.value, 'quantity')}
+                onInput={handleFloatInput}
+                onKeyDown={handleFloatKeyDown}
+                onClick={handleFloatClick}
+                onFocus={handleFloatFocus}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                  errors.quantity ? 'border-red-500' : 'border-gray-300'
+                }`}
+                placeholder="0,00"
+                inputMode="decimal"
+              />
+              {errors.quantity && (
+                <p className="text-red-500 text-sm mt-1">{errors.quantity}</p>
+              )}
+            </div>
           </div>
 
-          {/* Quantidade */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Quantidade Atual *
-            </label>
-            <input
-              type="text"
-              value={formData.quantity}
-              onChange={(e) => handleInputChange('quantity', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm sm:text-base ${
-                errors.quantity 
-                  ? 'border-red-500 dark:border-red-500' 
-                  : 'border-gray-300 dark:border-gray-600'
-              }`}
-              placeholder={formData.unit === 'unidades' ? '0' : '0,00'}
-            />
-            {errors.quantity && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.quantity}</p>
-            )}
-          </div>
-
-          {/* Preços */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Preço de Custo *
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 text-sm">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
                   R$
-                </span>
+                </div>
                 <input
                   type="text"
-                  value={formData.costPrice}
-                  onChange={(e) => handleInputChange('costPrice', e.target.value)}
-                  className={`w-full pl-8 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm sm:text-base ${
-                    errors.costPrice 
-                      ? 'border-red-500 dark:border-red-500' 
-                      : 'border-gray-300 dark:border-gray-600'
+                  value={displayCostPrice}
+                  onChange={(e) => handleCurrencyChange(e.target.value, 'costPrice')}
+                  onInput={(e) => handleCurrencyInput(e, 'costPrice')}
+                  onKeyDown={(e) => handleCurrencyKeyDown(e, 'costPrice')}
+                  onClick={handleCurrencyClick}
+                  onFocus={handleCurrencyFocus}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                    errors.costPrice ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="0,00"
+                  inputMode="numeric"
                 />
               </div>
               {errors.costPrice && (
-                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.costPrice}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.costPrice}</p>
               )}
             </div>
 
@@ -291,66 +538,87 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                 Preço de Venda *
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 text-sm">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
                   R$
-                </span>
+                </div>
                 <input
                   type="text"
-                  value={formData.salePrice}
-                  onChange={(e) => handleInputChange('salePrice', e.target.value)}
-                  className={`w-full pl-8 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm sm:text-base ${
-                    errors.salePrice 
-                      ? 'border-red-500 dark:border-red-500' 
-                      : 'border-gray-300 dark:border-gray-600'
+                  value={displaySalePrice}
+                  onChange={(e) => handleCurrencyChange(e.target.value, 'salePrice')}
+                  onInput={(e) => handleCurrencyInput(e, 'salePrice')}
+                  onKeyDown={(e) => handleCurrencyKeyDown(e, 'salePrice')}
+                  onClick={handleCurrencyClick}
+                  onFocus={handleCurrencyFocus}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                    errors.salePrice ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="0,00"
+                  inputMode="numeric"
                 />
               </div>
               {errors.salePrice && (
-                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.salePrice}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.salePrice}</p>
               )}
             </div>
           </div>
 
-          {/* Estoque Mínimo */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Estoque Mínimo * ({formData.unit})
+              Estoque Mínimo *
             </label>
-            <input
-              type="text"
-              value={formData.minQuantity}
-              onChange={(e) => handleInputChange('minQuantity', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm sm:text-base ${
-                errors.minQuantity 
-                  ? 'border-red-500 dark:border-red-500' 
-                  : 'border-gray-300 dark:border-gray-600'
-              }`}
-              placeholder={formData.unit === 'unidades' ? '0' : '0,00'}
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={displayMinQuantity}
+                onChange={(e) => handleFloatChange(e.target.value, 'minQuantity')}
+                onInput={handleFloatInput}
+                onKeyDown={handleFloatKeyDown}
+                onClick={handleFloatClick}
+                onFocus={(e) => {
+                  handleFloatFocus(e);
+                  const isUnits = formData.unit === 'unidades';
+                  if ((isUnits && e.target.value === '0') || (!isUnits && e.target.value === '0,00')) {
+                    setDisplayMinQuantity('');
+                    setFormData(prev => ({ ...prev, minQuantity: 0 }));
+                  }
+                }}
+                className={`w-full pr-12 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                  errors.minQuantity ? 'border-red-500' : 'border-gray-300'
+                }`}
+                placeholder={formData.unit === 'unidades' ? '0' : '0,00'}
+                inputMode="decimal"
+              />
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
+                {getUnitAbbreviation(formData.unit)}
+              </div>
+            </div>
             {errors.minQuantity && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.minQuantity}</p>
+              <p className="text-red-500 text-sm mt-1">{errors.minQuantity}</p>
             )}
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Você será notificado quando o estoque atingir este nível
+            </p>
           </div>
 
-          {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm sm:text-base"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base"
-            >
-              <Save className="h-4 w-4" />
-              <span>Salvar</span>
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
+        
+        <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#18191c]">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+          >
+            <Save className="h-4 w-4" />
+            <span>Salvar</span>
+          </button>
+        </div>
       </div>
     </div>
   );
