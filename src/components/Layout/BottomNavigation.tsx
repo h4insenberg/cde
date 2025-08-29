@@ -8,14 +8,14 @@ interface BottomNavigationProps {
 
 export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
   const tabs = [
-    { id: 'dashboard', label: 'Início', icon: Home },
-    { id: 'products', label: 'Produtos', icon: Package },
-    { id: 'services', label: 'Serviços', icon: Wrench },
     { id: 'entries', label: 'Entradas', icon: TrendingUp },
     { id: 'exits', label: 'Saídas', icon: TrendingDown },
+    { id: 'products', label: 'Produtos', icon: Package },
+    { id: 'services', label: 'Serviços', icon: Wrench },
     { id: 'sales', label: 'Vendas', icon: ShoppingCart },
-    { id: 'comanda', label: 'Comanda', icon: ClipboardList },
     { id: 'loans', label: 'Empréstimos', icon: HandCoins },
+    { id: 'comanda', label: 'Comandas', icon: ClipboardList },
+    { id: 'dashboard', label: 'Início', icon: Home },
     { id: 'settings', label: 'Config', icon: Settings },
   ];
 
