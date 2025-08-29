@@ -29,43 +29,6 @@ export function useNotifications() {
     dispatch({ type: 'CLEAR_ALL_NOTIFICATIONS' });
   }, [dispatch]);
 
-  const checkAndUpdateNotifications = useCallback(() => {
-    // Limpa todas as notificações existentes
-    dispatch({ type: 'CLEAR_ALL_NOTIFICATIONS' });
-
-    // Verifica produtos com estoque baixo
-    state.products.forEach(product => {
-      if (product.quantity <= product.minQuantity) {
-        addNotification(
-          'LOW_STOCK', 
-          `Estoque baixo: ${product.name} (${product.quantity} ${product.unit})`
-        );
-      }
-    });
-
-    // Verifica empréstimos vencidos
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-    
-    state.loans.forEach(loan => {
-      if (loan.status === 'ACTIVE') {
-        const dueDate = new Date(loan.dueDate);
-        dueDate.setHours(23, 59, 59, 999);
-        
-        if (dueDate < today) {
-          // Atualiza status do empréstimo para vencido
-          const overdueLoan = { ...loan, status: 'OVERDUE' as const };
-          dispatch({ type: 'UPDATE_LOAN', payload: overdueLoan });
-          
-          // Adiciona notificação
-          addNotification(
-            'ERROR', 
-            `Empréstimo vencido: ${loan.customerName} - R$ ${loan.totalAmount.toFixed(2).replace('.', ',')}`
-          );
-        }
-      }
-    });
-  }, [state.products, state.loans, dispatch, addNotification]);
 
   return {
     notifications: state.notifications,
@@ -74,6 +37,5 @@ export function useNotifications() {
     markAsRead,
     markAllAsRead,
     clearAll,
-    checkAndUpdateNotifications,
   };
 }
