@@ -3,7 +3,6 @@ import { Database } from 'lucide-react';
 import { BusinessProvider } from './context/BusinessContext';
 import { Header } from './components/Layout/Header';
 import { BottomNavigation } from './components/Layout/BottomNavigation';
-import { MenuModal } from './components/Layout/MenuModal';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { ProductsSection } from './components/Products/ProductsSection';
 import { ServicesSection } from './components/Services/ServicesSection';
@@ -20,7 +19,6 @@ function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showQuickSale, setShowQuickSale] = useState(false);
-  const [showMenuModal, setShowMenuModal] = useState(false);
   const { state, dispatch } = useBusiness();
 
   const getPageTitle = () => {
@@ -212,33 +210,19 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-[#131416] dark:to-[#0f1011]">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-[#0f1011] dark:to-[#131416]">
       <Header
         title={getPageTitle()}
         onNotificationsClick={() => setShowNotifications(true)}
       />
       
-      <main className="px-4 sm:px-6 py-4 sm:py-6 max-w-7xl mx-auto">
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-6 pb-20">
         {renderContent()}
       </main>
 
       <BottomNavigation
         activeTab={activeTab}
-        onTabChange={(tab) => {
-          setActiveTab(tab);
-          setShowMenuModal(false);
-        }}
-        onMenuClick={() => setShowMenuModal(true)}
-      />
-
-      <MenuModal
-        isOpen={showMenuModal}
-        activeTab={activeTab}
-        onTabChange={(tab) => {
-          setActiveTab(tab);
-          setShowMenuModal(false);
-        }}
-        onClose={() => setShowMenuModal(false)}
+        onTabChange={setActiveTab}
       />
 
       <NotificationModal

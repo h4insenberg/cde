@@ -14,29 +14,29 @@ export function Dashboard({ onNewSale }: DashboardProps) {
   const { dashboardStats, sales, products, comandas, stockMovements, userSettings } = state;
 
   return (
-    <div className="space-y-4 sm:space-y-6 pb-24">
+    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
       {/* Header with greeting and quick action */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-3 sm:space-y-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
             Olá, {userSettings.name}! 👋
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg">
+          <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-base">
             Bem-vindo ao seu painel de controle
           </p>
         </div>
         
         <button
           onClick={onNewSale}
-          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-2xl shadow-lg transition-all duration-200 flex items-center space-x-2 hover:scale-105 hover:shadow-xl w-full sm:w-auto justify-center"
+          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2 transform hover:scale-105"
         >
-          <Plus className="h-5 w-5" />
-          <span className="font-semibold">Nova Venda</span>
+          <Plus className="h-4 w-4" />
+          <span>Nova Venda</span>
         </button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
         <StatsCard
           title="Receitas"
           value={dashboardStats.revenue}
