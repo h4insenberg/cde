@@ -25,6 +25,7 @@ export function LoansSection() {
   const filteredLoans = getFilteredLoans();
   const activeLoans = state.loans.filter(l => l.status === 'ACTIVE');
   const totalActiveAmount = activeLoans.reduce((sum, loan) => sum + loan.amount, 0);
+  const totalToReceive = activeLoans.reduce((sum, loan) => sum + loan.totalAmount, 0);
 
   const handleSaveLoan = (loan: Loan) => {
     if (editingLoan) {
@@ -106,7 +107,7 @@ export function LoansSection() {
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Empréstimos</h2>
           <p className="text-gray-600 dark:text-gray-400">
-            {activeLoans.length} empréstimo{activeLoans.length !== 1 ? 's' : ''} ativo{activeLoans.length !== 1 ? 's' : ''} • {state.showValues ? formatCurrency(totalActiveAmount) : '••••'} em aberto
+            {activeLoans.length} empréstimo{activeLoans.length !== 1 ? 's' : ''} ativo{activeLoans.length !== 1 ? 's' : ''} • {state.showValues ? formatCurrency(totalToReceive) : '••••'} a receber
           </p>
         </div>
         
@@ -189,8 +190,13 @@ export function LoansSection() {
                 
                 <div className="text-right">
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {state.showValues ? formatCurrency(loan.amount) : '••••'}
+                    {state.showValues ? formatCurrency(loan.totalAmount) : '••••'}
                   </p>
+                  {loan.interestRate > 0 && (
+                    <p className="text-sm text-orange-600 dark:text-orange-400">
+                      +{loan.interestRate}% juros
+                    </p>
+                  )}
                   <div className="flex items-center space-x-2 mt-1">
                     <span className={`text-xs px-2 py-1 rounded-full flex items-center space-x-1 ${getStatusColor(loan.status)}`}>
                       {getStatusIcon(loan.status)}
@@ -202,9 +208,26 @@ export function LoansSection() {
 
               {loan.description && (
                 <div className="mb-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
-                    {loan.description}
-                  </p>
+                  <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg space-y-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {loan.description}
+                    </p>
+                    
+                    {loan.interestRate > 0 && (
+                      <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+                        <div className="flex justify-between">
+                          <span>Valor emprestado:</span>
+                          <span>{state.showValues ? formatCurrency(loan.amount) : '••••'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Juros ({loan.interestRate}%):</span>
+                          <span className="text-orange-600 dark:text-orange-400">
+                            +{state.showValues ? formatCurrency(loan.totalAmount - loan.amount) : '••••'}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 

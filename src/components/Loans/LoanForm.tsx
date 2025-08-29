@@ -13,11 +13,13 @@ export function LoanForm({ loan, onSave, onCancel }: LoanFormProps) {
   const [formData, setFormData] = useState({
     customerName: '',
     amount: 0,
+    interestRate: 0,
     dueDate: '',
     description: '',
   });
 
   const [displayAmount, setDisplayAmount] = useState('0,00');
+  const [displayInterestRate, setDisplayInterestRate] = useState('0,00');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -25,10 +27,12 @@ export function LoanForm({ loan, onSave, onCancel }: LoanFormProps) {
       setFormData({
         customerName: loan.customerName,
         amount: loan.amount,
+        interestRate: loan.interestRate,
         dueDate: new Date(loan.dueDate).toISOString().split('T')[0],
         description: loan.description || '',
       });
       setDisplayAmount(formatCurrencyInput(loan.amount));
+      setDisplayInterestRate(formatPercentageInput(loan.interestRate));
     } else {
       // Set default due date to 30 days from now
       const defaultDueDate = new Date();
@@ -38,6 +42,7 @@ export function LoanForm({ loan, onSave, onCancel }: LoanFormProps) {
         dueDate: defaultDueDate.toISOString().split('T')[0]
       }));
       setDisplayAmount('0,00');
+      setDisplayInterestRate('0,00');
     }
   }, [loan]);
 
@@ -50,6 +55,25 @@ export function LoanForm({ loan, onSave, onCancel }: LoanFormProps) {
     
     const reaisFormatted = reais.toLocaleString('pt-BR');
     return `${reaisFormatted},${centavos.toString().padStart(2, '0')}`;
+  };
+
+  const formatPercentageInput = (value: number): string => {
+    if (value === 0) return '0,00';
+    
+    const cents = Math.round(value * 100);
+    const integerPart = Math.floor(cents / 100);
+    const decimalPart = cents % 100;
+    
+    const integerFormatted = integerPart.toLocaleString('pt-BR');
+    return `${integerFormatted},${decimalPart.toString().padStart(2, '0')}`;
+  };
+
+  const calculateTotalAmount = () => {
+    return formData.amount * (1 + formData.interestRate / 100);
+  };
+
+  const calculateInterestAmount = () => {
+    return formData.amount * (formData.interestRate / 100);
   };
 
   const handleCurrencyChange = (value: string) => {
@@ -102,7 +126,77 @@ export function LoanForm({ loan, onSave, onCancel }: LoanFormProps) {
     }
   };
 
+  const handlePercentageChange = (value: string) => {
+    // Pega o valor atual sem formatação
+    const currentNumeric = displayInterestRate.replace(/[^\d]/g, '');
+    
+    // Remove tudo que não é dígito do novo valor
+    const inputNumeric = value.replace(/[^\d]/g, '');
+    
+    // Se o input tem mais dígitos que o atual, adiciona no final
+    // Se tem menos, remove do final
+    let finalNumeric = '';
+    if (inputNumeric.length > currentNumeric.length) {
+      // Adiciona apenas o último dígito digitado
+      const newDigit = inputNumeric[inputNumeric.length - 1];
+      finalNumeric = currentNumeric + newDigit;
+    } else if (inputNumeric.length < currentNumeric.length) {
+      // Remove do final
+      finalNumeric = currentNumeric.slice(0, -1);
+    } else {
+      finalNumeric = inputNumeric;
+    }
+    
+    // Se vazio, define como 0
+    if (!finalNumeric) {
+      setDisplayInterestRate('0,00');
+      setFormData(prev => ({ ...prev, interestRate: 0 }));
+      return;
+    }
+    
+    // Limita a 6 dígitos (máximo 9999,99%)
+    const limitedValue = finalNumeric.slice(0, 6);
+    const numericRate = parseInt(limitedValue, 10) / 100;
+    
+    // Formata o valor
+    const formattedValue = formatPercentageInput(numericRate);
+    
+    // Atualiza o display
+    setDisplayInterestRate(formattedValue);
+    
+    // Atualiza o valor numérico no formData
+    setFormData(prev => ({
+      ...prev,
+      interestRate: numericRate
+    }));
+
+    // Clear error when user starts typing
+    if (errors.interestRate) {
+      setErrors(prev => ({ ...prev, interestRate: '' }));
+    }
+  };
+
   const handleCurrencyKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Para teclas de navegação, força o cursor para o final
+    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+      e.preventDefault();
+      setTimeout(() => {
+        const target = e.target as HTMLInputElement;
+        target.setSelectionRange(target.value.length, target.value.length);
+      }, 0);
+      return;
+    }
+    
+    // Permite apenas números, backspace, delete, tab, escape, enter
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter'];
+    const isNumber = /^[0-9]$/.test(e.key);
+    
+    if (!isNumber && !allowedKeys.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  const handlePercentageKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // Para teclas de navegação, força o cursor para o final
     if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
       e.preventDefault();
@@ -130,6 +224,14 @@ export function LoanForm({ loan, onSave, onCancel }: LoanFormProps) {
     }, 0);
   };
 
+  const handlePercentageInput = (e: React.FormEvent<HTMLInputElement>) => {
+    // Move o cursor para o final sempre que houver input
+    setTimeout(() => {
+      const target = e.target as HTMLInputElement;
+      target.setSelectionRange(target.value.length, target.value.length);
+    }, 0);
+  };
+
   const handleCurrencyClick = (e: React.MouseEvent<HTMLInputElement>) => {
     // Move o cursor para o final sempre que clicar
     setTimeout(() => {
@@ -138,7 +240,22 @@ export function LoanForm({ loan, onSave, onCancel }: LoanFormProps) {
     }, 0);
   };
 
+  const handlePercentageClick = (e: React.MouseEvent<HTMLInputElement>) => {
+    // Move o cursor para o final sempre que clicar
+    setTimeout(() => {
+      const target = e.target as HTMLInputElement;
+      target.setSelectionRange(target.value.length, target.value.length);
+    }, 0);
+  };
+
   const handleCurrencyFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Move o cursor para o final sempre
+    setTimeout(() => {
+      e.target.setSelectionRange(e.target.value.length, e.target.value.length);
+    }, 0);
+  };
+
+  const handlePercentageFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     // Move o cursor para o final sempre
     setTimeout(() => {
       e.target.setSelectionRange(e.target.value.length, e.target.value.length);
@@ -154,6 +271,14 @@ export function LoanForm({ loan, onSave, onCancel }: LoanFormProps) {
 
     if (formData.amount <= 0) {
       newErrors.amount = 'Valor deve ser maior que zero';
+    }
+
+    if (formData.interestRate < 0) {
+      newErrors.interestRate = 'Taxa de juros deve ser positiva';
+    }
+
+    if (formData.interestRate > 100) {
+      newErrors.interestRate = 'Taxa de juros não pode ser maior que 100%';
     }
 
     if (!formData.dueDate) {
@@ -183,6 +308,8 @@ export function LoanForm({ loan, onSave, onCancel }: LoanFormProps) {
       id: loan?.id || generateId(),
       customerName: formData.customerName.trim(),
       amount: formData.amount,
+      interestRate: formData.interestRate,
+      totalAmount: calculateTotalAmount(),
       status: 'ACTIVE',
       dueDate: new Date(formData.dueDate),
       description: formData.description.trim() || undefined,
@@ -272,6 +399,35 @@ export function LoanForm({ loan, onSave, onCancel }: LoanFormProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Taxa de Juros (%) *
+              </label>
+              <div className="relative">
+                <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  value={displayInterestRate}
+                  onChange={(e) => handlePercentageChange(e.target.value)}
+                  onInput={handlePercentageInput}
+                  onKeyDown={handlePercentageKeyDown}
+                  onClick={handlePercentageClick}
+                  onFocus={handlePercentageFocus}
+                  className={`w-full pl-10 pr-8 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                    errors.interestRate ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="0,00"
+                  inputMode="numeric"
+                />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
+                  %
+                </div>
+              </div>
+              {errors.interestRate && (
+                <p className="text-red-500 text-sm mt-1">{errors.interestRate}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Data de Vencimento *
               </label>
               <div className="relative">
@@ -304,6 +460,40 @@ export function LoanForm({ loan, onSave, onCancel }: LoanFormProps) {
                 placeholder="Observações sobre o empréstimo (opcional)"
               />
             </div>
+
+            {/* Calculation Summary */}
+            {formData.amount > 0 && (
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg space-y-2">
+                <h4 className="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-2">
+                  Resumo do Empréstimo
+                </h4>
+                
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-400">Valor emprestado:</span>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {formatCurrency(formData.amount)}
+                    </span>
+                  </div>
+                  
+                  <div className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-400">Taxa de juros ({formData.interestRate}%):</span>
+                    <span className="font-medium text-orange-600 dark:text-orange-400">
+                      +{formatCurrency(calculateInterestAmount())}
+                    </span>
+                  </div>
+                  
+                  <hr className="my-2 border-blue-200 dark:border-blue-700" />
+                  
+                  <div className="flex justify-between">
+                    <span className="font-semibold text-blue-700 dark:text-blue-300">Valor total a receber:</span>
+                    <span className="font-bold text-blue-700 dark:text-blue-300 text-lg">
+                      {formatCurrency(calculateTotalAmount())}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </form>
         </div>
         
