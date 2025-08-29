@@ -275,7 +275,6 @@ export function LoansSection() {
                 </div>
                 )}
               </div>
-            </div>
           ))}
         </div>
       ) : (
