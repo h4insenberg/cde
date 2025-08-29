@@ -33,15 +33,6 @@ function AppContent() {
     }
   }, [state.darkMode]);
 
-  // Listen for navigation events from dropdown
-  React.useEffect(() => {
-    const handleNavigate = (event: CustomEvent) => {
-      setActiveTab(event.detail);
-    };
-    window.addEventListener('navigate', handleNavigate as EventListener);
-    return () => window.removeEventListener('navigate', handleNavigate as EventListener);
-  }, []);
-
   const getPageTitle = () => {
     switch (activeTab) {
       case 'dashboard':
