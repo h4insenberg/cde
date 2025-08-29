@@ -87,6 +87,8 @@ function AppContent() {
         return <ComandaSection />;
       case 'loans':
         return <LoansSection />;
+      case 'reports':
+        return <ReportsSection />;
       case 'settings':
         return (
           <div className="max-w-7xl mx-auto space-y-6 pb-20">
