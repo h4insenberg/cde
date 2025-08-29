@@ -930,6 +930,7 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       };
     
     case 'UPDATE_STATS':
+      // Calculate revenue from all sources
       const salesRevenue = state.sales.reduce((sum, sale) => sum + sale.total, 0);
       const comandasRevenue = state.comandas
         .filter(c => c.status === 'PAID')
@@ -947,7 +948,62 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       
       const revenue = salesRevenue + comandasRevenue + loansRevenue + entriesRevenue;
       
-      // Calculate profit correctly
+      // Calculate expenses (only financial exits and costs from sales)
+      const salesCosts = state.sales.reduce((sum, sale) => {
+        return sum + sale.items.reduce((itemSum, item) => {
+          if (item.type === 'product' && item.productId) {
+            const product = state.products.find(p => p.id === item.productId);
+            return itemSum + (product ? product.costPrice * item.quantity : 0);
+          }
+          return itemSum; // Services have no cost
+        }, 0);
+      }, 0);
+      
+      const comandasCosts = state.comandas
+        .filter(c => c.status === 'PAID')
+        .reduce((sum, comanda) => {
+          return sum + comanda.items.reduce((itemSum, item) => {
+            if (item.type === 'product' && item.productId) {
+              const product = state.products.find(p => p.id === item.productId);
+              return itemSum + (product ? product.costPrice * item.quantity : 0);
+            }
+            return itemSum; // Services have no cost
+          }, 0);
+        }, 0);
+      
+      const loansCosts = state.loans
+        .filter(l => l.status === 'PAID')
+        .reduce((sum, loan) => sum + loan.amount, 0); // Original loan amount is the cost
+      
+      // Only count exits that have reached their date
+      const financialExits = state.financialExits
+        .filter(exit => new Date(exit.date) <= today)
+        .reduce((sum, exit) => sum + exit.amount, 0);
+      
+      const totalCosts = salesCosts + comandasCosts + loansCosts;
+      const totalExpenses = financialExits;
+      
+      // Calculate gross profit (revenue - costs)
+      const grossProfit = revenue - totalCosts;
+      
+      // Calculate net profit (gross profit - expenses)
+      const netProfit = grossProfit - totalExpenses;
+      
+      // Calculate profit margin based on revenue
+      const profitMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
+      
+      const lowStockAlerts = state.products.filter(p => p.quantity <= p.minQuantity).length;
+      
+      return {
+        ...state,
+        dashboardStats: {
+          revenue,
+          expenses: totalExpenses,
+          netProfit,
+          profitMargin,
+          lowStockAlerts,
+        }
+      };
       const salesProfit = state.sales.reduce((sum, sale) => sum + sale.profit, 0);
       const comandasProfit = state.comandas
         .filter(c => c.status === 'PAID')

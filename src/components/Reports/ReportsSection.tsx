@@ -28,7 +28,7 @@ export function ReportsSection() {
 
   const { sales, comandas, loans, entries, exits } = getFilteredData();
 
-  // Métricas Gerais
+  // Calculate metrics using the same logic as the context
   const getTotalRevenue = () => {
     const salesRevenue = sales.reduce((sum, sale) => sum + sale.total, 0);
     const comandasRevenue = comandas.reduce((sum, comanda) => sum + comanda.total, 0);
@@ -37,26 +37,42 @@ export function ReportsSection() {
     return salesRevenue + comandasRevenue + loansRevenue + entriesRevenue;
   };
 
-  const getTotalExpenses = () => {
-    const salesExpenses = sales.reduce((sum, sale) => sum + (sale.total - sale.profit), 0);
-    const exitsExpenses = exits.reduce((sum, exit) => sum + exit.amount, 0);
-    return salesExpenses + exitsExpenses;
-  };
-
-  const getTotalProfit = () => {
-    const salesProfit = sales.reduce((sum, sale) => sum + sale.profit, 0);
-    const comandasProfit = comandas.reduce((sum, comanda) => {
+  const getTotalCosts = () => {
+    const salesCosts = sales.reduce((sum, sale) => {
+      return sum + sale.items.reduce((itemSum, item) => {
+        if (item.type === 'product' && item.productId) {
+          const product = state.products.find(p => p.id === item.productId);
+          return itemSum + (product ? product.costPrice * item.quantity : 0);
+        }
+        return itemSum; // Services have no cost
+      }, 0);
+    }, 0);
+    
+    const comandasCosts = comandas.reduce((sum, comanda) => {
       return sum + comanda.items.reduce((itemSum, item) => {
         if (item.type === 'product' && item.productId) {
           const product = state.products.find(p => p.id === item.productId);
-          return itemSum + (product ? (item.unitPrice - product.costPrice) * item.quantity : item.total);
+          return itemSum + (product ? product.costPrice * item.quantity : 0);
         }
-        return itemSum + item.total;
+        return itemSum; // Services have no cost
       }, 0);
     }, 0);
-    const loansProfit = loans.reduce((sum, loan) => sum + (loan.totalAmount - loan.amount), 0);
-    const entriesProfit = entries.reduce((sum, entry) => sum + entry.amount, 0);
-    return salesProfit + comandasProfit + loansProfit + entriesProfit;
+    
+    const loansCosts = loans.reduce((sum, loan) => sum + loan.amount, 0);
+    
+    return salesCosts + comandasCosts + loansCosts;
+  };
+
+  const getTotalExpenses = () => {
+    return exits.reduce((sum, exit) => sum + exit.amount, 0);
+  };
+
+  const getTotalGrossProfit = () => {
+    return getTotalRevenue() - getTotalCosts();
+  };
+
+  const getTotalNetProfit = () => {
+    return getTotalGrossProfit() - getTotalExpenses();
   };
 
   // Produtos mais vendidos
@@ -230,9 +246,11 @@ export function ReportsSection() {
   const loansAnalysis = getLoansAnalysis();
   
   const totalRevenue = getTotalRevenue();
+  const totalCosts = getTotalCosts();
   const totalExpenses = getTotalExpenses();
-  const totalProfit = getTotalProfit();
-  const profitMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : '0';
+  const grossProfit = getTotalGrossProfit();
+  const netProfit = getTotalNetProfit();
+  const profitMargin = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : '0';
   const averageTicket = (sales.length + comandas.length) > 0 ? (totalRevenue / (sales.length + comandas.length)) : 0;
 
   return (
@@ -272,7 +290,17 @@ export function ReportsSection() {
         <div className="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-xl p-3 md:p-4 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-red-100 text-xs md:text-sm font-medium">Despesas</p>
+              <p className="text-red-100 text-xs md:text-sm font-medium">Custos</p>
+              <p className="text-lg md:text-2xl font-bold">{state.showValues ? formatCurrency(totalCosts) : '••••'}</p>
+            </div>
+            <TrendingUp className="h-6 w-6 md:h-8 md:w-8 text-red-200 rotate-180" />
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl p-3 md:p-4 shadow-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-orange-100 text-xs md:text-sm font-medium">Despesas</p>
               <p className="text-lg md:text-2xl font-bold">{state.showValues ? formatCurrency(totalExpenses) : '••••'}</p>
             </div>
             <TrendingUp className="h-6 w-6 md:h-8 md:w-8 text-red-200 rotate-180" />
@@ -283,7 +311,7 @@ export function ReportsSection() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-blue-100 text-xs md:text-sm font-medium">Lucro Líquido</p>
-              <p className="text-lg md:text-2xl font-bold">{state.showValues ? formatCurrency(totalProfit) : '••••'}</p>
+              <p className="text-lg md:text-2xl font-bold">{state.showValues ? formatCurrency(netProfit) : '••••'}</p>
             </div>
             <DollarSign className="h-6 w-6 md:h-8 md:w-8 text-blue-200" />
           </div>
@@ -347,6 +375,7 @@ export function ReportsSection() {
             <Zap className="h-5 w-5 md:h-6 md:w-6 text-green-500" />
           </div>
         </div>
+      </div>
       </div>
 
       {/* Produtos e Serviços Mais Vendidos */}
