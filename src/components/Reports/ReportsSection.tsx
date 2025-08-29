@@ -273,7 +273,7 @@ export function ReportsSection() {
       </div>
 
       {/* Resumo Financeiro */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-3 md:p-4 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
