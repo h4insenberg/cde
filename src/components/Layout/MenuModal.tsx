@@ -64,14 +64,14 @@ export function MenuModal({ isOpen, onClose, activeTab, onTabChange }: MenuModal
                       <Icon className="h-6 w-6" />
                     </div>
                     <div>
-                      <p className={`font-semibold text-sm ${
+                      <p className={`font-semibold text-xs ${
                         isActive 
                           ? 'text-blue-600 dark:text-blue-400' 
                           : 'text-gray-900 dark:text-white'
                       }`}>
                         {item.label}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-tight">
                         {item.description}
                       </p>
                     </div>
