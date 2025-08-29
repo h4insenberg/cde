@@ -1,6 +1,6 @@
 import React from 'react';
 import { Calendar, CreditCard, Package, Wrench, TrendingUp, TrendingDown, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
-import { Sale, Comanda, StockMovement } from '../../types';
+import { Sale, Comanda, StockMovement, Loan } from '../../types';
 import { formatCurrency, formatDate, getPaymentMethodLabel } from '../../utils/helpers';
 import { useBusiness } from '../../context/BusinessContext';
 
@@ -8,9 +8,10 @@ interface ExtratoProps {
   sales: Sale[];
   comandas: Comanda[];
   stockMovements: StockMovement[];
+  loans: Loan[];
 }
 
-type MovementType = 'sale' | 'comanda' | 'stock_in' | 'stock_out' | 'service';
+type MovementType = 'sale' | 'comanda' | 'stock_in' | 'stock_out' | 'service' | 'loan';
 type MovementCategory = 'entry' | 'exit';
 
 interface Movement {
@@ -26,7 +27,7 @@ interface Movement {
   profit?: number;
 }
 
-export function RecentSales({ sales, comandas, stockMovements }: ExtratoProps) {
+export function RecentSales({ sales, comandas, stockMovements, loans }: ExtratoProps) {
   const { state } = useBusiness();
   const { showValues } = state;
   const movements: Movement[] = [];
@@ -62,6 +63,20 @@ export function RecentSales({ sales, comandas, stockMovements }: ExtratoProps) {
     });
   });
 
+  // Add paid loans
+  loans.filter(l => l.status === 'PAID').forEach(loan => {
+    movements.push({
+      id: `loan-${loan.id}`,
+      type: 'loan',
+      category: 'entry',
+      description: `Empréstimo de ${loan.customerName}`,
+      amount: loan.totalAmount,
+      createdAt: new Date(loan.paidAt || loan.createdAt),
+      paymentMethod: 'PIX', // Default for loans
+      profit: loan.totalAmount - loan.amount, // Interest as profit
+    });
+  });
+
   // Add stock movements
   stockMovements.forEach(movement => {
     movements.push({
@@ -87,6 +102,8 @@ export function RecentSales({ sales, comandas, stockMovements }: ExtratoProps) {
         return <Package className="h-4 w-4 text-green-500" />;
       case 'service':
         return <Wrench className="h-4 w-4 text-purple-500" />;
+      case 'loan':
+        return <CreditCard className="h-4 w-4 text-blue-500" />;
       case 'stock_in':
         return <TrendingUp className="h-4 w-4 text-blue-500" />;
       case 'stock_out':
@@ -100,6 +117,7 @@ export function RecentSales({ sales, comandas, stockMovements }: ExtratoProps) {
     switch (type) {
       case 'sale':
       case 'service':
+      case 'loan':
         return 'text-green-600 dark:text-green-400';
       case 'stock_in':
         return 'text-blue-600 dark:text-blue-400';

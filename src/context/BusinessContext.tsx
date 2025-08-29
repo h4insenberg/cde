@@ -352,7 +352,10 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       const comandasRevenue = state.comandas
         .filter(c => c.status === 'PAID')
         .reduce((sum, comanda) => sum + comanda.total, 0);
-      const revenue = salesRevenue + comandasRevenue;
+      const loansRevenue = state.loans
+        .filter(l => l.status === 'PAID')
+        .reduce((sum, loan) => sum + loan.totalAmount, 0);
+      const revenue = salesRevenue + comandasRevenue + loansRevenue;
       const expenses = state.sales.reduce((sum, sale) => sum + (sale.total - sale.profit), 0);
       const netProfit = revenue - expenses;
       const profitMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
