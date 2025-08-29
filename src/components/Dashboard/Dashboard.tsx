@@ -18,10 +18,10 @@ export function Dashboard({ onNewSale }: DashboardProps) {
       {/* Header with greeting and quick action */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
             Olá, {userSettings.name}! 👋
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+          <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-base">
             Bem-vindo ao seu painel de controle
           </p>
         </div>
