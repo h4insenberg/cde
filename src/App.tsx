@@ -28,6 +28,8 @@ function AppContent() {
         return 'Produtos';
       case 'services':
         return 'Serviços';
+      case 'services':
+        return 'Serviços';
       case 'sales':
         return 'Vendas';
       case 'comanda':
@@ -64,6 +66,8 @@ function AppContent() {
         return <Dashboard onNewSale={() => setShowQuickSale(true)} />;
       case 'products':
         return <ProductsSection activeTab="products" />;
+      case 'services':
+        return <ProductsSection activeTab="services" />;
       case 'services':
         return <ProductsSection activeTab="services" />;
       case 'sales':
