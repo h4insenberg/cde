@@ -7,6 +7,7 @@ import { Dashboard } from './components/Dashboard/Dashboard';
 import { ProductsSection } from './components/Products/ProductsSection';
 import { SalesSection } from './components/Sales/SalesSection';
 import { ComandaSection } from './components/Comanda/ComandaSection';
+import { ReportsSection } from './components/Reports/ReportsSection';
 import { NotificationModal } from './components/Notifications/NotificationModal';
 import { SaleForm } from './components/Sales/SaleForm';
 import { Plus, Search } from 'lucide-react';
@@ -34,6 +35,8 @@ function AppContent() {
         return 'Vendas';
       case 'comanda':
         return 'Comandas';
+      case 'settings':
+        return 'Configurações';
       default:
         return 'BizManager';
     }
@@ -74,6 +77,8 @@ function AppContent() {
         return <SalesSection />;
       case 'comanda':
         return <ComandaSection />;
+      case 'settings':
+        return <ReportsSection sales={state.sales} products={state.products} />;
       default:
         return <Dashboard onNewSale={() => setShowQuickSale(true)} />;
     }

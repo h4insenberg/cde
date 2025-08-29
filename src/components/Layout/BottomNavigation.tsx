@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Package, Wrench, ShoppingCart, ClipboardList } from 'lucide-react';
+import { Home, Package, Wrench, ShoppingCart, ClipboardList, Settings } from 'lucide-react';
 
 interface BottomNavigationProps {
   activeTab: string;
@@ -13,6 +13,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
     { id: 'services', label: 'Serviços', icon: Wrench },
     { id: 'sales', label: 'Vendas', icon: ShoppingCart },
     { id: 'comanda', label: 'Comandas', icon: ClipboardList },
+    { id: 'settings', label: 'Config', icon: Settings },
   ];
 
   return (
