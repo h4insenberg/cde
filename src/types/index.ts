@@ -98,6 +98,8 @@ export interface Loan {
   id: string;
   customerName: string;
   amount: number;
+  interestRate: number;
+  totalAmount: number;
   status: 'ACTIVE' | 'PAID' | 'OVERDUE';
   dueDate: Date;
   createdAt: Date;
