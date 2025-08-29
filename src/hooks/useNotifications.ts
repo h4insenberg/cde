@@ -31,21 +31,18 @@ export function useNotifications() {
 
   // Check for low stock alerts and overdue loans
   useEffect(() => {
+    // Clear all existing notifications first to start fresh
+    if (state.notifications.length > 0) {
+      clearAll();
+    }
+
     // Check for low stock products
     state.products.forEach(product => {
       if (product.quantity <= product.minQuantity) {
-        const existingAlert = state.notifications.find(
-          n => n.type === 'LOW_STOCK' && 
-               n.message.includes(product.name) && 
-               !n.read
+        addNotification(
+          'LOW_STOCK', 
+          `Estoque baixo: ${product.name} (${product.quantity} ${product.unit})`
         );
-        
-        if (!existingAlert) {
-          addNotification(
-            'LOW_STOCK', 
-            `Estoque baixo: ${product.name} (${product.quantity} ${product.unit})`
-          );
-        }
       }
     });
 
@@ -64,24 +61,13 @@ export function useNotifications() {
           const overdueLoan = { ...loan, status: 'OVERDUE' as const };
           dispatch({ type: 'UPDATE_LOAN', payload: overdueLoan });
           
-          // Check if we already have an overdue notification for this loan
-          const existingAlert = state.notifications.find(
-            n => n.type === 'ERROR' && 
-                 n.message.includes(loan.customerName) && 
-                 n.message.includes('vencido') &&
-                 !n.read
+          addNotification(
+            'ERROR', 
+            `Empréstimo vencido: ${loan.customerName} - ${loan.totalAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`
           );
-          
-          if (!existingAlert) {
-            addNotification(
-              'ERROR', 
-              `Empréstimo vencido: ${loan.customerName} - ${loan.totalAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`
-            );
-          }
         }
       }
     });
-  }, [state.products, state.loans]);
 
   return {
     notifications: state.notifications,

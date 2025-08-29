@@ -940,7 +940,7 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
     case 'CLEAR_ALL_NOTIFICATIONS':
       return {
         ...state,
-        notifications: []
+        notifications: [],
       };
     
     case 'UPDATE_STATS':
