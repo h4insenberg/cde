@@ -50,6 +50,16 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
     }
   };
 
+  const handleMarkAllAsRead = () => {
+    markAllAsRead();
+  };
+
+  const handleClearAll = () => {
+    if (window.confirm('Tem certeza que deseja limpar todas as notificações?')) {
+      clearAll();
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pb-24">
       <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-md max-h-full overflow-hidden flex flex-col">
@@ -62,18 +72,14 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
             {notifications.length > 0 && (
               <>
                 <button
-                  onClick={markAllAsRead}
+                  onClick={handleMarkAllAsRead}
                   className="p-2 text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
                   title="Marcar todas como lidas"
                 >
                   <Check className="h-4 w-4" />
                 </button>
                 <button
-                  onClick={() => {
-                    if (window.confirm('Tem certeza que deseja limpar todas as notificações?')) {
-                      clearAll();
-                    }
-                  }}
+                  onClick={handleClearAll}
                   className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                   title="Limpar todas as notificações"
                 >

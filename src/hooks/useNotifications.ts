@@ -22,56 +22,55 @@ export function useNotifications() {
   };
 
   const markAllAsRead = () => {
-    console.log('Marcando todas as notificações como lidas');
     dispatch({ type: 'MARK_ALL_NOTIFICATIONS_READ' });
   };
 
   const clearAll = () => {
-    console.log('Limpando todas as notificações');
     dispatch({ type: 'CLEAR_ALL_NOTIFICATIONS' });
   };
 
-  // Check for low stock alerts and overdue loans
+  // Check for notifications only when needed
   useEffect(() => {
-    // Clear all existing notifications first to start fresh
-    if (state.notifications.length > 0) {
-      clearAll();
-    }
+    const checkNotifications = () => {
+      // Clear existing notifications first
+      dispatch({ type: 'CLEAR_ALL_NOTIFICATIONS' });
 
-    // Check for low stock products
-    state.products.forEach(product => {
-      if (product.quantity <= product.minQuantity) {
-        addNotification(
-          'LOW_STOCK', 
-          `Estoque baixo: ${product.name} (${product.quantity} ${product.unit})`
-        );
-      }
-    });
-
-    // Check for overdue loans
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Start of today
-    
-    state.loans.forEach(loan => {
-      if (loan.status === 'ACTIVE') {
-        const dueDate = new Date(loan.dueDate);
-        dueDate.setHours(0, 0, 0, 0);
-        
-        // Check if loan is overdue (due date has passed)
-        if (dueDate < today) {
-          // Update loan status to OVERDUE
-          const overdueLoan = { ...loan, status: 'OVERDUE' as const };
-          dispatch({ type: 'UPDATE_LOAN', payload: overdueLoan });
-          
+      // Check for low stock products
+      state.products.forEach(product => {
+        if (product.quantity <= product.minQuantity) {
           addNotification(
-            'ERROR', 
-            `Empréstimo vencido: ${loan.customerName} - ${loan.totalAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`
+            'LOW_STOCK', 
+            `Estoque baixo: ${product.name} (${product.quantity} ${product.unit})`
           );
         }
-      }
-    });
-  }
-  )
+      });
+
+      // Check for overdue loans
+      const today = new Date();
+      today.setHours(23, 59, 59, 999); // End of today
+      
+      state.loans.forEach(loan => {
+        if (loan.status === 'ACTIVE') {
+          const dueDate = new Date(loan.dueDate);
+          dueDate.setHours(23, 59, 59, 999);
+          
+          // Check if loan is overdue (due date has passed)
+          if (dueDate < today) {
+            // Update loan status to OVERDUE
+            const overdueLoan = { ...loan, status: 'OVERDUE' as const };
+            dispatch({ type: 'UPDATE_LOAN', payload: overdueLoan });
+            
+            addNotification(
+              'ERROR', 
+              `Empréstimo vencido: ${loan.customerName} - R$ ${loan.totalAmount.toFixed(2).replace('.', ',')}`
+            );
+          }
+        }
+      });
+    };
+
+    checkNotifications();
+  }, [state.products, state.loans]);
 
   return {
     notifications: state.notifications,
