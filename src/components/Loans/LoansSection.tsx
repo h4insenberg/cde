@@ -226,16 +226,6 @@ export function LoansSection() {
                   )}
                 </div>
 
-                {loan.status === 'ACTIVE' && (
-                  <div className="bg-green-50 dark:bg-green-900/20 p-1.5 sm:p-2 rounded-lg">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-green-600 dark:text-green-400 font-medium">A Receber</span>
-                      <span className="text-xs sm:text-sm font-bold text-green-700 dark:text-green-300">
-                        {state.showValues ? formatCurrency(loan.totalAmount) : '••••'}
-                      </span>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Actions */}
