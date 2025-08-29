@@ -80,12 +80,19 @@ export function ProductCard({ product, onEdit, onDelete }: ProductCardProps) {
           </div>
         </div>
 
-        <div className="bg-blue-50 dark:bg-blue-900/20 p-1.5 sm:p-2 rounded-lg">
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">Margem de Lucro</span>
-            <span className="text-xs sm:text-sm font-bold text-blue-700 dark:text-blue-300">
+        <div className="grid grid-cols-2 gap-1 sm:gap-2">
+          <div className="bg-purple-50 dark:bg-purple-900/20 p-1.5 sm:p-2 rounded-lg">
+            <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">Lucro</p>
+            <p className="text-xs sm:text-sm font-semibold text-purple-700 dark:text-purple-300">
+              {formatCurrency(product.salePrice - product.costPrice)}
+            </p>
+          </div>
+          
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-1.5 sm:p-2 rounded-lg">
+            <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">Margem</p>
+            <p className="text-xs sm:text-sm font-semibold text-blue-700 dark:text-blue-300">
               {profitMargin}%
-            </span>
+            </p>
           </div>
         </div>
       </div>
