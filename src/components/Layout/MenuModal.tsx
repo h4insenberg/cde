@@ -28,7 +28,7 @@ export function MenuModal({ isOpen, onClose, activeTab, onTabChange }: MenuModal
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center z-[9999] md:hidden">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center z-[9999] p-4 pb-24 md:hidden">
       <div className="bg-white dark:bg-[#18191c] rounded-t-3xl w-full max-h-[80vh] overflow-hidden animate-slide-up">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Menu</h2>

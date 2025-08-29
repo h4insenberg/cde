@@ -61,7 +61,7 @@ export function ConfirmModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 pb-24">
       <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-scale-in">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
