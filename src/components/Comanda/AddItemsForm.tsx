@@ -204,58 +204,6 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
                   </div>
                 )}
 
-              {/* Services */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Serviços</h3>
-                <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
-                  {services.map(service => (
-                    <button
-                      key={service.id}
-                      type="button"
-                      onClick={() => addServiceToCart(service)}
-                      className="text-left p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:border-purple-300 dark:hover:border-purple-600 transition-colors"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900 dark:text-white">{service.name}</p>
-                          {service.description && (
-                            <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                              {service.description}
-                            </p>
-                          )}
-                        </div>
-                        <p className="font-semibold text-purple-600 dark:text-purple-400">
-                          {formatCurrency(service.price)}
-                        </p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Cart */}
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                  Novos Itens ({cartItems.length})
-                </h3>
-                
-                <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {cartItems.map(item => (
-                    <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {formatCurrency(item.unitPrice)} x {item.quantity} = {formatCurrency(item.unitPrice * item.quantity)}
-                        </p>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="p-1 text-gray-400 hover:text-red-600 transition-colors"
                 {activeTab === 'services' && (
                   <div>
                     <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
@@ -293,6 +241,61 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
                     </div>
                   </div>
                 )}
+              </div>
+            </div>
+
+            {/* Cart */}
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                  Novos Itens ({cartItems.length})
+                </h3>
+                
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {cartItems.map(item => (
+                    <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {formatCurrency(item.unitPrice)} x {item.quantity} = {formatCurrency(item.unitPrice * item.quantity)}
+                        </p>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2">
+                        <button
+                          type="button"
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                        >
+                          <Minus className="h-4 w-4" />
+                        </button>
+                        <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                        <button
+                          type="button"
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          className="p-1 text-gray-400 hover:text-green-600 transition-colors"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeFromCart(item.id)}
+                          className="p-1 text-gray-400 hover:text-red-600 transition-colors ml-2"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {cartItems.length === 0 && (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500 dark:text-gray-400">
+                        Nenhum item adicionado
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Summary */}
