@@ -135,7 +135,7 @@ export function ComandaForm({ products, services, onSave, onCancel }: ComandaFor
   const total = calculateTotal();
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 pb-24">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pb-24">
       <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-4xl max-h-full overflow-hidden flex flex-col">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Nova Comanda</h2>
@@ -147,7 +147,8 @@ export function ComandaForm({ products, services, onSave, onCancel }: ComandaFor
           </button>
         </div>
 
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1">
+        <div className="overflow-y-auto flex-1">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Customer Info and Items Selection */}
             <div className="space-y-6">
@@ -373,6 +374,8 @@ export function ComandaForm({ products, services, onSave, onCancel }: ComandaFor
               )}
             </div>
           </div>
+
+          </form>
         </div>
         
         {/* Actions */}
