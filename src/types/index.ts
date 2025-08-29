@@ -62,7 +62,7 @@ export interface DashboardStats {
   lowStockAlerts: number;
 }
 
-export type PaymentMethod = 'PIX' | 'CARD' | 'CREDIT';
+export type PaymentMethod = 'CASH' | 'PIX' | 'CARD' | 'CREDIT';
 
 export interface Notification {
   id: string;

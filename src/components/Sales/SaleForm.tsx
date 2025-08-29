@@ -23,7 +23,7 @@ interface CartItem {
 
 export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('PIX');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('CASH');
   const [cardFeeRate, setCardFeeRate] = useState(3.5);
   const [activeTab, setActiveTab] = useState<'products' | 'services'>('products');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -356,23 +356,16 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Forma de Pagamento</h3>
                 
-                <div className="space-y-3">
-                  {(['PIX', 'CARD', 'CREDIT'] as PaymentMethod[]).map((method) => (
-                    <label key={method} className="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value={method}
-                        checked={paymentMethod === method}
-                        onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
-                        className="mr-3"
-                      />
-                      <span className="text-gray-900 dark:text-white font-medium">
-                        {getPaymentMethodLabel(method)}
-                      </span>
-                    </label>
-                  ))}
-                </div>
+                <select
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+                  className="w-full px-3 py-3 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white font-medium"
+                >
+                  <option value="CASH">Dinheiro (em espécie)</option>
+                  <option value="PIX">PIX</option>
+                  <option value="CARD">Cartão</option>
+                  <option value="CREDIT">Fiado</option>
+                </select>
 
                 {paymentMethod === 'CARD' && (
                   <div className="mt-3">

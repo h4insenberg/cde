@@ -47,6 +47,7 @@ export function calculateCardFee(amount: number, feeRate: number): number {
 
 export function getPaymentMethodLabel(method: string): string {
   const labels = {
+    CASH: 'Dinheiro',
     PIX: 'PIX',
     CARD: 'Cartão',
     CREDIT: 'Fiado',
