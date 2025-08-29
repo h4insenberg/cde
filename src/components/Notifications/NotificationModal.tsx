@@ -52,7 +52,7 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pb-24">
-      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-md max-h-full overflow-hidden flex flex-col">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-4xl max-h-full overflow-hidden flex flex-col">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
             <Bell className="h-5 w-5 mr-2" />
