@@ -601,6 +601,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
           </div>
 
           </div>
+        </div>
         
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3 p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#18191c] flex-shrink-0">
