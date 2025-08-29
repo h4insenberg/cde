@@ -51,8 +51,8 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pb-24">
-      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-md max-h-full overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
             <Bell className="h-5 w-5 mr-2" />
@@ -66,38 +66,38 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
           </button>
         </div>
 
-        <div className="overflow-y-auto flex-1">
+        <div className="overflow-y-auto flex-1 min-h-0">
           {sortedNotifications.length > 0 ? (
-            <div className="p-4 space-y-3">
+            <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
               {sortedNotifications.map((notification) => (
                 <div
                   key={notification.id}
                   onClick={() => handleNotificationClick(notification)}
-                  className={`p-3 rounded-lg border cursor-pointer transition-all hover:shadow-sm ${getNotificationBgColor(notification.type)} ${
+                  className={`p-2 sm:p-3 rounded-lg border cursor-pointer transition-all hover:shadow-sm ${getNotificationBgColor(notification.type)} ${
                     notification.read ? 'opacity-60' : ''
                   }`}
                 >
-                  <div className="flex items-start space-x-3">
+                  <div className="flex items-start space-x-2 sm:space-x-3">
                     {getNotificationIcon(notification.type)}
-                    <div className="flex-1 min-w-0">
-                      <p className={`text-sm ${notification.read ? 'text-gray-600 dark:text-gray-400' : 'text-gray-900 dark:text-white font-medium'}`}>
+                    <div className="flex-1 min-w-0 overflow-hidden">
+                      <p className={`text-xs sm:text-sm ${notification.read ? 'text-gray-600 dark:text-gray-400' : 'text-gray-900 dark:text-white font-medium'} break-words`}>
                         {notification.message}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5 sm:mt-1">
                         {formatDate(new Date(notification.createdAt))}
                       </p>
                     </div>
                     {!notification.read && (
-                      <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>
+                      <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1 sm:mt-2"></div>
                     )}
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="p-8 text-center">
+            <div className="p-6 sm:p-8 text-center">
               <Bell className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400">Nenhuma notificação</p>
+              <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">Nenhuma notificação</p>
             </div>
           )}
         </div>

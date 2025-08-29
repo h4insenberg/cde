@@ -120,8 +120,8 @@ export function ComandaForm({ products, services, onSave, onCancel }: ComandaFor
   const total = calculateTotal();
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pb-24">
-      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-4xl max-h-full overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-4xl max-h-[98vh] overflow-hidden flex flex-col">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Nova Comanda</h2>
           <button
@@ -132,8 +132,8 @@ export function ComandaForm({ products, services, onSave, onCancel }: ComandaFor
           </button>
         </div>
 
-        <div className="overflow-y-auto flex-1">
-          <form onSubmit={handleSubmit} className="p-4 sm:p-6">
+        <div className="overflow-y-auto flex-1 min-h-0">
+          <div className="p-3 sm:p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Customer Info and Items Selection */}
             <div className="space-y-6">
@@ -346,21 +346,21 @@ export function ComandaForm({ products, services, onSave, onCancel }: ComandaFor
             </div>
           </div>
 
-          </form>
+          </div>
         </div>
         
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#18191c]">
+        <div className="flex flex-col sm:flex-row gap-3 p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#18191c] flex-shrink-0">
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center"
+            className="flex-1 px-4 py-2.5 sm:py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center text-sm sm:text-base"
           >
             Cancelar
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+            className="flex-1 px-4 py-2.5 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base"
           >
             <Save className="h-4 w-4" />
             <span>Criar Comanda</span>
