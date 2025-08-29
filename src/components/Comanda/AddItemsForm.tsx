@@ -106,7 +106,7 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
   const newItemsTotal = cartItems.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 pb-24">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pb-24">
       <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-4xl max-h-full overflow-hidden flex flex-col">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <div>
