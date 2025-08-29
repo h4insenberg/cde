@@ -21,7 +21,7 @@ export function Header({ title, onMenuClick, onNotificationsClick }: HeaderProps
             <div className="bg-blue-600 p-2 rounded-lg">
               <Store className="h-5 w-5 text-white" />
             </div>
-            <div className="hidden sm:block">
+            <div>
               <h1 className="text-lg font-bold text-gray-900 dark:text-white">Meu Negócio</h1>
             </div>
           </div>
