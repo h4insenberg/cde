@@ -71,7 +71,7 @@ export function MenuModal({ isOpen, onClose, activeTab, onTabChange }: MenuModal
                       }`}>
                         {item.label}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-tight">
                         {item.description}
                       </p>
                     </div>
