@@ -981,7 +981,7 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
         .reduce((sum, exit) => sum + exit.amount, 0);
       
       // Total expenses = all costs + financial exits
-      const totalExpenses = salesCosts + comandasCosts + loansCosts + financialExitsAmount;
+      const totalExpenses = salesCosts + comandasCosts + loansCosts + financialExits;
       
       // Calculate net profit (revenue - all expenses)
       const netProfit = revenue - totalExpenses;
