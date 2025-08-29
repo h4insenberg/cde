@@ -6,6 +6,8 @@ import { BottomNavigation } from './components/Layout/BottomNavigation';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { ProductsSection } from './components/Products/ProductsSection';
 import { ServicesSection } from './components/Services/ServicesSection';
+import { EntriesSection } from './components/Entries/EntriesSection';
+import { ExitsSection } from './components/Exits/ExitsSection';
 import { SalesSection } from './components/Sales/SalesSection';
 import { ComandaSection } from './components/Comanda/ComandaSection';
 import { LoansSection } from './components/Loans/LoansSection';
@@ -27,6 +29,10 @@ function AppContent() {
         return 'Produtos';
       case 'services':
         return 'Serviços';
+      case 'entries':
+        return 'Entradas';
+      case 'exits':
+        return 'Saídas';
       case 'sales':
         return 'Vendas';
       case 'comanda':
@@ -69,6 +75,10 @@ function AppContent() {
         return <ProductsSection />;
       case 'services':
         return <ServicesSection />;
+      case 'entries':
+        return <EntriesSection />;
+      case 'exits':
+        return <ExitsSection />;
       case 'sales':
         return <SalesSection />;
       case 'comanda':

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { Product, Service, Sale, StockMovement, DashboardStats, Notification, Comanda, Loan, UserSettings } from '../types';
+import { Product, Service, Sale, StockMovement, DashboardStats, Notification, Comanda, Loan, UserSettings, FinancialEntry, FinancialExit } from '../types';
 import { generateId } from '../utils/helpers';
 
 interface BusinessState {
@@ -8,6 +8,8 @@ interface BusinessState {
   sales: Sale[];
   comandas: Comanda[];
   loans: Loan[];
+  financialEntries: FinancialEntry[];
+  financialExits: FinancialExit[];
   stockMovements: StockMovement[];
   notifications: Notification[];
   dashboardStats: DashboardStats;
@@ -30,6 +32,12 @@ type BusinessAction =
   | { type: 'ADD_LOAN'; payload: Loan }
   | { type: 'UPDATE_LOAN'; payload: Loan }
   | { type: 'DELETE_LOAN'; payload: string }
+  | { type: 'ADD_FINANCIAL_ENTRY'; payload: FinancialEntry }
+  | { type: 'UPDATE_FINANCIAL_ENTRY'; payload: FinancialEntry }
+  | { type: 'DELETE_FINANCIAL_ENTRY'; payload: string }
+  | { type: 'ADD_FINANCIAL_EXIT'; payload: FinancialExit }
+  | { type: 'UPDATE_FINANCIAL_EXIT'; payload: FinancialExit }
+  | { type: 'DELETE_FINANCIAL_EXIT'; payload: string }
   | { type: 'ADD_STOCK_MOVEMENT'; payload: StockMovement }
   | { type: 'ADD_NOTIFICATION'; payload: Notification }
   | { type: 'MARK_NOTIFICATION_READ'; payload: string }
@@ -783,6 +791,8 @@ function createSampleData(): BusinessState {
     sales: sampleSales,
     comandas: sampleComandas,
     loans: sampleLoans,
+    financialEntries: [],
+    financialExits: [],
     stockMovements: [],
     notifications: [],
     dashboardStats: {
@@ -875,6 +885,36 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
         loans: state.loans.filter(l => l.id !== action.payload)
       };
     
+    case 'ADD_FINANCIAL_ENTRY':
+      return { ...state, financialEntries: [...state.financialEntries, action.payload] };
+    
+    case 'UPDATE_FINANCIAL_ENTRY':
+      return {
+        ...state,
+        financialEntries: state.financialEntries.map(e => e.id === action.payload.id ? action.payload : e)
+      };
+    
+    case 'DELETE_FINANCIAL_ENTRY':
+      return {
+        ...state,
+        financialEntries: state.financialEntries.filter(e => e.id !== action.payload)
+      };
+    
+    case 'ADD_FINANCIAL_EXIT':
+      return { ...state, financialExits: [...state.financialExits, action.payload] };
+    
+    case 'UPDATE_FINANCIAL_EXIT':
+      return {
+        ...state,
+        financialExits: state.financialExits.map(e => e.id === action.payload.id ? action.payload : e)
+      };
+    
+    case 'DELETE_FINANCIAL_EXIT':
+      return {
+        ...state,
+        financialExits: state.financialExits.filter(e => e.id !== action.payload)
+      };
+    
     case 'ADD_STOCK_MOVEMENT':
       return { ...state, stockMovements: [...state.stockMovements, action.payload] };
     
@@ -897,8 +937,11 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       const loansRevenue = state.loans
         .filter(l => l.status === 'PAID')
         .reduce((sum, loan) => sum + loan.totalAmount, 0);
-      const revenue = salesRevenue + comandasRevenue + loansRevenue;
-      const expenses = state.sales.reduce((sum, sale) => sum + (sale.total - sale.profit), 0);
+      const entriesRevenue = state.financialEntries.reduce((sum, entry) => sum + entry.amount, 0);
+      const revenue = salesRevenue + comandasRevenue + loansRevenue + entriesRevenue;
+      const salesExpenses = state.sales.reduce((sum, sale) => sum + (sale.total - sale.profit), 0);
+      const financialExits = state.financialExits.reduce((sum, exit) => sum + exit.amount, 0);
+      const expenses = salesExpenses + financialExits;
       const netProfit = revenue - expenses;
       const profitMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
       const lowStockAlerts = state.products.filter(p => p.quantity <= p.minQuantity).length;
@@ -975,6 +1018,16 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
               dueDate: new Date(l.dueDate),
               paidAt: l.paidAt ? new Date(l.paidAt) : undefined,
             })) || [],
+            financialEntries: parsedData.financialEntries?.map((e: any) => ({
+              ...e,
+              date: new Date(e.date),
+              createdAt: new Date(e.createdAt),
+            })) || [],
+            financialExits: parsedData.financialExits?.map((e: any) => ({
+              ...e,
+              date: new Date(e.date),
+              createdAt: new Date(e.createdAt),
+            })) || [],
             stockMovements: parsedData.stockMovements?.map((sm: any) => ({
               ...sm,
               createdAt: new Date(sm.createdAt),
@@ -1035,6 +1088,16 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
             dueDate: l.dueDate.toISOString(),
             paidAt: l.paidAt?.toISOString(),
           })),
+          financialEntries: state.financialEntries.map(e => ({
+            ...e,
+            date: e.date.toISOString(),
+            createdAt: e.createdAt.toISOString(),
+          })),
+          financialExits: state.financialExits.map(e => ({
+            ...e,
+            date: e.date.toISOString(),
+            createdAt: e.createdAt.toISOString(),
+          })),
           stockMovements: state.stockMovements.map(sm => ({
             ...sm,
             createdAt: sm.createdAt.toISOString(),
@@ -1060,7 +1123,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
   // Atualizar estatísticas quando necessário
   useEffect(() => {
     dispatch({ type: 'UPDATE_STATS' });
-  }, [state.products, state.services, state.sales, state.comandas, state.loans]);
+  }, [state.products, state.services, state.sales, state.comandas, state.loans, state.financialEntries, state.financialExits]);
 
   // Aplicar modo escuro
   useEffect(() => {

@@ -115,3 +115,21 @@ export interface UserSettings {
   email: string;
   address: string;
 }
+
+export interface FinancialEntry {
+  id: string;
+  description: string;
+  amount: number;
+  category: string;
+  date: Date;
+  createdAt: Date;
+}
+
+export interface FinancialExit {
+  id: string;
+  description: string;
+  amount: number;
+  category: string;
+  date: Date;
+  createdAt: Date;
+}
