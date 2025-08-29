@@ -16,8 +16,8 @@ export function Dashboard({ onNewSale }: DashboardProps) {
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20">
       {/* Header with greeting and quick action */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex items-center justify-between sm:justify-start">
+        <div className="text-center sm:text-left flex-1 sm:flex-initial">
           <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
             Olá, {userSettings.name}! 👋
           </h2>
