@@ -181,59 +181,6 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
             {/* Primeira Coluna: Products/Services e Payment Method */}
             <div className="space-y-6">
               {/* Products and Services Selection */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Forma de Pagamento</h3>
-                
-                <select
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
-                  className="w-full px-3 py-3 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white font-medium"
-                >
-                  <option value="CASH">Dinheiro (em espécie)</option>
-                  <option value="PIX">PIX</option>
-                  <option value="CARD">Cartão</option>
-                  <option value="CREDIT">Fiado</option>
-                </select>
-
-                {paymentMethod === 'CARD' && (
-                  <div className="mt-3 space-y-3">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Taxa da Maquininha (%)
-                    </label>
-                    <input
-                      type="number"
-                      value={cardFeeRate}
-                      onChange={(e) => setCardFeeRate(parseFloat(e.target.value) || 0)}
-                      min="0"
-                      max="20"
-                      step="0.1"
-                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                        errors.cardFeeRate ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      placeholder="3.5"
-                    />
-                    {errors.cardFeeRate && (
-                      <p className="text-red-500 text-sm mt-1">{errors.cardFeeRate}</p>
-                    )}
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Quem paga a taxa?
-                      </label>
-                      <select
-                        value={cardFeePayer}
-                        onChange={(e) => setCardFeePayer(e.target.value as 'seller' | 'customer')}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                      >
-                        <option value="seller">Vendedor (desconta do valor)</option>
-                        <option value="customer">Cliente (adiciona ao valor)</option>
-                      </select>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Products and Services Selection */}
               {/* Tabs */}
               <div className="bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1">
                 <div className="flex space-x-1">
@@ -406,7 +353,7 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
                   </div>
                 </div>
               )}
-              </div>
+
 
               {/* Payment Method */}
               <div>
@@ -461,7 +408,7 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
                 )}
               </div>
             </div>
-          </div>
+            
         </div>
             {/* Segunda Coluna: Cart */}
 
