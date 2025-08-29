@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Calendar, DollarSign, Tag } from 'lucide-react';
+import { X, Save, Calendar, DollarSign, FileText } from 'lucide-react';
 import { FinancialExit } from '../../types';
 import { generateId, formatCurrency } from '../../utils/helpers';
 
@@ -9,27 +9,11 @@ interface ExitFormProps {
   onCancel: () => void;
 }
 
-const EXIT_CATEGORIES = [
-  'Despesas Operacionais',
-  'Aluguel',
-  'Energia Elétrica',
-  'Água',
-  'Internet/Telefone',
-  'Combustível',
-  'Manutenção',
-  'Impostos',
-  'Salários',
-  'Fornecedores',
-  'Marketing',
-  'Equipamentos',
-  'Outros',
-];
-
 export function ExitForm({ exit, onSave, onCancel }: ExitFormProps) {
   const [formData, setFormData] = useState({
-    description: '',
+    name: '',
     amount: 0,
-    category: 'Outros',
+    description: '',
     date: new Date().toISOString().split('T')[0],
   });
 
@@ -39,9 +23,9 @@ export function ExitForm({ exit, onSave, onCancel }: ExitFormProps) {
   useEffect(() => {
     if (exit) {
       setFormData({
-        description: exit.description,
+        name: exit.name,
         amount: exit.amount,
-        category: exit.category,
+        description: exit.description || '',
         date: new Date(exit.date).toISOString().split('T')[0],
       });
       setDisplayAmount(formatCurrencyInput(exit.amount));
@@ -134,8 +118,8 @@ export function ExitForm({ exit, onSave, onCancel }: ExitFormProps) {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.description.trim()) {
-      newErrors.description = 'Descrição é obrigatória';
+    if (!formData.name.trim()) {
+      newErrors.name = 'Nome da saída é obrigatório';
     }
 
     if (formData.amount <= 0) {
@@ -159,9 +143,9 @@ export function ExitForm({ exit, onSave, onCancel }: ExitFormProps) {
 
     const exitData: FinancialExit = {
       id: exit?.id || generateId(),
-      description: formData.description.trim(),
+      name: formData.name.trim(),
       amount: formData.amount,
-      category: formData.category,
+      description: formData.description.trim() || undefined,
       date: new Date(formData.date),
       createdAt: exit?.createdAt || new Date(),
     };
@@ -169,7 +153,7 @@ export function ExitForm({ exit, onSave, onCancel }: ExitFormProps) {
     onSave(exitData);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -200,20 +184,20 @@ export function ExitForm({ exit, onSave, onCancel }: ExitFormProps) {
           <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Descrição *
+                Nome da Saída *
               </label>
               <input
                 type="text"
-                name="description"
-                value={formData.description}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                  errors.description ? 'border-red-500' : 'border-gray-300'
+                  errors.name ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="Ex: Pagamento de aluguel"
               />
-              {errors.description && (
-                <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
               )}
             </div>
 
@@ -245,20 +229,18 @@ export function ExitForm({ exit, onSave, onCancel }: ExitFormProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Categoria *
+                Descrição
               </label>
               <div className="relative">
-                <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <select
-                  name="category"
-                  value={formData.category}
+                <FileText className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <textarea
+                  name="description"
+                  value={formData.description}
                   onChange={handleChange}
+                  rows={3}
                   className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:text-white"
-                >
-                  {EXIT_CATEGORIES.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
+                  placeholder="Descrição opcional da saída"
+                />
               </div>
             </div>
 
@@ -281,6 +263,9 @@ export function ExitForm({ exit, onSave, onCancel }: ExitFormProps) {
               {errors.date && (
                 <p className="text-red-500 text-sm mt-1">{errors.date}</p>
               )}
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                O valor só será contabilizado nas despesas a partir desta data
+              </p>
             </div>
           </form>
         </div>

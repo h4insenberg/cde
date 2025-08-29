@@ -15,8 +15,8 @@ export function EntriesSection() {
 
   // Filter entries based on search term
   const filteredEntries = state.financialEntries.filter(entry =>
-    entry.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    entry.category.toLowerCase().includes(searchTerm.toLowerCase())
+    entry.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (entry.description && entry.description.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const totalEntries = filteredEntries.reduce((sum, entry) => sum + entry.amount, 0);
@@ -24,10 +24,10 @@ export function EntriesSection() {
   const handleSaveEntry = (entry: FinancialEntry) => {
     if (editingEntry) {
       dispatch({ type: 'UPDATE_FINANCIAL_ENTRY', payload: entry });
-      addNotification('SUCCESS', `Entrada "${entry.description}" atualizada com sucesso`);
+      addNotification('SUCCESS', `Entrada "${entry.name}" atualizada com sucesso`);
     } else {
       dispatch({ type: 'ADD_FINANCIAL_ENTRY', payload: entry });
-      addNotification('SUCCESS', `Entrada "${entry.description}" registrada com sucesso`);
+      addNotification('SUCCESS', `Entrada "${entry.name}" adicionada com sucesso`);
     }
     setShowEntryForm(false);
     setEditingEntry(null);
@@ -40,9 +40,9 @@ export function EntriesSection() {
 
   const handleDeleteEntry = (id: string) => {
     const entry = state.financialEntries.find(e => e.id === id);
-    if (entry && window.confirm(`Tem certeza que deseja excluir "${entry.description}"?`)) {
+    if (entry && window.confirm(`Tem certeza que deseja excluir "${entry.name}"?`)) {
       dispatch({ type: 'DELETE_FINANCIAL_ENTRY', payload: id });
-      addNotification('SUCCESS', `Entrada "${entry.description}" excluída com sucesso`);
+      addNotification('SUCCESS', `Entrada "${entry.name}" excluída com sucesso`);
     }
   };
 
@@ -98,7 +98,7 @@ export function EntriesSection() {
               <div className="flex items-start justify-between mb-2 sm:mb-3">
                 <div className="flex items-center space-x-2 flex-1">
                   <TrendingUp className="h-5 w-5 text-green-500" />
-                  <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white truncate">{entry.description}</h3>
+                  <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white truncate">{entry.name}</h3>
                 </div>
                 
                 <div className="text-right flex-shrink-0">
@@ -112,16 +112,13 @@ export function EntriesSection() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <div className="bg-green-50 dark:bg-green-900/20 p-2 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <Tag className="h-4 w-4 text-green-600 dark:text-green-400" />
-                      <span className="text-sm font-medium text-green-700 dark:text-green-300">{entry.category}</span>
-                    </div>
-                  </div>
+              {entry.description && (
+                <div className="mb-3">
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                    {entry.description}
+                  </p>
                 </div>
-              </div>
+              )}
 
               {/* Actions */}
               <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">

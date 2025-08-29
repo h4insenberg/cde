@@ -118,18 +118,18 @@ export interface UserSettings {
 
 export interface FinancialEntry {
   id: string;
-  description: string;
+  name: string;
   amount: number;
-  category: string;
+  description?: string;
   date: Date;
   createdAt: Date;
 }
 
 export interface FinancialExit {
   id: string;
-  description: string;
+  name: string;
   amount: number;
-  category: string;
+  description?: string;
   date: Date;
   createdAt: Date;
 }

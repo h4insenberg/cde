@@ -15,8 +15,8 @@ export function ExitsSection() {
 
   // Filter exits based on search term
   const filteredExits = state.financialExits.filter(exit =>
-    exit.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    exit.category.toLowerCase().includes(searchTerm.toLowerCase())
+    exit.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (exit.description && exit.description.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const totalExits = filteredExits.reduce((sum, exit) => sum + exit.amount, 0);
@@ -24,10 +24,10 @@ export function ExitsSection() {
   const handleSaveExit = (exit: FinancialExit) => {
     if (editingExit) {
       dispatch({ type: 'UPDATE_FINANCIAL_EXIT', payload: exit });
-      addNotification('SUCCESS', `Saída "${exit.description}" atualizada com sucesso`);
+      addNotification('SUCCESS', `Saída "${exit.name}" atualizada com sucesso`);
     } else {
       dispatch({ type: 'ADD_FINANCIAL_EXIT', payload: exit });
-      addNotification('SUCCESS', `Saída "${exit.description}" registrada com sucesso`);
+      addNotification('SUCCESS', `Saída "${exit.name}" registrada com sucesso`);
     }
     setShowExitForm(false);
     setEditingExit(null);
@@ -40,9 +40,9 @@ export function ExitsSection() {
 
   const handleDeleteExit = (id: string) => {
     const exit = state.financialExits.find(e => e.id === id);
-    if (exit && window.confirm(`Tem certeza que deseja excluir "${exit.description}"?`)) {
+    if (exit && window.confirm(`Tem certeza que deseja excluir "${exit.name}"?`)) {
       dispatch({ type: 'DELETE_FINANCIAL_EXIT', payload: id });
-      addNotification('SUCCESS', `Saída "${exit.description}" excluída com sucesso`);
+      addNotification('SUCCESS', `Saída "${exit.name}" excluída com sucesso`);
     }
   };
 
@@ -98,7 +98,7 @@ export function ExitsSection() {
               <div className="flex items-start justify-between mb-2 sm:mb-3">
                 <div className="flex items-center space-x-2 flex-1">
                   <TrendingDown className="h-5 w-5 text-red-500" />
-                  <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white truncate">{exit.description}</h3>
+                  <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white truncate">{exit.name}</h3>
                 </div>
                 
                 <div className="text-right flex-shrink-0">
@@ -112,16 +112,13 @@ export function ExitsSection() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <div className="bg-red-50 dark:bg-red-900/20 p-2 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <Tag className="h-4 w-4 text-red-600 dark:text-red-400" />
-                      <span className="text-sm font-medium text-red-700 dark:text-red-300">{exit.category}</span>
-                    </div>
-                  </div>
+              {exit.description && (
+                <div className="mb-3">
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                    {exit.description}
+                  </p>
                 </div>
-              </div>
+              )}
 
               {/* Actions */}
               <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">

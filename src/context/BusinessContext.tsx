@@ -937,10 +937,23 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       const loansRevenue = state.loans
         .filter(l => l.status === 'PAID')
         .reduce((sum, loan) => sum + loan.totalAmount, 0);
-      const entriesRevenue = state.financialEntries.reduce((sum, entry) => sum + entry.amount, 0);
+      
+      // Only count entries that have reached their date
+      const today = new Date();
+      today.setHours(23, 59, 59, 999); // End of today
+      const entriesRevenue = state.financialEntries
+        .filter(entry => new Date(entry.date) <= today)
+        .reduce((sum, entry) => sum + entry.amount, 0);
+      
       const revenue = salesRevenue + comandasRevenue + loansRevenue + entriesRevenue;
+      
       const salesExpenses = state.sales.reduce((sum, sale) => sum + (sale.total - sale.profit), 0);
-      const financialExits = state.financialExits.reduce((sum, exit) => sum + exit.amount, 0);
+      
+      // Only count exits that have reached their date
+      const financialExits = state.financialExits
+        .filter(exit => new Date(exit.date) <= today)
+        .reduce((sum, exit) => sum + exit.amount, 0);
+      
       const expenses = salesExpenses + financialExits;
       const netProfit = revenue - expenses;
       const profitMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
