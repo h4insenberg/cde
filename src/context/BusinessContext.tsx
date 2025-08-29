@@ -578,9 +578,52 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
-        // Use the theme preference we determined above
-        parsedData.darkMode = isDarkMode;
-        dispatch({ type: 'LOAD_DATA', payload: parsedData });
+        
+        // Convert date strings back to Date objects
+        const restoredData = {
+          ...parsedData,
+          products: parsedData.products?.map((p: any) => ({
+            ...p,
+            createdAt: new Date(p.createdAt),
+            updatedAt: new Date(p.updatedAt),
+          })) || [],
+          services: parsedData.services?.map((s: any) => ({
+            ...s,
+            createdAt: new Date(s.createdAt),
+            updatedAt: new Date(s.updatedAt),
+          })) || [],
+          sales: parsedData.sales?.map((s: any) => ({
+            ...s,
+            createdAt: new Date(s.createdAt),
+          })) || [],
+          comandas: parsedData.comandas?.map((c: any) => ({
+            ...c,
+            createdAt: new Date(c.createdAt),
+            paidAt: c.paidAt ? new Date(c.paidAt) : undefined,
+            items: c.items?.map((item: any) => ({
+              ...item,
+              addedAt: new Date(item.addedAt),
+            })) || [],
+          })) || [],
+          loans: parsedData.loans?.map((l: any) => ({
+            ...l,
+            createdAt: new Date(l.createdAt),
+            dueDate: new Date(l.dueDate),
+            paidAt: l.paidAt ? new Date(l.paidAt) : undefined,
+          })) || [],
+          stockMovements: parsedData.stockMovements?.map((sm: any) => ({
+            ...sm,
+            createdAt: new Date(sm.createdAt),
+          })) || [],
+          notifications: parsedData.notifications?.map((n: any) => ({
+            ...n,
+            createdAt: new Date(n.createdAt),
+          })) || [],
+          darkMode: isDarkMode,
+        };
+        
+        console.log('Data loaded from localStorage:', restoredData);
+        dispatch({ type: 'LOAD_DATA', payload: restoredData });
       } catch (error) {
         console.error('Error loading saved data:', error);
         // Load sample data if saved data is corrupted
@@ -612,8 +655,59 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
 
   // Save data to localStorage whenever state changes
   useEffect(() => {
-    localStorage.setItem('businessData', JSON.stringify(state));
-    localStorage.setItem('darkMode', JSON.stringify(state.darkMode));
+    // Only save if state is not the initial empty state
+    if (state.products.length > 0 || state.services.length > 0 || state.sales.length > 0 || 
+        state.comandas.length > 0 || state.loans.length > 0) {
+      try {
+        const dataToSave = {
+          ...state,
+          // Convert dates to strings for JSON serialization
+          products: state.products.map(p => ({
+            ...p,
+            createdAt: p.createdAt.toISOString(),
+            updatedAt: p.updatedAt.toISOString(),
+          })),
+          services: state.services.map(s => ({
+            ...s,
+            createdAt: s.createdAt.toISOString(),
+            updatedAt: s.updatedAt.toISOString(),
+          })),
+          sales: state.sales.map(s => ({
+            ...s,
+            createdAt: s.createdAt.toISOString(),
+          })),
+          comandas: state.comandas.map(c => ({
+            ...c,
+            createdAt: c.createdAt.toISOString(),
+            paidAt: c.paidAt?.toISOString(),
+            items: c.items.map(item => ({
+              ...item,
+              addedAt: item.addedAt.toISOString(),
+            })),
+          })),
+          loans: state.loans.map(l => ({
+            ...l,
+            createdAt: l.createdAt.toISOString(),
+            dueDate: l.dueDate.toISOString(),
+            paidAt: l.paidAt?.toISOString(),
+          })),
+          stockMovements: state.stockMovements.map(sm => ({
+            ...sm,
+            createdAt: sm.createdAt.toISOString(),
+          })),
+          notifications: state.notifications.map(n => ({
+            ...n,
+            createdAt: n.createdAt.toISOString(),
+          })),
+        };
+        
+        localStorage.setItem('businessData', JSON.stringify(dataToSave));
+        localStorage.setItem('darkMode', JSON.stringify(state.darkMode));
+        console.log('Data saved to localStorage:', dataToSave);
+      } catch (error) {
+        console.error('Error saving data to localStorage:', error);
+      }
+    }
   }, [state]);
 
   // Update stats separately to avoid infinite loops
