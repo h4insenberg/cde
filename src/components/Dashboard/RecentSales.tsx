@@ -37,43 +37,30 @@ export function RecentSales({ sales, comandas, stockMovements, loans }: ExtratoP
     sale.items.forEach(item => {
       movements.push({
         id: `sale-${sale.id}-${item.id}`,
-        type: item.type === 'product' ? 'sale' : 'service',
+        type: 'sale',
         category: 'entry',
-        description: `${item.name} (${item.quantity}x)`,
-        amount: item.total,
-        createdAt: new Date(sale.createdAt),
+        description: `Venda: ${item.name}`,
+        amount: item.price * item.quantity,
+        createdAt: sale.createdAt,
         paymentMethod: sale.paymentMethod,
-        profit: item.profit,
+        profit: (item.price - item.cost) * item.quantity
       });
     });
   });
 
-  // Add paid comandas
-  comandas.filter(c => c.status === 'PAID').forEach(comanda => {
+  // Add comandas
+  comandas.forEach(comanda => {
     comanda.items.forEach(item => {
       movements.push({
         id: `comanda-${comanda.id}-${item.id}`,
-        type: item.type === 'product' ? 'sale' : 'service',
+        type: 'comanda',
         category: 'entry',
-        description: `${item.name} (${item.quantity}x) - ${comanda.customerName}`,
-        amount: item.total,
-        createdAt: new Date(comanda.paidAt || comanda.createdAt),
-        paymentMethod: 'PIX', // Default for comandas
+        description: `Comanda: ${item.name}`,
+        amount: item.price * item.quantity,
+        createdAt: comanda.createdAt,
+        paymentMethod: comanda.paymentMethod,
+        profit: (item.price - item.cost) * item.quantity
       });
-    });
-  });
-
-  // Add paid loans
-  loans.filter(l => l.status === 'PAID').forEach(loan => {
-    movements.push({
-      id: `loan-${loan.id}`,
-      type: 'loan',
-      category: 'entry',
-      description: `Empréstimo de ${loan.customerName}`,
-      amount: loan.totalAmount,
-      createdAt: new Date(loan.paidAt || loan.createdAt),
-      paymentMethod: 'PIX', // Default for loans
-      profit: loan.totalAmount - loan.amount, // Interest as profit
     });
   });
 
@@ -81,68 +68,66 @@ export function RecentSales({ sales, comandas, stockMovements, loans }: ExtratoP
   stockMovements.forEach(movement => {
     movements.push({
       id: `stock-${movement.id}`,
-      type: movement.type === 'IN' ? 'stock_in' : 'stock_out',
-      category: movement.type === 'IN' ? 'entry' : 'exit',
-      description: `${movement.productName} (${movement.quantity}x)`,
+      type: movement.type === 'in' ? 'stock_in' : 'stock_out',
+      category: movement.type === 'in' ? 'entry' : 'exit',
+      description: `${movement.type === 'in' ? 'Entrada' : 'Saída'}: ${movement.productName}`,
       quantity: movement.quantity,
-      createdAt: new Date(movement.createdAt),
+      unit: movement.unit,
+      createdAt: movement.createdAt
     });
   });
 
-  const allMovements = movements
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 12);
+  // Add loans
+  loans.forEach(loan => {
+    movements.push({
+      id: `loan-${loan.id}`,
+      type: 'loan',
+      category: 'exit',
+      description: `Empréstimo: ${loan.description}`,
+      amount: loan.amount,
+      createdAt: loan.createdAt
+    });
+  });
 
-  const entries = allMovements.filter(m => m.category === 'entry').slice(0, 6);
-  const exits = allMovements.filter(m => m.category === 'exit').slice(0, 6);
+  const allMovements = movements.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  const entries = allMovements.filter(m => m.category === 'entry');
+  const exits = allMovements.filter(m => m.category === 'exit');
 
   const getMovementIcon = (type: MovementType) => {
     switch (type) {
       case 'sale':
-        return <Package className="h-4 w-4 text-green-500" />;
-      case 'service':
-        return <Wrench className="h-4 w-4 text-purple-500" />;
-      case 'loan':
-        return <CreditCard className="h-4 w-4 text-blue-500" />;
+        return <CreditCard className="h-4 w-4 text-green-500" />;
+      case 'comanda':
+        return <Package className="h-4 w-4 text-blue-500" />;
       case 'stock_in':
         return <TrendingUp className="h-4 w-4 text-blue-500" />;
       case 'stock_out':
         return <TrendingDown className="h-4 w-4 text-red-500" />;
+      case 'service':
+        return <Wrench className="h-4 w-4 text-purple-500" />;
+      case 'loan':
+        return <ArrowDownCircle className="h-4 w-4 text-red-500" />;
       default:
-        return <CreditCard className="h-4 w-4 text-gray-400" />;
+        return <Package className="h-4 w-4 text-gray-500" />;
     }
   };
 
   const getMovementColor = (type: MovementType) => {
     switch (type) {
       case 'sale':
-      case 'service':
-      case 'loan':
+      case 'comanda':
         return 'text-green-600 dark:text-green-400';
       case 'stock_in':
         return 'text-blue-600 dark:text-blue-400';
       case 'stock_out':
+      case 'loan':
         return 'text-red-600 dark:text-red-400';
+      case 'service':
+        return 'text-purple-600 dark:text-purple-400';
       default:
         return 'text-gray-600 dark:text-gray-400';
     }
   };
-
-  if (allMovements.length === 0) {
-    return (
-      <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-            <Calendar className="h-5 w-5 mr-2 text-blue-500" />
-            Extrato
-          </h3>
-        </div>
-        <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-          Nenhuma movimentação registrada ainda
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
