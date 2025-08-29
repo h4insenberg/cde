@@ -24,6 +24,15 @@ function AppContent() {
   const [showMenuModal, setShowMenuModal] = useState(false);
   const { state, dispatch } = useBusiness();
 
+  // Apply dark mode to HTML element
+  React.useEffect(() => {
+    if (state.darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [state.darkMode]);
+
   const getPageTitle = () => {
     switch (activeTab) {
       case 'dashboard':
