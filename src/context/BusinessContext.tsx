@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { Product, Service, Sale, StockMovement, DashboardStats, Notification, Comanda, Loan } from '../types';
+import { Product, Service, Sale, StockMovement, DashboardStats, Notification, Comanda, Loan, UserSettings } from '../types';
 import { generateId } from '../utils/helpers';
 
 interface BusinessState {
@@ -13,6 +13,7 @@ interface BusinessState {
   dashboardStats: DashboardStats;
   showValues: boolean;
   darkMode: boolean;
+  userSettings: UserSettings;
 }
 
 type BusinessAction =
@@ -35,6 +36,7 @@ type BusinessAction =
   | { type: 'UPDATE_STATS' }
   | { type: 'TOGGLE_DARK_MODE' }
   | { type: 'TOGGLE_SHOW_VALUES' }
+  | { type: 'UPDATE_USER_SETTINGS'; payload: UserSettings }
   | { type: 'LOAD_DATA'; payload: BusinessState };
 
 const initialState: BusinessState = {
@@ -54,6 +56,14 @@ const initialState: BusinessState = {
   },
   showValues: true,
   darkMode: false,
+  userSettings: {
+    name: 'João Silva',
+    companyName: 'Mercadinho do João',
+    document: '12.345.678/0001-90',
+    phone: '(11) 99999-9999',
+    email: 'joao@mercadinho.com',
+    address: 'Rua das Flores, 123 - Centro - São Paulo/SP',
+  },
 };
 
 // Sample data for testing
@@ -178,6 +188,114 @@ const sampleProducts: Product[] = [
     createdAt: new Date(),
     updatedAt: new Date(),
   },
+  {
+    id: generateId(),
+    name: 'Farinha de Trigo',
+    description: 'Farinha de trigo especial para panificação, pacote de 1kg',
+    unit: 'kg',
+    quantity: 22,
+    costPrice: 4.80,
+    salePrice: 7.20,
+    minQuantity: 6,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Detergente Líquido',
+    description: 'Detergente líquido neutro, frasco de 500ml',
+    unit: 'liters',
+    quantity: 15,
+    costPrice: 2.30,
+    salePrice: 3.80,
+    minQuantity: 8,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Biscoito Recheado',
+    description: 'Biscoito recheado sabor chocolate, pacote de 140g',
+    unit: 'units',
+    quantity: 45,
+    costPrice: 1.80,
+    salePrice: 2.90,
+    minQuantity: 15,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Água Mineral',
+    description: 'Água mineral natural sem gás, garrafa de 1,5L',
+    unit: 'liters',
+    quantity: 35,
+    costPrice: 1.20,
+    salePrice: 2.50,
+    minQuantity: 12,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Margarina',
+    description: 'Margarina cremosa com sal, pote de 500g',
+    unit: 'kg',
+    quantity: 18,
+    costPrice: 3.90,
+    salePrice: 6.20,
+    minQuantity: 5,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Shampoo',
+    description: 'Shampoo para todos os tipos de cabelo, frasco de 400ml',
+    unit: 'units',
+    quantity: 12,
+    costPrice: 8.50,
+    salePrice: 13.90,
+    minQuantity: 4,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Pão de Açúcar',
+    description: 'Pão de açúcar tradicional, unidade de 50g',
+    unit: 'units',
+    quantity: 80,
+    costPrice: 0.35,
+    salePrice: 0.60,
+    minQuantity: 20,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Cerveja Lata',
+    description: 'Cerveja pilsen gelada, lata de 350ml',
+    unit: 'units',
+    quantity: 4,
+    costPrice: 2.80,
+    salePrice: 4.50,
+    minQuantity: 12,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Iogurte Natural',
+    description: 'Iogurte natural integral, pote de 170g',
+    unit: 'units',
+    quantity: 25,
+    costPrice: 2.20,
+    salePrice: 3.80,
+    minQuantity: 8,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
 ];
 
 const sampleServices: Service[] = [
@@ -261,6 +379,78 @@ const sampleServices: Service[] = [
     createdAt: new Date(),
     updatedAt: new Date(),
   },
+  {
+    id: generateId(),
+    name: 'Sobrancelha',
+    description: 'Design e modelagem de sobrancelhas com pinça',
+    price: 18.00,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Hidratação Capilar',
+    description: 'Hidratação profunda para cabelos ressecados',
+    price: 40.00,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Penteado para Festa',
+    description: 'Penteado elaborado para eventos especiais',
+    price: 70.00,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Reflexo no Cabelo',
+    description: 'Aplicação de reflexo para realçar a cor natural',
+    price: 55.00,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Tratamento Anti-idade',
+    description: 'Tratamento facial anti-idade com produtos premium',
+    price: 150.00,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Massagem nos Pés',
+    description: 'Massagem relaxante nos pés com óleos essenciais',
+    price: 30.00,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Luzes no Cabelo',
+    description: 'Aplicação de luzes para clarear mechas do cabelo',
+    price: 95.00,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Esmaltação em Gel',
+    description: 'Esmaltação com esmalte em gel de longa duração',
+    price: 35.00,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: generateId(),
+    name: 'Alongamento de Unhas',
+    description: 'Alongamento de unhas com fibra de vidro',
+    price: 50.00,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
 ];
 
 // Sample loans for testing
@@ -321,6 +511,74 @@ const sampleLoans: Loan[] = [
     description: 'Empréstimo para investimento no negócio',
     createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
   },
+  {
+    id: generateId(),
+    customerName: 'Lucia Mendes',
+    amount: 1500.00,
+    interestRate: 7.0,
+    totalAmount: 1605.00,
+    status: 'ACTIVE',
+    dueDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), // 20 days from now
+    description: 'Empréstimo para reforma da casa',
+    createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Roberto Santos',
+    amount: 600.00,
+    interestRate: 9.0,
+    totalAmount: 654.00,
+    status: 'PAID',
+    dueDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+    description: 'Empréstimo para compra de moto',
+    createdAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000), // 25 days ago
+    paidAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Sandra Lima',
+    amount: 400.00,
+    interestRate: 6.0,
+    totalAmount: 424.00,
+    status: 'OVERDUE',
+    dueDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago (overdue)
+    description: 'Empréstimo para pagamento de escola',
+    createdAt: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000), // 40 days ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Marcos Oliveira',
+    amount: 1000.00,
+    interestRate: 11.0,
+    totalAmount: 1110.00,
+    status: 'ACTIVE',
+    dueDate: new Date(Date.now() + 18 * 24 * 60 * 60 * 1000), // 18 days from now
+    description: 'Empréstimo para capital de giro',
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Carla Rodrigues',
+    amount: 250.00,
+    interestRate: 4.0,
+    totalAmount: 260.00,
+    status: 'PAID',
+    dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+    description: 'Empréstimo para compra de remédios',
+    createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
+    paidAt: new Date(Date.now() - 12 * 60 * 60 * 1000), // 12 hours ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Eduardo Costa',
+    amount: 3000.00,
+    interestRate: 13.0,
+    totalAmount: 3390.00,
+    status: 'ACTIVE',
+    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+    description: 'Empréstimo para abertura de negócio',
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+  },
 ];
 
 // Sample sales for testing
@@ -377,6 +635,232 @@ const sampleSales: Sale[] = [
     netAmount: 24.12,
     createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
   },
+  {
+    id: generateId(),
+    items: [
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[2].id, // Feijão Carioca
+        name: 'Feijão Carioca',
+        quantity: 2,
+        unitPrice: 9.90,
+        total: 19.80,
+        profit: 6.20,
+      },
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[3].id, // Óleo de Soja
+        name: 'Óleo de Soja',
+        quantity: 1,
+        unitPrice: 6.50,
+        total: 6.50,
+        profit: 2.30,
+      },
+    ],
+    total: 26.30,
+    profit: 8.50,
+    paymentMethod: 'PIX',
+    netAmount: 26.30,
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+  },
+  {
+    id: generateId(),
+    items: [
+      {
+        id: generateId(),
+        type: 'service',
+        serviceId: sampleServices[1].id, // Corte Feminino
+        name: 'Corte de Cabelo Feminino',
+        quantity: 1,
+        unitPrice: 45.00,
+        total: 45.00,
+        profit: 45.00,
+      },
+      {
+        id: generateId(),
+        type: 'service',
+        serviceId: sampleServices[3].id, // Manicure
+        name: 'Manicure',
+        quantity: 1,
+        unitPrice: 20.00,
+        total: 20.00,
+        profit: 20.00,
+      },
+    ],
+    total: 65.00,
+    profit: 65.00,
+    paymentMethod: 'CARD',
+    cardFeeRate: 2.8,
+    cardFeeAmount: 1.82,
+    netAmount: 63.18,
+    createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
+  },
+  {
+    id: generateId(),
+    items: [
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[4].id, // Macarrão
+        name: 'Macarrão Espaguete',
+        quantity: 5,
+        unitPrice: 4.20,
+        total: 21.00,
+        profit: 7.00,
+      },
+    ],
+    total: 21.00,
+    profit: 7.00,
+    paymentMethod: 'CREDIT',
+    netAmount: 21.00,
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+  },
+  {
+    id: generateId(),
+    items: [
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[5].id, // Leite
+        name: 'Leite Integral',
+        quantity: 3,
+        unitPrice: 5.50,
+        total: 16.50,
+        profit: 5.10,
+      },
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[6].id, // Café
+        name: 'Café em Pó',
+        quantity: 1,
+        unitPrice: 12.90,
+        total: 12.90,
+        profit: 4.40,
+      },
+    ],
+    total: 29.40,
+    profit: 9.50,
+    paymentMethod: 'PIX',
+    netAmount: 29.40,
+    createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000), // 6 days ago
+  },
+  {
+    id: generateId(),
+    items: [
+      {
+        id: generateId(),
+        type: 'service',
+        serviceId: sampleServices[5].id, // Escova Progressiva
+        name: 'Escova Progressiva',
+        quantity: 1,
+        unitPrice: 120.00,
+        total: 120.00,
+        profit: 120.00,
+      },
+    ],
+    total: 120.00,
+    profit: 120.00,
+    paymentMethod: 'CARD',
+    cardFeeRate: 3.2,
+    cardFeeAmount: 3.84,
+    netAmount: 116.16,
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+  },
+  {
+    id: generateId(),
+    items: [
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[8].id, // Papel Higiênico
+        name: 'Papel Higiênico',
+        quantity: 2,
+        unitPrice: 9.90,
+        total: 19.80,
+        profit: 6.20,
+      },
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[11].id, // Detergente
+        name: 'Detergente Líquido',
+        quantity: 1,
+        unitPrice: 3.80,
+        total: 3.80,
+        profit: 1.50,
+      },
+    ],
+    total: 23.60,
+    profit: 7.70,
+    paymentMethod: 'PIX',
+    netAmount: 23.60,
+    createdAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000), // 8 days ago
+  },
+  {
+    id: generateId(),
+    items: [
+      {
+        id: generateId(),
+        type: 'service',
+        serviceId: sampleServices[7].id, // Limpeza de Pele
+        name: 'Limpeza de Pele',
+        quantity: 1,
+        unitPrice: 60.00,
+        total: 60.00,
+        profit: 60.00,
+      },
+      {
+        id: generateId(),
+        type: 'service',
+        serviceId: sampleServices[10].id, // Sobrancelha
+        name: 'Sobrancelha',
+        quantity: 1,
+        unitPrice: 18.00,
+        total: 18.00,
+        profit: 18.00,
+      },
+    ],
+    total: 78.00,
+    profit: 78.00,
+    paymentMethod: 'CARD',
+    cardFeeRate: 2.9,
+    cardFeeAmount: 2.26,
+    netAmount: 75.74,
+    createdAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000), // 9 days ago
+  },
+  {
+    id: generateId(),
+    items: [
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[12].id, // Biscoito
+        name: 'Biscoito Recheado',
+        quantity: 4,
+        unitPrice: 2.90,
+        total: 11.60,
+        profit: 4.40,
+      },
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[13].id, // Água
+        name: 'Água Mineral',
+        quantity: 2,
+        unitPrice: 2.50,
+        total: 5.00,
+        profit: 2.60,
+      },
+    ],
+    total: 16.60,
+    profit: 7.00,
+    paymentMethod: 'PIX',
+    netAmount: 16.60,
+    createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
+  },
 ];
 
 // Sample comandas for testing
@@ -429,6 +913,202 @@ const sampleComandas: Comanda[] = [
     total: 45.00,
     createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
     paidAt: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Carlos Mendes',
+    status: 'OPEN',
+    items: [
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[14].id, // Margarina
+        name: 'Margarina',
+        quantity: 1,
+        unitPrice: 6.20,
+        total: 6.20,
+        addedAt: new Date(),
+      },
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[16].id, // Pão
+        name: 'Pão de Açúcar',
+        quantity: 10,
+        unitPrice: 0.60,
+        total: 6.00,
+        addedAt: new Date(),
+      },
+    ],
+    total: 12.20,
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Ana Paula',
+    status: 'PAID',
+    items: [
+      {
+        id: generateId(),
+        type: 'service',
+        serviceId: sampleServices[6].id, // Coloração
+        name: 'Coloração de Cabelo',
+        quantity: 1,
+        unitPrice: 80.00,
+        total: 80.00,
+        addedAt: new Date(),
+      },
+    ],
+    total: 80.00,
+    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
+    paidAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+  },
+  {
+    id: generateId(),
+    customerName: 'José Santos',
+    status: 'OPEN',
+    items: [
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[17].id, // Cerveja
+        name: 'Cerveja Lata',
+        quantity: 6,
+        unitPrice: 4.50,
+        total: 27.00,
+        addedAt: new Date(),
+      },
+    ],
+    total: 27.00,
+    createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Patrícia Lima',
+    status: 'PAID',
+    items: [
+      {
+        id: generateId(),
+        type: 'service',
+        serviceId: sampleServices[8].id, // Massagem
+        name: 'Massagem Relaxante',
+        quantity: 1,
+        unitPrice: 90.00,
+        total: 90.00,
+        addedAt: new Date(),
+      },
+      {
+        id: generateId(),
+        type: 'service',
+        serviceId: sampleServices[15].id, // Massagem nos Pés
+        name: 'Massagem nos Pés',
+        quantity: 1,
+        unitPrice: 30.00,
+        total: 30.00,
+        addedAt: new Date(),
+      },
+    ],
+    total: 120.00,
+    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
+    paidAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Ricardo Alves',
+    status: 'OPEN',
+    items: [
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[15].id, // Shampoo
+        name: 'Shampoo',
+        quantity: 1,
+        unitPrice: 13.90,
+        total: 13.90,
+        addedAt: new Date(),
+      },
+    ],
+    total: 13.90,
+    createdAt: new Date(Date.now() - 45 * 60 * 1000), // 45 minutes ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Silvia Costa',
+    status: 'PAID',
+    items: [
+      {
+        id: generateId(),
+        type: 'service',
+        serviceId: sampleServices[9].id, // Depilação
+        name: 'Depilação com Cera',
+        quantity: 1,
+        unitPrice: 35.00,
+        total: 35.00,
+        addedAt: new Date(),
+      },
+      {
+        id: generateId(),
+        type: 'service',
+        serviceId: sampleServices[18].id, // Esmaltação em Gel
+        name: 'Esmaltação em Gel',
+        quantity: 1,
+        unitPrice: 35.00,
+        total: 35.00,
+        addedAt: new Date(),
+      },
+    ],
+    total: 70.00,
+    createdAt: new Date(Date.now() - 7 * 60 * 60 * 1000), // 7 hours ago
+    paidAt: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 hours ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Marcos Silva',
+    status: 'OPEN',
+    items: [
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[18].id, // Iogurte
+        name: 'Iogurte Natural',
+        quantity: 3,
+        unitPrice: 3.80,
+        total: 11.40,
+        addedAt: new Date(),
+      },
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[10].id, // Farinha
+        name: 'Farinha de Trigo',
+        quantity: 2,
+        unitPrice: 7.20,
+        total: 14.40,
+        addedAt: new Date(),
+      },
+    ],
+    total: 25.80,
+    createdAt: new Date(Date.now() - 20 * 60 * 1000), // 20 minutes ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Helena Rodrigues',
+    status: 'PAID',
+    items: [
+      {
+        id: generateId(),
+        type: 'service',
+        serviceId: sampleServices[16].id, // Luzes
+        name: 'Luzes no Cabelo',
+        quantity: 1,
+        unitPrice: 95.00,
+        total: 95.00,
+        addedAt: new Date(),
+      },
+    ],
+    total: 95.00,
+    createdAt: new Date(Date.now() - 8 * 60 * 60 * 1000), // 8 hours ago
+    paidAt: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
   },
 ];
 
@@ -548,6 +1228,9 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
       console.log('Toggling dark mode from', state.darkMode, 'to', !state.darkMode);
       return { ...state, darkMode: !state.darkMode };
     
+    case 'UPDATE_USER_SETTINGS':
+      return { ...state, userSettings: action.payload };
+    
     case 'LOAD_DATA':
       return action.payload;
     
@@ -582,6 +1265,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         // Convert date strings back to Date objects
         const restoredData = {
           ...parsedData,
+          userSettings: parsedData.userSettings || initialState.userSettings,
           products: parsedData.products?.map((p: any) => ({
             ...p,
             createdAt: new Date(p.createdAt),
@@ -662,6 +1346,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         const dataToSave = {
           ...state,
           // Convert dates to strings for JSON serialization
+          userSettings: state.userSettings,
           products: state.products.map(p => ({
             ...p,
             createdAt: p.createdAt.toISOString(),

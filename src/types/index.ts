@@ -106,3 +106,12 @@ export interface Loan {
   paidAt?: Date;
   description?: string;
 }
+
+export interface UserSettings {
+  name: string;
+  companyName: string;
+  document: string;
+  phone: string;
+  email: string;
+  address: string;
+}

@@ -90,68 +90,102 @@ function AppContent() {
                 Dados do Negócio
               </h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Nome da Empresa
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Minha Empresa Ltda"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  />
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const updatedSettings = {
+                  name: formData.get('name') as string,
+                  companyName: formData.get('companyName') as string,
+                  document: formData.get('document') as string,
+                  phone: formData.get('phone') as string,
+                  email: formData.get('email') as string,
+                  address: formData.get('address') as string,
+                };
+                dispatch({ type: 'UPDATE_USER_SETTINGS', payload: updatedSettings });
+              }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Nome do Usuário
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      defaultValue={state.userSettings.name}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Nome da Empresa
+                    </label>
+                    <input
+                      type="text"
+                      name="companyName"
+                      defaultValue={state.userSettings.companyName}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      CNPJ/CPF
+                    </label>
+                    <input
+                      type="text"
+                      name="document"
+                      defaultValue={state.userSettings.document}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Telefone
+                    </label>
+                    <input
+                      type="text"
+                      name="phone"
+                      defaultValue={state.userSettings.phone}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      defaultValue={state.userSettings.email}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Endereço
+                    </label>
+                    <input
+                      type="text"
+                      name="address"
+                      defaultValue={state.userSettings.address}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
                 </div>
                 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    CNPJ/CPF
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="00.000.000/0000-00"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  />
+                <div className="mt-6">
+                  <button 
+                    type="submit"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  >
+                    Salvar Dados
+                  </button>
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Telefone
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="(11) 99999-9999"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="contato@empresa.com"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-                
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Endereço
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Rua das Flores, 123 - Centro - São Paulo/SP"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-              </div>
-              
-              <div className="mt-6">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
-                  Salvar Dados
-                </button>
-              </div>
+              </form>
             </div>
           </div>
         );

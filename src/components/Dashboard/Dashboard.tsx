@@ -11,7 +11,7 @@ interface DashboardProps {
 
 export function Dashboard({ onNewSale }: DashboardProps) {
   const { state } = useBusiness();
-  const { dashboardStats, sales, products, comandas, stockMovements } = state;
+  const { dashboardStats, sales, products, comandas, stockMovements, userSettings } = state;
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20">
@@ -19,7 +19,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-            Olá, Usuário! 👋
+            Olá, {userSettings.name}! 👋
           </h2>
           <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
             Bem-vindo ao seu painel de controle
