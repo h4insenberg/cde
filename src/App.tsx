@@ -4,31 +4,43 @@ import { BusinessProvider } from './context/BusinessContext';
 import { Header } from './components/Layout/Header';
 import { BottomNavigation } from './components/Layout/BottomNavigation';
 import { Dashboard } from './components/Dashboard/Dashboard';
-import { ProductsSection } from './components/Products/ProductsSection';
+import { ProductCard } from './components/Products/ProductCard';
+import { ServiceCard } from './components/Services/ServiceCard';
+import { ProductForm } from './components/Products/ProductForm';
+import { ServiceForm } from './components/Services/ServiceForm';
 import { SalesSection } from './components/Sales/SalesSection';
 import { ComandaSection } from './components/Comanda/ComandaSection';
 import { NotificationModal } from './components/Notifications/NotificationModal';
 import { SaleForm } from './components/Sales/SaleForm';
+import { Plus, Search } from 'lucide-react';
+import { Product, Service } from './types';
 import { useBusiness } from './context/BusinessContext';
+import { useNotifications } from './hooks/useNotifications';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showQuickSale, setShowQuickSale] = useState(false);
+  const [showProductForm, setShowProductForm] = useState(false);
+  const [showServiceForm, setShowServiceForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editingService, setEditingService] = useState<Service | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const { state, dispatch } = useBusiness();
+  const { addNotification } = useNotifications();
 
   const getPageTitle = () => {
     switch (activeTab) {
       case 'dashboard':
         return 'Dashboard';
       case 'products':
-        return 'Estoque & Serviços';
+        return 'Produtos';
+      case 'services':
+        return 'Serviços';
       case 'sales':
         return 'Vendas';
       case 'comanda':
         return 'Comandas';
-      case 'settings':
-        return 'Configurações';
       default:
         return 'BizManager';
     }
