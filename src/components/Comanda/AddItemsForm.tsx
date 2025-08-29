@@ -125,203 +125,203 @@ export function AddItemsForm({ comanda, products, services, onSave, onCancel }: 
 
         <div className="overflow-y-auto flex-1 min-h-0">
           <div className="p-3 sm:p-6 overflow-y-auto flex-1 min-h-0">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Items Selection */}
-            <div className="space-y-6">
-              {/* Tabs */}
-              <div>
-                <div className="bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1">
-                  <div className="flex space-x-1">
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('products')}
-                      className={`flex-1 px-3 py-2 rounded-md transition-colors flex items-center justify-center space-x-2 text-sm font-medium ${
-                        activeTab === 'products'
-                          ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-                      }`}
-                    >
-                      <Package className="h-4 w-4" />
-                      <span>Produtos</span>
-                      <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs">
-                        {products.filter(p => p.quantity > 0).length}
-                      </span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('services')}
-                      className={`flex-1 px-3 py-2 rounded-md transition-colors flex items-center justify-center space-x-2 text-sm font-medium ${
-                        activeTab === 'services'
-                          ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-                      }`}
-                    >
-                      <Wrench className="h-4 w-4" />
-                      <span>Serviços</span>
-                      <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs">
-                        {services.length}
-                      </span>
-                    </button>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Items Selection */}
+              <div className="space-y-6">
+                {/* Tabs */}
+                <div>
+                  <div className="bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1">
+                    <div className="flex space-x-1">
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('products')}
+                        className={`flex-1 px-3 py-2 rounded-md transition-colors flex items-center justify-center space-x-2 text-sm font-medium ${
+                          activeTab === 'products'
+                            ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                        }`}
+                      >
+                        <Package className="h-4 w-4" />
+                        <span>Produtos</span>
+                        <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs">
+                          {products.filter(p => p.quantity > 0).length}
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('services')}
+                        className={`flex-1 px-3 py-2 rounded-md transition-colors flex items-center justify-center space-x-2 text-sm font-medium ${
+                          activeTab === 'services'
+                            ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                        }`}
+                      >
+                        <Wrench className="h-4 w-4" />
+                        <span>Serviços</span>
+                        <span className="bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-200 px-2 py-1 rounded-full text-xs">
+                          {services.length}
+                        </span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-              
-              {/* Tab Content */}
-              <div className="min-h-[300px]">
-                {activeTab === 'products' && (
-                  <div>
-                    <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
-                      {products.filter(p => p.quantity > 0).map(product => (
-                        <button
-                          key={product.id}
-                          type="button"
-                          onClick={() => addProductToCart(product)}
-                          className="text-left p-2 sm:p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
-                        >
-                          <div className="flex justify-between items-start gap-2">
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">{product.name}</p>
-                              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                Estoque: {product.quantity} {product.unit}
+                
+                {/* Tab Content */}
+                <div className="min-h-[300px]">
+                  {activeTab === 'products' && (
+                    <div>
+                      <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+                        {products.filter(p => p.quantity > 0).map(product => (
+                          <button
+                            key={product.id}
+                            type="button"
+                            onClick={() => addProductToCart(product)}
+                            className="text-left p-2 sm:p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
+                          >
+                            <div className="flex justify-between items-start gap-2">
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">{product.name}</p>
+                                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                  Estoque: {product.quantity} {product.unit}
+                                </p>
+                              </div>
+                              <p className="font-semibold text-green-600 dark:text-green-400 text-sm sm:text-base flex-shrink-0">
+                                {formatCurrency(product.salePrice)}
                               </p>
                             </div>
-                            <p className="font-semibold text-green-600 dark:text-green-400 text-sm sm:text-base flex-shrink-0">
-                              {formatCurrency(product.salePrice)}
+                          </button>
+                        ))}
+                        
+                        {products.filter(p => p.quantity > 0).length === 0 && (
+                          <div className="text-center py-6 sm:py-8">
+                            <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                            <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base px-4">
+                              Nenhum produto disponível em estoque
                             </p>
                           </div>
-                        </button>
-                      ))}
-                      
-                      {products.filter(p => p.quantity > 0).length === 0 && (
-                        <div className="text-center py-6 sm:py-8">
-                          <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base px-4">
-                            Nenhum produto disponível em estoque
-                          </p>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {activeTab === 'services' && (
-                  <div>
-                    <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
-                      {services.map(service => (
-                        <button
-                          key={service.id}
-                          type="button"
-                          onClick={() => addServiceToCart(service)}
-                          className="text-left p-2 sm:p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:border-purple-300 dark:hover:border-purple-600 transition-colors"
-                        >
-                          <div className="flex justify-between items-start gap-2">
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">{service.name}</p>
-                              {service.description && (
-                                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">
-                                  {service.description}
-                                </p>
-                              )}
+                  {activeTab === 'services' && (
+                    <div>
+                      <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+                        {services.map(service => (
+                          <button
+                            key={service.id}
+                            type="button"
+                            onClick={() => addServiceToCart(service)}
+                            className="text-left p-2 sm:p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:border-purple-300 dark:hover:border-purple-600 transition-colors"
+                          >
+                            <div className="flex justify-between items-start gap-2">
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">{service.name}</p>
+                                {service.description && (
+                                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">
+                                    {service.description}
+                                  </p>
+                                )}
+                              </div>
+                              <p className="font-semibold text-purple-600 dark:text-purple-400 text-sm sm:text-base flex-shrink-0">
+                                {formatCurrency(service.price)}
+                              </p>
                             </div>
-                            <p className="font-semibold text-purple-600 dark:text-purple-400 text-sm sm:text-base flex-shrink-0">
-                              {formatCurrency(service.price)}
+                          </button>
+                        ))}
+                        
+                        {services.length === 0 && (
+                          <div className="text-center py-6 sm:py-8">
+                            <Wrench className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                            <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base px-4">
+                              Nenhum serviço cadastrado
                             </p>
                           </div>
-                        </button>
-                      ))}
-                      
-                      {services.length === 0 && (
-                        <div className="text-center py-6 sm:py-8">
-                          <Wrench className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base px-4">
-                            Nenhum serviço cadastrado
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Cart */}
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                  Novos Itens ({cartItems.length})
-                </h3>
-                
-                <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {cartItems.map(item => (
-                    <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {formatCurrency(item.unitPrice)} x {item.quantity} = {formatCurrency(item.unitPrice * item.quantity)}
-                        </p>
+                        )}
                       </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="p-1 text-gray-400 hover:text-red-600 transition-colors"
-                        >
-                          <Minus className="h-4 w-4" />
-                        </button>
-                        <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="p-1 text-gray-400 hover:text-green-600 transition-colors"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => removeFromCart(item.id)}
-                          className="p-1 text-gray-400 hover:text-red-600 transition-colors ml-2"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {cartItems.length === 0 && (
-                    <div className="text-center py-8">
-                      <p className="text-gray-500 dark:text-gray-400">
-                        Nenhum item adicionado
-                      </p>
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Summary */}
-              <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Total atual:</span>
-                  <span className="font-medium">{formatCurrency(comanda.total)}</span>
-                </div>
-                
-                {newItemsTotal > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-400">Novos itens:</span>
-                    <span className="font-medium text-blue-600">+{formatCurrency(newItemsTotal)}</span>
+              {/* Cart */}
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                    Novos Itens ({cartItems.length})
+                  </h3>
+                  
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {cartItems.map(item => (
+                      <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {formatCurrency(item.unitPrice)} x {item.quantity} = {formatCurrency(item.unitPrice * item.quantity)}
+                          </p>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                          >
+                            <Minus className="h-4 w-4" />
+                          </button>
+                          <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            className="p-1 text-gray-400 hover:text-green-600 transition-colors"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeFromCart(item.id)}
+                            className="p-1 text-gray-400 hover:text-red-600 transition-colors ml-2"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {cartItems.length === 0 && (
+                      <div className="text-center py-8">
+                        <p className="text-gray-500 dark:text-gray-400">
+                          Nenhum item adicionado
+                        </p>
+                      </div>
+                    )}
                   </div>
-                )}
-                
-                <hr className="my-2 border-gray-300 dark:border-gray-600" />
-                
-                <div className="flex justify-between text-lg font-bold">
-                  <span>Novo total:</span>
-                  <span className="text-blue-600 dark:text-blue-400">{formatCurrency(calculateNewTotal())}</span>
+                </div>
+
+                {/* Summary */}
+                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600 dark:text-gray-400">Total atual:</span>
+                    <span className="font-medium">{formatCurrency(comanda.total)}</span>
+                  </div>
+                  
+                  {newItemsTotal > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600 dark:text-gray-400">Novos itens:</span>
+                      <span className="font-medium text-blue-600">+{formatCurrency(newItemsTotal)}</span>
+                    </div>
+                  )}
+                  
+                  <hr className="my-2 border-gray-300 dark:border-gray-600" />
+                  
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>Novo total:</span>
+                    <span className="text-blue-600 dark:text-blue-400">{formatCurrency(calculateNewTotal())}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
         
         {/* Actions */}
