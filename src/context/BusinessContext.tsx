@@ -1203,7 +1203,6 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
             const notification: Notification = {
               id: generateId(),
               type: 'LOW_STOCK',
-              title: 'Estoque Baixo',
               message: `O produto "${product.name}" está com estoque baixo (${product.quantity} ${product.unit})`,
               read: false,
               createdAt: new Date(),
@@ -1230,7 +1229,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
 
             // Verificar se já existe uma notificação para este empréstimo
             const existingNotification = state.notifications.find(n => 
-              n.type === 'OVERDUE_LOAN' && 
+              n.message.includes('empréstimo') &&
               n.message.includes(loan.customerName) &&
               !n.read
             );
@@ -1238,8 +1237,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
             if (!existingNotification) {
               const notification: Notification = {
                 id: generateId(),
-                type: 'OVERDUE_LOAN',
-                title: 'Empréstimo Vencido',
+                type: 'ERROR',
                 message: `O empréstimo de ${loan.customerName} venceu em ${dueDate.toLocaleDateString()}`,
                 read: false,
                 createdAt: new Date(),
@@ -1251,11 +1249,12 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
       });
     };
 
-    // Verificar imediatamente e depois a cada 5 minutos
-    checkNotifications();
-    const interval = setInterval(checkNotifications, 5 * 60 * 1000);
+    // Usar um timeout para evitar execução durante atualizações de estado
+    const timeoutId = setTimeout(() => {
+      checkNotifications();
+    }, 500);
 
-    return () => clearInterval(interval);
+    return () => clearTimeout(timeoutId);
   }, [state.products, state.loans, state.notifications]);
 
   return (
