@@ -1,625 +1,1274 @@
-import React, { useState, useEffect } from 'react';
-import { X, Save } from 'lucide-react';
-import { Product } from '../../types';
-import { generateId, formatCurrency } from '../../utils/helpers';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import { Product, Service, Sale, StockMovement, DashboardStats, Notification, Comanda, Loan, UserSettings, FinancialEntry, FinancialExit } from '../types';
+import { generateId } from '../utils/helpers';
 
-interface ProductFormProps {
-  product?: Product | null;
-  onSave: (product: Product) => void;
-  onCancel: () => void;
+interface BusinessState {
+  products: Product[];
+  services: Service[];
+  sales: Sale[];
+  comandas: Comanda[];
+  loans: Loan[];
+  financialEntries: FinancialEntry[];
+  financialExits: FinancialExit[];
+  stockMovements: StockMovement[];
+  notifications: Notification[];
+  dashboardStats: DashboardStats;
+  showValues: boolean;
+  darkMode: boolean;
+  userSettings: UserSettings;
+  skipNotificationCheck: boolean;
 }
 
-export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    unit: 'unidades' as Product['unit'],
-    quantity: 0,
-    costPrice: 0,
-    salePrice: 0,
-    minQuantity: 5,
-  });
+type BusinessAction =
+  | { type: 'ADD_PRODUCT'; payload: Product }
+  | { type: 'UPDATE_PRODUCT'; payload: Product }
+  | { type: 'DELETE_PRODUCT'; payload: string }
+  | { type: 'ADD_SERVICE'; payload: Service }
+  | { type: 'UPDATE_SERVICE'; payload: Service }
+  | { type: 'DELETE_SERVICE'; payload: string }
+  | { type: 'ADD_SALE'; payload: Sale }
+  | { type: 'ADD_COMANDA'; payload: Comanda }
+  | { type: 'UPDATE_COMANDA'; payload: Comanda }
+  | { type: 'DELETE_COMANDA'; payload: string }
+  | { type: 'ADD_LOAN'; payload: Loan }
+  | { type: 'UPDATE_LOAN'; payload: Loan }
+  | { type: 'DELETE_LOAN'; payload: string }
+  | { type: 'ADD_FINANCIAL_ENTRY'; payload: FinancialEntry }
+  | { type: 'UPDATE_FINANCIAL_ENTRY'; payload: FinancialEntry }
+  | { type: 'DELETE_FINANCIAL_ENTRY'; payload: string }
+  | { type: 'ADD_FINANCIAL_EXIT'; payload: FinancialExit }
+  | { type: 'UPDATE_FINANCIAL_EXIT'; payload: FinancialExit }
+  | { type: 'DELETE_FINANCIAL_EXIT'; payload: string }
+  | { type: 'ADD_STOCK_MOVEMENT'; payload: StockMovement }
+  | { type: 'ADD_NOTIFICATION'; payload: Notification }
+  | { type: 'MARK_NOTIFICATION_READ'; payload: string }
+  | { type: 'MARK_ALL_NOTIFICATIONS_READ' }
+  | { type: 'CLEAR_ALL_NOTIFICATIONS' }
+  | { type: 'UPDATE_STATS' }
+  | { type: 'TOGGLE_DARK_MODE' }
+  | { type: 'TOGGLE_SHOW_VALUES' }
+  | { type: 'UPDATE_USER_SETTINGS'; payload: UserSettings }
+  | { type: 'LOAD_STATE'; payload: BusinessState };
 
-  const [displayCostPrice, setDisplayCostPrice] = useState('0,00');
-  const [displaySalePrice, setDisplaySalePrice] = useState('0,00');
-  const [displayQuantity, setDisplayQuantity] = useState('0,00');
-  const [displayMinQuantity, setDisplayMinQuantity] = useState('5,00');
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    if (product) {
-      setFormData({
-        name: product.name,
-        description: product.description,
-        unit: product.unit,
-        quantity: product.quantity,
-        costPrice: product.costPrice,
-        salePrice: product.salePrice,
-        minQuantity: product.minQuantity,
-      });
-      setDisplayCostPrice(formatCurrencyInput(product.costPrice));
-      setDisplaySalePrice(formatCurrencyInput(product.salePrice));
-      // Format based on unit type
-      if (product.unit === 'unidades') {
-        setDisplayQuantity(Math.floor(product.quantity).toString());
-        setDisplayMinQuantity(Math.floor(product.minQuantity).toString());
-      } else {
-        setDisplayQuantity(formatFloatInput(product.quantity));
-        setDisplayMinQuantity(formatFloatInput(product.minQuantity));
-      }
-    } else {
-      setDisplayCostPrice('0,00');
-      setDisplaySalePrice('0,00');
-      setDisplayQuantity('0');
-      setDisplayMinQuantity('5');
-    }
-  }, [product]);
-
-  const formatCurrencyInput = (value: number): string => {
-    if (value === 0) return '0,00';
-    
-    const cents = Math.round(value * 100);
-    const reais = Math.floor(cents / 100);
-    const centavos = cents % 100;
-    
-    const reaisFormatted = reais.toLocaleString('pt-BR');
-    return `${reaisFormatted},${centavos.toString().padStart(2, '0')}`;
-  };
-
-  const parseCurrencyInput = (value: string): number => {
-    const numericValue = value.replace(/[^\d]/g, '');
-    if (!numericValue) return 0;
-    return parseInt(numericValue) / 100;
-  };
-
-  const formatFloatInput = (value: number): string => {
-    if (value === 0) return '0,00';
-    
-    // For units, format as integer
-    if (formData.unit === 'unidades') {
-      return Math.floor(value).toString();
-    }
-    
-    const cents = Math.round(value * 100);
-    const integerPart = Math.floor(cents / 100);
-    const decimalPart = cents % 100;
-    
-    const integerFormatted = integerPart.toLocaleString('pt-BR');
-    return `${integerFormatted},${decimalPart.toString().padStart(2, '0')}`;
-  };
-
-  const parseFloatInput = (value: string): number => {
-    // For units, parse as integer
-    if (formData.unit === 'unidades') {
-      const numericValue = value.replace(/[^\d]/g, '');
-      return parseInt(numericValue) || 0;
-    }
-    
-    const numericValue = value.replace(/[^\d]/g, '');
-    if (!numericValue) return 0;
-    return parseInt(numericValue) / 100;
-  };
-
-  const handleFloatChange = (value: string, field: 'quantity' | 'minQuantity') => {
-    // For units, handle as integer
-    if (formData.unit === 'unidades') {
-      const numericValue = value.replace(/[^\d]/g, '');
-      const intValue = parseInt(numericValue) || 0;
-      
-      if (field === 'quantity') {
-        setDisplayQuantity(intValue.toString());
-        setFormData(prev => ({ ...prev, quantity: intValue }));
-      } else {
-        setDisplayMinQuantity(intValue.toString());
-        setFormData(prev => ({ ...prev, minQuantity: intValue }));
-      }
-      
-      // Clear error when user starts typing
-      if (errors[field]) {
-        setErrors(prev => ({ ...prev, [field]: '' }));
-      }
-      return;
-    }
-    
-    // Pega o valor atual sem formatação
-    const currentValue = field === 'quantity' ? displayQuantity : displayMinQuantity;
-    const currentNumeric = currentValue.replace(/[^\d]/g, '');
-    
-    // Remove tudo que não é dígito do novo valor
-    const inputNumeric = value.replace(/[^\d]/g, '');
-    
-    // Se o input tem mais dígitos que o atual, adiciona no final
-    // Se tem menos, remove do final
-    let finalNumeric = '';
-    if (inputNumeric.length > currentNumeric.length) {
-      // Adiciona apenas o último dígito digitado
-      const newDigit = inputNumeric[inputNumeric.length - 1];
-      finalNumeric = currentNumeric + newDigit;
-    } else if (inputNumeric.length < currentNumeric.length) {
-      // Remove do final
-      finalNumeric = currentNumeric.slice(0, -1);
-    } else {
-      finalNumeric = inputNumeric;
-    }
-    
-    // Se vazio, define como 0
-    if (!finalNumeric) {
-      if (field === 'quantity') {
-        setDisplayQuantity('0,00');
-        setFormData(prev => ({ ...prev, quantity: 0 }));
-      } else {
-        setDisplayMinQuantity('0,00');
-        setFormData(prev => ({ ...prev, minQuantity: 0 }));
-      }
-      return;
-    }
-    
-    // Limita a 10 dígitos (máximo 99.999.999,99)
-    const limitedValue = finalNumeric.slice(0, 10);
-    const numericValue = parseInt(limitedValue, 10) / 100;
-    
-    // Formata o valor
-    const formattedValue = formatFloatInput(numericValue);
-    
-    // Atualiza o display
-    if (field === 'quantity') {
-      setDisplayQuantity(formattedValue);
-      setFormData(prev => ({ ...prev, quantity: numericValue }));
-    } else {
-      setDisplayMinQuantity(formattedValue);
-      setFormData(prev => ({ ...prev, minQuantity: numericValue }));
-    }
-
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  };
-
-  // Update display format when unit changes
-  useEffect(() => {
-    if (formData.unit === 'unidades') {
-      // Convert to integer format
-      setDisplayQuantity(Math.floor(formData.quantity).toString());
-      setDisplayMinQuantity(Math.floor(formData.minQuantity).toString());
-      setFormData(prev => ({
-        ...prev,
-        quantity: Math.floor(prev.quantity),
-        minQuantity: Math.floor(prev.minQuantity)
-      }));
-    } else {
-      // Convert to float format
-      setDisplayQuantity(formatFloatInput(formData.quantity));
-      setDisplayMinQuantity(formatFloatInput(formData.minQuantity));
-    }
-  }, [formData.unit]);
-
-  const handleFloatKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Para teclas de navegação, força o cursor para o final
-    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
-      e.preventDefault();
-      setTimeout(() => {
-        const target = e.target as HTMLInputElement;
-        target.setSelectionRange(target.value.length, target.value.length);
-      }, 0);
-      return;
-    }
-    
-    // Permite apenas números, vírgula, backspace, delete, tab, escape, enter
-    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter'];
-    const isNumber = /^[0-9]$/.test(e.key);
-    
-    if (!isNumber && !allowedKeys.includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-
-  const handleFloatInput = (e: React.FormEvent<HTMLInputElement>) => {
-    // Move o cursor para o final sempre que houver input
-    setTimeout(() => {
-      const target = e.target as HTMLInputElement;
-      target.setSelectionRange(target.value.length, target.value.length);
-    }, 0);
-  };
-
-  const handleFloatClick = (e: React.MouseEvent<HTMLInputElement>) => {
-    // Move o cursor para o final sempre que clicar
-    setTimeout(() => {
-      const target = e.target as HTMLInputElement;
-      target.setSelectionRange(target.value.length, target.value.length);
-    }, 0);
-  };
-
-  const handleFloatFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    // Move o cursor para o final sempre
-    setTimeout(() => {
-      e.target.setSelectionRange(e.target.value.length, e.target.value.length);
-    }, 0);
-  };
-
-  const handleCurrencyChange = (value: string, field: 'costPrice' | 'salePrice') => {
-    // Pega o valor atual sem formatação
-    const currentValue = field === 'costPrice' ? displayCostPrice : displaySalePrice;
-    const currentNumeric = currentValue.replace(/[^\d]/g, '');
-    
-    // Remove tudo que não é dígito do novo valor
-    const inputNumeric = value.replace(/[^\d]/g, '');
-    
-    // Se o input tem mais dígitos que o atual, adiciona no final
-    // Se tem menos, remove do final
-    let finalNumeric = '';
-    if (inputNumeric.length > currentNumeric.length) {
-      // Adiciona apenas o último dígito digitado
-      const newDigit = inputNumeric[inputNumeric.length - 1];
-      finalNumeric = currentNumeric + newDigit;
-    } else if (inputNumeric.length < currentNumeric.length) {
-      // Remove do final
-      finalNumeric = currentNumeric.slice(0, -1);
-    } else {
-      finalNumeric = inputNumeric;
-    }
-    
-    // Se vazio, define como 0
-    if (!finalNumeric) {
-      if (field === 'costPrice') {
-        setDisplayCostPrice('0,00');
-      } else {
-        setDisplaySalePrice('0,00');
-      }
-      setFormData(prev => ({ ...prev, [field]: 0 }));
-      return;
-    }
-    
-    // Limita a 10 dígitos (máximo R$ 99.999.999,99)
-    const limitedValue = finalNumeric.slice(0, 10);
-    const numericPrice = parseInt(limitedValue, 10) / 100;
-    
-    // Formata o valor
-    const formattedValue = formatCurrencyInput(numericPrice);
-    
-    // Atualiza o display
-    if (field === 'costPrice') {
-      setDisplayCostPrice(formattedValue);
-    } else {
-      setDisplaySalePrice(formattedValue);
-    }
-    
-    // Atualiza o valor numérico no formData
-    setFormData(prev => ({
-      ...prev,
-      [field]: numericPrice
-    }));
-
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  };
-
-  const handleCurrencyKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, field: 'costPrice' | 'salePrice') => {
-    // Para teclas de navegação, força o cursor para o final
-    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
-      e.preventDefault();
-      setTimeout(() => {
-        const target = e.target as HTMLInputElement;
-        target.setSelectionRange(target.value.length, target.value.length);
-      }, 0);
-      return;
-    }
-    
-    // Permite apenas números, backspace, delete, tab, escape, enter
-    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter'];
-    const isNumber = /^[0-9]$/.test(e.key);
-    
-    if (!isNumber && !allowedKeys.includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-
-  const handleCurrencyInput = (e: React.FormEvent<HTMLInputElement>, field: 'costPrice' | 'salePrice') => {
-    // Move o cursor para o final sempre que houver input
-    setTimeout(() => {
-      const target = e.target as HTMLInputElement;
-      target.setSelectionRange(target.value.length, target.value.length);
-    }, 0);
-  };
-
-  const handleCurrencyClick = (e: React.MouseEvent<HTMLInputElement>) => {
-    // Move o cursor para o final sempre que clicar
-    setTimeout(() => {
-      const target = e.target as HTMLInputElement;
-      target.setSelectionRange(target.value.length, target.value.length);
-    }, 0);
-  };
-
-  const handleCurrencyFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    // Move o cursor para o final sempre
-    setTimeout(() => {
-      e.target.setSelectionRange(e.target.value.length, e.target.value.length);
-    }, 0);
-  };
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Nome é obrigatório';
-    }
-
-    if (formData.quantity < 0) {
-      newErrors.quantity = 'Quantidade deve ser positiva';
-    }
-
-    if (formData.costPrice < 0) {
-      newErrors.costPrice = 'Preço de custo deve ser positivo';
-    }
-
-    if (formData.salePrice < 0) {
-      newErrors.salePrice = 'Preço de venda deve ser positivo';
-    }
-
-    if (formData.salePrice <= formData.costPrice) {
-      newErrors.salePrice = 'Preço de venda deve ser maior que o custo';
-    }
-
-    if (formData.minQuantity < 0) {
-      newErrors.minQuantity = 'Estoque mínimo deve ser positivo';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-
-    const productData: Product = {
-      id: product?.id || generateId(),
-      ...formData,
-      createdAt: product?.createdAt || new Date(),
+// Função para criar dados de teste
+function createSampleData(): BusinessState {
+  // Produtos de teste
+  const sampleProducts: Product[] = [
+    {
+      id: generateId(),
+      name: 'Açúcar Cristal',
+      description: 'Açúcar cristal refinado especial, pacote de 1kg',
+      unit: 'kg',
+      quantity: 25,
+      costPrice: 3.50,
+      salePrice: 5.20,
+      minQuantity: 5,
+      createdAt: new Date(),
       updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Arroz Branco',
+      description: 'Arroz branco tipo 1, pacote de 5kg',
+      unit: 'kg',
+      quantity: 15,
+      costPrice: 12.00,
+      salePrice: 18.50,
+      minQuantity: 3,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Feijão Carioca',
+      description: 'Feijão carioca tipo 1, pacote de 1kg',
+      unit: 'kg',
+      quantity: 2,
+      costPrice: 6.80,
+      salePrice: 9.90,
+      minQuantity: 5,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Óleo de Soja',
+      description: 'Óleo de soja refinado, garrafa de 900ml',
+      unit: 'litros',
+      quantity: 20,
+      costPrice: 4.20,
+      salePrice: 6.50,
+      minQuantity: 8,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Macarrão Espaguete',
+      description: 'Macarrão espaguete nº 8, pacote de 500g',
+      unit: 'unidades',
+      quantity: 30,
+      costPrice: 2.80,
+      salePrice: 4.20,
+      minQuantity: 10,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Leite Integral',
+      description: 'Leite integral UHT, caixa de 1 litro',
+      unit: 'litros',
+      quantity: 12,
+      costPrice: 3.80,
+      salePrice: 5.50,
+      minQuantity: 6,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Café em Pó',
+      description: 'Café torrado e moído tradicional, pacote de 500g',
+      unit: 'kg',
+      quantity: 18,
+      costPrice: 8.50,
+      salePrice: 12.90,
+      minQuantity: 4,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Sabão em Pó',
+      description: 'Sabão em pó concentrado, caixa de 1kg',
+      unit: 'kg',
+      quantity: 1,
+      costPrice: 7.20,
+      salePrice: 11.50,
+      minQuantity: 5,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Papel Higiênico',
+      description: 'Papel higiênico folha dupla, pacote com 4 rolos',
+      unit: 'unidades',
+      quantity: 25,
+      costPrice: 6.80,
+      salePrice: 9.90,
+      minQuantity: 8,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Refrigerante Cola',
+      description: 'Refrigerante sabor cola, garrafa de 2 litros',
+      unit: 'litros',
+      quantity: 3,
+      costPrice: 4.50,
+      salePrice: 7.20,
+      minQuantity: 6,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ];
+
+  // Serviços de teste
+  const sampleServices: Service[] = [
+    {
+      id: generateId(),
+      name: 'Corte de Cabelo Masculino',
+      description: 'Corte de cabelo masculino tradicional com acabamento',
+      price: 25.00,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Corte de Cabelo Feminino',
+      description: 'Corte de cabelo feminino com lavagem e escovação',
+      price: 45.00,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Barba e Bigode',
+      description: 'Aparar barba e bigode com acabamento profissional',
+      price: 15.00,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Manicure',
+      description: 'Serviço completo de manicure com esmaltação',
+      price: 20.00,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Pedicure',
+      description: 'Serviço completo de pedicure com esmaltação',
+      price: 25.00,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Escova Progressiva',
+      description: 'Tratamento de escova progressiva para alisamento',
+      price: 120.00,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Coloração de Cabelo',
+      description: 'Coloração completa do cabelo com produtos profissionais',
+      price: 80.00,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Limpeza de Pele',
+      description: 'Limpeza facial profunda com extração e hidratação',
+      price: 60.00,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Massagem Relaxante',
+      description: 'Massagem corporal relaxante de 60 minutos',
+      price: 90.00,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: generateId(),
+      name: 'Depilação com Cera',
+      description: 'Depilação completa das pernas com cera quente',
+      price: 35.00,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ];
+
+  // Empréstimos de teste
+  const sampleLoans: Loan[] = [
+    {
+      id: generateId(),
+      customerName: 'João Silva',
+      amount: 500.00,
+      interestRate: 10.0,
+      totalAmount: 550.00,
+      status: 'ACTIVE',
+      dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+      description: 'Empréstimo para compra de material de construção',
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Maria Santos',
+      amount: 1200.00,
+      interestRate: 8.5,
+      totalAmount: 1302.00,
+      status: 'PAID',
+      dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      description: 'Empréstimo para emergência médica',
+      createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
+      paidAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Carlos Oliveira',
+      amount: 800.00,
+      interestRate: 12.0,
+      totalAmount: 896.00,
+      status: 'OVERDUE',
+      dueDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+      description: 'Empréstimo para pagamento de contas',
+      createdAt: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Ana Costa',
+      amount: 300.00,
+      interestRate: 5.0,
+      totalAmount: 315.00,
+      status: 'ACTIVE',
+      dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+      description: 'Empréstimo para compra de eletrodoméstico',
+      createdAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Pedro Ferreira',
+      amount: 2000.00,
+      interestRate: 15.0,
+      totalAmount: 2300.00,
+      status: 'ACTIVE',
+      dueDate: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000),
+      description: 'Empréstimo para investimento no negócio',
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Lucia Mendes',
+      amount: 1500.00,
+      interestRate: 7.0,
+      totalAmount: 1605.00,
+      status: 'ACTIVE',
+      dueDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
+      description: 'Empréstimo para reforma da casa',
+      createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Roberto Santos',
+      amount: 600.00,
+      interestRate: 9.0,
+      totalAmount: 654.00,
+      status: 'PAID',
+      dueDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      description: 'Empréstimo para compra de moto',
+      createdAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
+      paidAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Sandra Lima',
+      amount: 400.00,
+      interestRate: 6.0,
+      totalAmount: 424.00,
+      status: 'OVERDUE',
+      dueDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      description: 'Empréstimo para pagamento de escola',
+      createdAt: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Marcos Oliveira',
+      amount: 1000.00,
+      interestRate: 11.0,
+      totalAmount: 1110.00,
+      status: 'ACTIVE',
+      dueDate: new Date(Date.now() + 18 * 24 * 60 * 60 * 1000),
+      description: 'Empréstimo para capital de giro',
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Carla Rodrigues',
+      amount: 250.00,
+      interestRate: 4.0,
+      totalAmount: 260.00,
+      status: 'PAID',
+      dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      description: 'Empréstimo para compra de remédios',
+      createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+      paidAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+    },
+  ];
+
+  // Vendas de teste
+  const sampleSales: Sale[] = [
+    {
+      id: generateId(),
+      items: [
+        {
+          id: generateId(),
+          type: 'product',
+          productId: sampleProducts[0].id,
+          name: 'Açúcar Cristal',
+          quantity: 2,
+          unitPrice: 5.20,
+          total: 10.40,
+          profit: 3.40,
+        },
+      ],
+      total: 10.40,
+      profit: 3.40,
+      paymentMethod: 'PIX',
+      netAmount: 10.40,
+      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      items: [
+        {
+          id: generateId(),
+          type: 'service',
+          serviceId: sampleServices[0].id,
+          name: 'Corte de Cabelo Masculino',
+          quantity: 1,
+          unitPrice: 25.00,
+          total: 25.00,
+          profit: 25.00,
+        },
+      ],
+      total: 25.00,
+      profit: 25.00,
+      paymentMethod: 'CARD',
+      cardFeeRate: 3.5,
+      cardFeeAmount: 0.88,
+      netAmount: 24.12,
+      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      items: [
+        {
+          id: generateId(),
+          type: 'product',
+          productId: sampleProducts[1].id,
+          name: 'Arroz Branco',
+          quantity: 1,
+          unitPrice: 18.50,
+          total: 18.50,
+          profit: 6.50,
+        },
+      ],
+      total: 18.50,
+      profit: 6.50,
+      paymentMethod: 'PIX',
+      netAmount: 18.50,
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      items: [
+        {
+          id: generateId(),
+          type: 'service',
+          serviceId: sampleServices[1].id,
+          name: 'Corte de Cabelo Feminino',
+          quantity: 1,
+          unitPrice: 45.00,
+          total: 45.00,
+          profit: 45.00,
+        },
+      ],
+      total: 45.00,
+      profit: 45.00,
+      paymentMethod: 'CARD',
+      cardFeeRate: 2.8,
+      cardFeeAmount: 1.26,
+      netAmount: 43.74,
+      createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      items: [
+        {
+          id: generateId(),
+          type: 'product',
+          productId: sampleProducts[4].id,
+          name: 'Macarrão Espaguete',
+          quantity: 3,
+          unitPrice: 4.20,
+          total: 12.60,
+          profit: 4.20,
+        },
+      ],
+      total: 12.60,
+      profit: 4.20,
+      paymentMethod: 'CREDIT',
+      netAmount: 12.60,
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      items: [
+        {
+          id: generateId(),
+          type: 'product',
+          productId: sampleProducts[5].id,
+          name: 'Leite Integral',
+          quantity: 2,
+          unitPrice: 5.50,
+          total: 11.00,
+          profit: 3.40,
+        },
+      ],
+      total: 11.00,
+      profit: 3.40,
+      paymentMethod: 'PIX',
+      netAmount: 11.00,
+      createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      items: [
+        {
+          id: generateId(),
+          type: 'service',
+          serviceId: sampleServices[5].id,
+          name: 'Escova Progressiva',
+          quantity: 1,
+          unitPrice: 120.00,
+          total: 120.00,
+          profit: 120.00,
+        },
+      ],
+      total: 120.00,
+      profit: 120.00,
+      paymentMethod: 'CARD',
+      cardFeeRate: 3.2,
+      cardFeeAmount: 3.84,
+      netAmount: 116.16,
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      items: [
+        {
+          id: generateId(),
+          type: 'product',
+          productId: sampleProducts[8].id,
+          name: 'Papel Higiênico',
+          quantity: 1,
+          unitPrice: 9.90,
+          total: 9.90,
+          profit: 3.10,
+        },
+      ],
+      total: 9.90,
+      profit: 3.10,
+      paymentMethod: 'PIX',
+      netAmount: 9.90,
+      createdAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      items: [
+        {
+          id: generateId(),
+          type: 'service',
+          serviceId: sampleServices[7].id,
+          name: 'Limpeza de Pele',
+          quantity: 1,
+          unitPrice: 60.00,
+          total: 60.00,
+          profit: 60.00,
+        },
+      ],
+      total: 60.00,
+      profit: 60.00,
+      paymentMethod: 'CARD',
+      cardFeeRate: 2.9,
+      cardFeeAmount: 1.74,
+      netAmount: 58.26,
+      createdAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      items: [
+        {
+          id: generateId(),
+          type: 'product',
+          productId: sampleProducts[9].id,
+          name: 'Refrigerante Cola',
+          quantity: 2,
+          unitPrice: 7.20,
+          total: 14.40,
+          profit: 5.40,
+        },
+      ],
+      total: 14.40,
+      profit: 5.40,
+      paymentMethod: 'PIX',
+      netAmount: 14.40,
+      createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+    },
+  ];
+
+  // Comandas de teste
+  const sampleComandas: Comanda[] = [
+    {
+      id: generateId(),
+      customerName: 'Roberto Lima',
+      status: 'OPEN',
+      items: [
+        {
+          id: generateId(),
+          type: 'product',
+          productId: sampleProducts[4].id,
+          name: 'Macarrão Espaguete',
+          quantity: 2,
+          unitPrice: 4.20,
+          total: 8.40,
+          addedAt: new Date(),
+        },
+      ],
+      total: 8.40,
+      createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Fernanda Alves',
+      status: 'PAID',
+      items: [
+        {
+          id: generateId(),
+          type: 'service',
+          serviceId: sampleServices[1].id,
+          name: 'Corte de Cabelo Feminino',
+          quantity: 1,
+          unitPrice: 45.00,
+          total: 45.00,
+          addedAt: new Date(),
+        },
+      ],
+      total: 45.00,
+      createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
+      paidAt: new Date(Date.now() - 1 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Carlos Mendes',
+      status: 'OPEN',
+      items: [
+        {
+          id: generateId(),
+          type: 'product',
+          productId: sampleProducts[5].id,
+          name: 'Leite Integral',
+          quantity: 1,
+          unitPrice: 5.50,
+          total: 5.50,
+          addedAt: new Date(),
+        },
+      ],
+      total: 5.50,
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Ana Paula',
+      status: 'PAID',
+      items: [
+        {
+          id: generateId(),
+          type: 'service',
+          serviceId: sampleServices[6].id,
+          name: 'Coloração de Cabelo',
+          quantity: 1,
+          unitPrice: 80.00,
+          total: 80.00,
+          addedAt: new Date(),
+        },
+      ],
+      total: 80.00,
+      createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
+      paidAt: new Date(Date.now() - 30 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'José Santos',
+      status: 'OPEN',
+      items: [
+        {
+          id: generateId(),
+          type: 'product',
+          productId: sampleProducts[6].id,
+          name: 'Café em Pó',
+          quantity: 1,
+          unitPrice: 12.90,
+          total: 12.90,
+          addedAt: new Date(),
+        },
+      ],
+      total: 12.90,
+      createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Patrícia Lima',
+      status: 'PAID',
+      items: [
+        {
+          id: generateId(),
+          type: 'service',
+          serviceId: sampleServices[8].id,
+          name: 'Massagem Relaxante',
+          quantity: 1,
+          unitPrice: 90.00,
+          total: 90.00,
+          addedAt: new Date(),
+        },
+      ],
+      total: 90.00,
+      createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000),
+      paidAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Ricardo Alves',
+      status: 'OPEN',
+      items: [
+        {
+          id: generateId(),
+          type: 'product',
+          productId: sampleProducts[7].id,
+          name: 'Sabão em Pó',
+          quantity: 1,
+          unitPrice: 11.50,
+          total: 11.50,
+          addedAt: new Date(),
+        },
+      ],
+      total: 11.50,
+      createdAt: new Date(Date.now() - 45 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Silvia Costa',
+      status: 'PAID',
+      items: [
+        {
+          id: generateId(),
+          type: 'service',
+          serviceId: sampleServices[9].id,
+          name: 'Depilação com Cera',
+          quantity: 1,
+          unitPrice: 35.00,
+          total: 35.00,
+          addedAt: new Date(),
+        },
+      ],
+      total: 35.00,
+      createdAt: new Date(Date.now() - 7 * 60 * 60 * 1000),
+      paidAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Marcos Silva',
+      status: 'OPEN',
+      items: [
+        {
+          id: generateId(),
+          type: 'product',
+          productId: sampleProducts[8].id,
+          name: 'Papel Higiênico',
+          quantity: 1,
+          unitPrice: 9.90,
+          total: 9.90,
+          addedAt: new Date(),
+        },
+      ],
+      total: 9.90,
+      createdAt: new Date(Date.now() - 20 * 60 * 1000),
+    },
+    {
+      id: generateId(),
+      customerName: 'Helena Rodrigues',
+      status: 'PAID',
+      items: [
+        {
+          id: generateId(),
+          type: 'service',
+          serviceId: sampleServices[3].id,
+          name: 'Manicure',
+          quantity: 1,
+          unitPrice: 20.00,
+          total: 20.00,
+          addedAt: new Date(),
+        },
+      ],
+      total: 20.00,
+      createdAt: new Date(Date.now() - 8 * 60 * 60 * 1000),
+      paidAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
+    },
+  ];
+
+  return {
+    products: sampleProducts,
+    services: sampleServices,
+    sales: sampleSales,
+    comandas: sampleComandas,
+    loans: sampleLoans,
+    financialEntries: [],
+    financialExits: [],
+    stockMovements: [],
+    notifications: [],
+    dashboardStats: {
+      revenue: 0,
+      expenses: 0,
+      netProfit: 0,
+      profitMargin: 0,
+      lowStockAlerts: 0,
+    },
+    showValues: true,
+    darkMode: false,
+    userSettings: {
+      name: 'Maria Silva',
+      companyName: 'Mercadinho da Maria',
+      document: '12.345.678/0001-90',
+      phone: '(11) 99999-9999',
+      email: 'maria@mercadinho.com',
+      address: 'Rua das Flores, 123 - Centro - São Paulo/SP',
+    },
+  };
+}
+
+const BusinessContext = createContext<{
+  state: BusinessState;
+  dispatch: React.Dispatch<BusinessAction>;
+} | null>(null);
+
+function businessReducer(state: BusinessState, action: BusinessAction): BusinessState {
+  switch (action.type) {
+    case 'ADD_PRODUCT':
+      return { ...state, products: [...state.products, action.payload] };
+    
+    case 'UPDATE_PRODUCT':
+      return {
+        ...state,
+        products: state.products.map(p => p.id === action.payload.id ? action.payload : p)
+      };
+    
+    case 'DELETE_PRODUCT':
+      return {
+        ...state,
+        products: state.products.filter(p => p.id !== action.payload)
+      };
+    
+    case 'ADD_SERVICE':
+      return { ...state, services: [...state.services, action.payload] };
+    
+    case 'UPDATE_SERVICE':
+      return {
+        ...state,
+        services: state.services.map(s => s.id === action.payload.id ? action.payload : s)
+      };
+    
+    case 'DELETE_SERVICE':
+      return {
+        ...state,
+        services: state.services.filter(s => s.id !== action.payload)
+      };
+    
+    case 'ADD_SALE':
+      return { ...state, sales: [...state.sales, action.payload] };
+    
+    case 'ADD_COMANDA':
+      return { ...state, comandas: [...state.comandas, action.payload] };
+    
+    case 'UPDATE_COMANDA':
+      return {
+        ...state,
+        comandas: state.comandas.map(c => c.id === action.payload.id ? action.payload : c)
+      };
+    
+    case 'DELETE_COMANDA':
+      return {
+        ...state,
+        comandas: state.comandas.filter(c => c.id !== action.payload)
+      };
+    
+    case 'ADD_LOAN':
+      return { ...state, loans: [...state.loans, action.payload] };
+    
+    case 'UPDATE_LOAN':
+      return {
+        ...state,
+        loans: state.loans.map(l => l.id === action.payload.id ? action.payload : l)
+      };
+    
+    case 'DELETE_LOAN':
+      return {
+        ...state,
+        loans: state.loans.filter(l => l.id !== action.payload)
+      };
+    
+    case 'ADD_FINANCIAL_ENTRY':
+      return { ...state, financialEntries: [...state.financialEntries, action.payload] };
+    
+    case 'UPDATE_FINANCIAL_ENTRY':
+      return {
+        ...state,
+        financialEntries: state.financialEntries.map(e => e.id === action.payload.id ? action.payload : e)
+      };
+    
+    case 'DELETE_FINANCIAL_ENTRY':
+      return {
+        ...state,
+        financialEntries: state.financialEntries.filter(e => e.id !== action.payload)
+      };
+    
+    case 'ADD_FINANCIAL_EXIT':
+      return { ...state, financialExits: [...state.financialExits, action.payload] };
+    
+    case 'UPDATE_FINANCIAL_EXIT':
+      return {
+        ...state,
+        financialExits: state.financialExits.map(e => e.id === action.payload.id ? action.payload : e)
+      };
+    
+    case 'DELETE_FINANCIAL_EXIT':
+      return {
+        ...state,
+        financialExits: state.financialExits.filter(e => e.id !== action.payload)
+      };
+    
+    case 'ADD_STOCK_MOVEMENT':
+      return { ...state, stockMovements: [...state.stockMovements, action.payload] };
+    
+    case 'ADD_NOTIFICATION':
+      return { ...state, notifications: [...state.notifications, action.payload] };
+    
+    case 'MARK_NOTIFICATION_READ':
+      return {
+        ...state,
+        notifications: state.notifications.map(n => 
+          n.id === action.payload ? { ...n, read: true } : n
+        )
+      };
+    
+    case 'MARK_ALL_NOTIFICATIONS_READ':
+      return {
+        ...state,
+        notifications: state.notifications.map(n => ({ ...n, read: true }))
+      };
+    
+    case 'CLEAR_ALL_NOTIFICATIONS':
+      return {
+        ...state,
+        notifications: [],
+      };
+    
+    case 'UPDATE_STATS':
+      // Calculate revenue from all sources
+      const salesRevenue = state.sales.reduce((sum, sale) => sum + sale.total, 0);
+      const comandasRevenue = state.comandas
+        .filter(c => c.status === 'PAID')
+        .reduce((sum, comanda) => sum + comanda.total, 0);
+      const loansRevenue = state.loans
+        .filter(l => l.status === 'PAID')
+        .reduce((sum, loan) => sum + loan.totalAmount, 0);
+      
+      // Only count entries that have reached their date
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Início do dia para comparação de empréstimos
+      const entriesRevenue = state.financialEntries
+        .filter(entry => new Date(entry.date) <= today)
+        .reduce((sum, entry) => sum + entry.amount, 0);
+      
+      const revenue = salesRevenue + comandasRevenue + loansRevenue + entriesRevenue;
+      
+      // Calculate expenses (includes all costs and financial exits)
+      const salesCosts = state.sales.reduce((sum, sale) => {
+        return sum + sale.items.reduce((itemSum, item) => {
+          if (item.type === 'product' && item.productId) {
+            const product = state.products.find(p => p.id === item.productId);
+            return itemSum + (product ? product.costPrice * item.quantity : 0);
+          }
+          return itemSum; // Services have no cost
+        }, 0);
+      }, 0);
+      
+      const comandasCosts = state.comandas
+        .filter(c => c.status === 'PAID')
+        .reduce((sum, comanda) => {
+          return sum + comanda.items.reduce((itemSum, item) => {
+            if (item.type === 'product' && item.productId) {
+              const product = state.products.find(p => p.id === item.productId);
+              return itemSum + (product ? product.costPrice * item.quantity : 0);
+            }
+            return itemSum; // Services have no cost
+          }, 0);
+        }, 0);
+      
+      const loansCosts = state.loans
+        .filter(l => l.status === 'PAID')
+        .reduce((sum, loan) => sum + loan.amount, 0); // Original loan amount is the cost
+      
+      // Financial exits
+      const financialExits = state.financialExits
+        .filter(exit => new Date(exit.date) <= today)
+        .reduce((sum, exit) => sum + exit.amount, 0);
+      
+      // Total expenses = all costs + financial exits
+      const totalExpenses = salesCosts + comandasCosts + loansCosts + financialExits;
+      
+      // Calculate net profit (revenue - all expenses)
+      const netProfit = revenue - totalExpenses;
+      
+      // Calculate profit margin based on revenue
+      const profitMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
+      
+      const lowStockAlerts = state.products.filter(p => p.quantity <= p.minQuantity).length;
+      
+      return {
+        ...state,
+        dashboardStats: {
+          revenue,
+          expenses: totalExpenses,
+          netProfit,
+          profitMargin,
+          lowStockAlerts,
+        }
+      };
+    
+    case 'TOGGLE_SHOW_VALUES':
+      return { ...state, showValues: !state.showValues };
+    
+    case 'TOGGLE_DARK_MODE':
+      return { ...state, darkMode: !state.darkMode };
+    
+    case 'UPDATE_USER_SETTINGS':
+      return { ...state, userSettings: action.payload };
+    
+    case 'LOAD_STATE':
+      return action.payload;
+    
+    default:
+      return state;
+  }
+}
+
+export function BusinessProvider({ children }: { children: React.ReactNode }) {
+  const [state, dispatch] = useReducer(businessReducer, createSampleData());
+
+  // Carregar dados do localStorage na inicialização
+  useEffect(() => {
+    const loadData = () => {
+      try {
+        const savedData = localStorage.getItem('bizManagerData');
+        
+        if (savedData) {
+          const parsedData = JSON.parse(savedData);
+          
+          // Converter strings de data de volta para objetos Date
+          const restoredState: BusinessState = {
+            ...parsedData,
+            products: parsedData.products?.map((p: any) => ({
+              ...p,
+              createdAt: new Date(p.createdAt),
+              updatedAt: new Date(p.updatedAt),
+            })) || [],
+            services: parsedData.services?.map((s: any) => ({
+              ...s,
+              createdAt: new Date(s.createdAt),
+              updatedAt: new Date(s.updatedAt),
+            })) || [],
+            sales: parsedData.sales?.map((s: any) => ({
+              ...s,
+              createdAt: new Date(s.createdAt),
+            })) || [],
+            comandas: parsedData.comandas?.map((c: any) => ({
+              ...c,
+              createdAt: new Date(c.createdAt),
+              paidAt: c.paidAt ? new Date(c.paidAt) : undefined,
+              items: c.items?.map((item: any) => ({
+                ...item,
+                addedAt: new Date(item.addedAt),
+              })) || [],
+            })) || [],
+            loans: parsedData.loans?.map((l: any) => ({
+              ...l,
+              createdAt: new Date(l.createdAt),
+              dueDate: new Date(l.dueDate),
+              paidAt: l.paidAt ? new Date(l.paidAt) : undefined,
+            })) || [],
+            financialEntries: parsedData.financialEntries?.map((e: any) => ({
+              ...e,
+              date: new Date(e.date),
+              createdAt: new Date(e.createdAt),
+            })) || [],
+            financialExits: parsedData.financialExits?.map((e: any) => ({
+              ...e,
+              date: new Date(e.date),
+              createdAt: new Date(e.createdAt),
+            })) || [],
+            stockMovements: parsedData.stockMovements?.map((sm: any) => ({
+              ...sm,
+              createdAt: new Date(sm.createdAt),
+            })) || [],
+            notifications: parsedData.notifications?.map((n: any) => ({
+              ...n,
+              createdAt: new Date(n.createdAt),
+            })) || [],
+          };
+          
+          console.log('Dados carregados do localStorage:', restoredState);
+          dispatch({ type: 'LOAD_STATE', payload: restoredState });
+        } else {
+          console.log('Nenhum dado salvo encontrado, usando dados de teste');
+          // Se não há dados salvos, os dados de teste já estão carregados no estado inicial
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        localStorage.removeItem('bizManagerData');
+      }
     };
 
-    onSave(productData);
-  };
+    loadData();
+  }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name.includes('Price') || name.includes('quantity') || name.includes('Quantity') 
-        ? parseFloat(value) || 0 
-        : value
-    }));
-
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
-
-  const getUnitAbbreviation = (unit: Product['unit']): string => {
-    const abbreviations = {
-      kg: 'kg',
-      litros: 'L',
-      metros: 'm',
-      unidades: 'un',
+  // Salvar dados no localStorage sempre que o estado mudar
+  useEffect(() => {
+    const saveData = () => {
+      try {
+        const dataToSave = {
+          ...state,
+          products: state.products.map(p => ({
+            ...p,
+            createdAt: p.createdAt.toISOString(),
+            updatedAt: p.updatedAt.toISOString(),
+          })),
+          services: state.services.map(s => ({
+            ...s,
+            createdAt: s.createdAt.toISOString(),
+            updatedAt: s.updatedAt.toISOString(),
+          })),
+          sales: state.sales.map(s => ({
+            ...s,
+            createdAt: s.createdAt.toISOString(),
+          })),
+          comandas: state.comandas.map(c => ({
+            ...c,
+            createdAt: c.createdAt.toISOString(),
+            paidAt: c.paidAt?.toISOString(),
+            items: c.items.map(item => ({
+              ...item,
+              addedAt: item.addedAt.toISOString(),
+            })),
+          })),
+          loans: state.loans.map(l => ({
+            ...l,
+            createdAt: l.createdAt.toISOString(),
+            dueDate: l.dueDate.toISOString(),
+            paidAt: l.paidAt?.toISOString(),
+          })),
+          financialEntries: state.financialEntries.map(e => ({
+            ...e,
+            date: e.date.toISOString(),
+            createdAt: e.createdAt.toISOString(),
+          })),
+          financialExits: state.financialExits.map(e => ({
+            ...e,
+            date: e.date.toISOString(),
+            createdAt: e.createdAt.toISOString(),
+          })),
+          stockMovements: state.stockMovements.map(sm => ({
+            ...sm,
+            createdAt: sm.createdAt.toISOString(),
+          })),
+          notifications: state.notifications.map(n => ({
+            ...n,
+            createdAt: n.createdAt.toISOString(),
+          })),
+        };
+        
+        localStorage.setItem('bizManagerData', JSON.stringify(dataToSave));
+        console.log('Dados salvos no localStorage');
+      } catch (error) {
+        console.error('Erro ao salvar dados:', error);
+      }
     };
-    return abbreviations[unit] || unit;
-  };
+
+    // Pequeno delay para evitar salvar durante a inicialização
+    const timeoutId = setTimeout(saveData, 100);
+    return () => clearTimeout(timeoutId);
+  }, [state]);
+
+  // Atualizar estatísticas quando necessário
+  useEffect(() => {
+    dispatch({ type: 'UPDATE_STATS' });
+  }, [state.products, state.services, state.sales, state.comandas, state.loans, state.financialEntries, state.financialExits]);
+
+  // Verificar notificações periodicamente
+  useEffect(() => {
+    const checkNotifications = () => {
+      const today = new Date();
+      
+      // Verificar produtos com estoque baixo
+      state.products.forEach(product => {
+        if (product.quantity <= product.minQuantity && product.quantity >= 0) {
+          // Verificar se já existe uma notificação para este produto
+          const existingNotification = state.notifications.find(n => 
+            n.type === 'LOW_STOCK' && 
+            n.message.includes(product.name) && 
+            !n.read
+          );
+
+          if (!existingNotification) {
+            const notification: Notification = {
+              id: generateId(),
+              type: 'LOW_STOCK',
+              message: `O produto "${product.name}" está com estoque baixo (${product.quantity} ${product.unit})`,
+              read: false,
+              createdAt: new Date(),
+            };
+            dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
+          }
+        }
+      });
+
+      // Verificar empréstimos vencidos
+      state.loans.forEach(loan => {
+        if (loan.status === 'ACTIVE') {
+          const today = new Date();
+          const dueDate = new Date(loan.dueDate);
+          
+          // Comparar apenas as datas (sem horário)
+          today.setHours(0, 0, 0, 0);
+          dueDate.setHours(0, 0, 0, 0);
+          
+          if (today >= dueDate) {
+            // Atualizar status do empréstimo para vencido
+            const overdueLoan = { ...loan, status: 'OVERDUE' as const };
+            dispatch({ type: 'UPDATE_LOAN', payload: overdueLoan });
+
+            // Verificar se já existe uma notificação para este empréstimo
+            const existingNotification = state.notifications.find(n => 
+              n.message.includes('empréstimo') &&
+              n.message.includes(loan.customerName) &&
+              !n.read
+            );
+
+            if (!existingNotification) {
+              const notification: Notification = {
+                id: generateId(),
+                type: 'ERROR',
+                message: `O empréstimo de ${loan.customerName} venceu em ${dueDate.toLocaleDateString()}`,
+                read: false,
+                createdAt: new Date(),
+              };
+              dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
+            }
+          }
+        }
+      });
+    };
+
+    // Usar um timeout para evitar execução durante atualizações de estado
+    const timeoutId = setTimeout(() => {
+      checkNotifications();
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [state.products, state.loans, state.notifications]);
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pb-24">
-      <div className="bg-white dark:bg-[#18191c] rounded-xl shadow-xl w-full max-w-lg max-h-full overflow-hidden flex flex-col">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            {product ? 'Editar Produto' : 'Novo Produto'}
-          </h2>
-          <button
-            onClick={onCancel}
-            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        <div className="overflow-y-auto flex-1">
-          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Nome do Produto *
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                errors.name ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="Ex: Açúcar cristal"
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Descrição
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-              placeholder="Descrição opcional do produto"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Unidade de Medida *
-              </label>
-              <select
-                name="unit"
-                value={formData.unit}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-              >
-                <option value="unidades">Unidades (un)</option>
-                <option value="kg">Quilogramas (kg)</option>
-                <option value="litros">Litros (L)</option>
-                <option value="metros">Metros (m)</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Quantidade Atual *
-              </label>
-              <input
-                type="text"
-                value={displayQuantity}
-                onChange={(e) => handleFloatChange(e.target.value, 'quantity')}
-                onInput={handleFloatInput}
-                onKeyDown={handleFloatKeyDown}
-                onClick={handleFloatClick}
-                onFocus={handleFloatFocus}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                  errors.quantity ? 'border-red-500' : 'border-gray-300'
-                }`}
-                placeholder="0,00"
-                inputMode="decimal"
-              />
-              {errors.quantity && (
-                <p className="text-red-500 text-sm mt-1">{errors.quantity}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Preço de Custo *
-              </label>
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
-                  R$
-                </div>
-                <input
-                  type="text"
-                  value={displayCostPrice}
-                  onChange={(e) => handleCurrencyChange(e.target.value, 'costPrice')}
-                  onInput={(e) => handleCurrencyInput(e, 'costPrice')}
-                  onKeyDown={(e) => handleCurrencyKeyDown(e, 'costPrice')}
-                  onClick={handleCurrencyClick}
-                  onFocus={handleCurrencyFocus}
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                    errors.costPrice ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  placeholder="0,00"
-                  inputMode="numeric"
-                />
-              </div>
-              {errors.costPrice && (
-                <p className="text-red-500 text-sm mt-1">{errors.costPrice}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Preço de Venda *
-              </label>
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
-                  R$
-                </div>
-                <input
-                  type="text"
-                  value={displaySalePrice}
-                  onChange={(e) => handleCurrencyChange(e.target.value, 'salePrice')}
-                  onInput={(e) => handleCurrencyInput(e, 'salePrice')}
-                  onKeyDown={(e) => handleCurrencyKeyDown(e, 'salePrice')}
-                  onClick={handleCurrencyClick}
-                  onFocus={handleCurrencyFocus}
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                    errors.salePrice ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  placeholder="0,00"
-                  inputMode="numeric"
-                />
-              </div>
-              {errors.salePrice && (
-                <p className="text-red-500 text-sm mt-1">{errors.salePrice}</p>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Estoque Mínimo *
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={displayMinQuantity}
-                onChange={(e) => handleFloatChange(e.target.value, 'minQuantity')}
-                onInput={handleFloatInput}
-                onKeyDown={handleFloatKeyDown}
-                onClick={handleFloatClick}
-                onFocus={(e) => {
-                  handleFloatFocus(e);
-                  const isUnits = formData.unit === 'unidades';
-                  if ((isUnits && e.target.value === '0') || (!isUnits && e.target.value === '0,00')) {
-                    setDisplayMinQuantity('');
-                    setFormData(prev => ({ ...prev, minQuantity: 0 }));
-                  }
-                }}
-                className={`w-full pr-12 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
-                  errors.minQuantity ? 'border-red-500' : 'border-gray-300'
-                }`}
-                placeholder={formData.unit === 'unidades' ? '0' : '0,00'}
-                inputMode="decimal"
-              />
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 dark:text-gray-300 font-medium pointer-events-none">
-                {getUnitAbbreviation(formData.unit)}
-              </div>
-            </div>
-            {errors.minQuantity && (
-              <p className="text-red-500 text-sm mt-1">{errors.minQuantity}</p>
-            )}
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Você será notificado quando o estoque atingir este nível
-            </p>
-          </div>
-
-          </form>
-        </div>
-        
-        <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#18191c]">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
-          >
-            <Save className="h-4 w-4" />
-            <span>Salvar</span>
-          </button>
-        </div>
-      </div>
-    </div>
+    <BusinessContext.Provider value={{ state, dispatch }}>
+      {children}
+    </BusinessContext.Provider>
   );
+}
+
+export function useBusiness() {
+  const context = useContext(BusinessContext);
+  if (!context) {
+    throw new Error('useBusiness must be used within a BusinessProvider');
+  }
+  return context;
 }
