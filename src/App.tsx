@@ -7,7 +7,7 @@ import { Dashboard } from './components/Dashboard/Dashboard';
 import { ProductsSection } from './components/Products/ProductsSection';
 import { SalesSection } from './components/Sales/SalesSection';
 import { ComandaSection } from './components/Comanda/ComandaSection';
-import { ReportsSection } from './components/Reports/ReportsSection';
+import { SettingsSection } from './components/Settings/SettingsSection';
 import { NotificationModal } from './components/Notifications/NotificationModal';
 import { SaleForm } from './components/Sales/SaleForm';
 import { Plus, Search } from 'lucide-react';
@@ -78,7 +78,7 @@ function AppContent() {
       case 'comanda':
         return <ComandaSection />;
       case 'settings':
-        return <ReportsSection sales={state.sales} products={state.products} />;
+        return <SettingsSection />;
       default:
         return <Dashboard onNewSale={() => setShowQuickSale(true)} />;
     }
