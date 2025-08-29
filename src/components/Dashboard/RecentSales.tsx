@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, CreditCard, Package, Wrench, TrendingUp, TrendingDown, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
+import { Calendar, CreditCard, Package, Wrench, TrendingUp, TrendingDown, ArrowUpCircle, ArrowDownCircle, ShoppingCart, ClipboardList, HandCoins } from 'lucide-react';
 import { Sale, Comanda, StockMovement, Loan, FinancialEntry, FinancialExit } from '../../types';
 import { formatCurrency, formatDate, getPaymentMethodLabel } from '../../utils/helpers';
 import { useBusiness } from '../../context/BusinessContext';
@@ -55,7 +55,7 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
     comanda.items.forEach(item => {
       movements.push({
         id: `comanda-${comanda.id}-${item.id}`,
-        type: item.type === 'product' ? 'sale' : 'service',
+        type: 'comanda',
         category: 'entry',
         description: `${item.name} (${item.quantity}x) - ${comanda.customerName}`,
         amount: item.total,
@@ -126,19 +126,21 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
   const getMovementIcon = (type: MovementType) => {
     switch (type) {
       case 'sale':
-        return <Package className="h-4 w-4 text-green-500" />;
+        return <ShoppingCart className="h-4 w-4 text-green-500" />;
       case 'service':
-        return <Wrench className="h-4 w-4 text-purple-500" />;
+        return <ShoppingCart className="h-4 w-4 text-green-500" />;
+      case 'comanda':
+        return <ClipboardList className="h-4 w-4 text-green-500" />;
       case 'loan':
-        return <CreditCard className="h-4 w-4 text-blue-500" />;
+        return <HandCoins className="h-4 w-4 text-green-500" />;
       case 'financial_entry':
         return <TrendingUp className="h-4 w-4 text-green-500" />;
       case 'financial_exit':
         return <TrendingDown className="h-4 w-4 text-red-500" />;
       case 'stock_in':
-        return <TrendingUp className="h-4 w-4 text-blue-500" />;
+        return <Package className="h-4 w-4 text-blue-500" />;
       case 'stock_out':
-        return <TrendingDown className="h-4 w-4 text-red-500" />;
+        return <Package className="h-4 w-4 text-red-500" />;
       default:
         return <CreditCard className="h-4 w-4 text-gray-400" />;
     }
