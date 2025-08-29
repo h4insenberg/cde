@@ -18,7 +18,9 @@ export function Header({ title, onMenuClick, onNotificationsClick }: HeaderProps
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center space-x-3">
           <div className="flex items-center space-x-2">
-            <Store className="h-6 w-6 text-blue-600" />
+            <div className="bg-blue-600 p-2 rounded-lg">
+              <Store className="h-5 w-5 text-white" />
+            </div>
             <div>
               <h1 className="text-lg font-bold text-gray-900 dark:text-white">Meu Negócio</h1>
             </div>
