@@ -182,7 +182,6 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
             <div className="space-y-6">
               {/* Products and Services Selection */}
               <div>
-              <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Forma de Pagamento</h3>
                 
                 <select
@@ -336,6 +335,41 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
                 
                 {errors.items && (
                   <p className="text-red-500 text-sm mb-3">{errors.items}</p>
+                )}
+
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {cartItems.map(item => (
+                    <div key={item.id} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-600 rounded-lg">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 dark:text-white text-sm truncate">{item.name}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {formatCurrency(item.unitPrice)} cada
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                        >
+                          <Minus className="h-4 w-4" />
+                        </button>
+                        <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => removeFromCart(item.id)}
+                          className="p-1 text-red-400 hover:text-red-600 ml-2"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
               {/* Summary */}
               {cartItems.length > 0 && (
@@ -428,6 +462,7 @@ export function SaleForm({ products, services, onSave, onCancel }: SaleFormProps
               </div>
             </div>
           </div>
+        </div>
             {/* Segunda Coluna: Cart */}
 
         {/* Actions */}
