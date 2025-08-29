@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, AlertTriangle, CheckCircle, XCircle, Bell } from 'lucide-react';
+import { X, AlertTriangle, CheckCircle, XCircle, Bell, Check, Trash2 } from 'lucide-react';
 import { Notification } from '../../types';
 import { formatDate } from '../../utils/helpers';
 import { useNotifications } from '../../hooks/useNotifications';
@@ -10,7 +10,7 @@ interface NotificationModalProps {
 }
 
 export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
-  const { notifications, markAsRead } = useNotifications();
+  const { notifications, markAsRead, markAllAsRead, clearAll } = useNotifications();
 
   if (!isOpen) return null;
 
@@ -58,12 +58,36 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
             <Bell className="h-5 w-5 mr-2" />
             Notificações
           </h2>
-          <button
-            onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <div className="flex items-center space-x-2">
+            {notifications.length > 0 && (
+              <>
+                <button
+                  onClick={markAllAsRead}
+                  className="p-2 text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                  title="Marcar todas como lidas"
+                >
+                  <Check className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => {
+                    if (window.confirm('Tem certeza que deseja limpar todas as notificações?')) {
+                      clearAll();
+                    }
+                  }}
+                  className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                  title="Limpar todas as notificações"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </>
+            )}
+            <button
+              onClick={onClose}
+              className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         <div className="overflow-y-auto flex-1">

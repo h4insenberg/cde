@@ -41,6 +41,8 @@ type BusinessAction =
   | { type: 'ADD_STOCK_MOVEMENT'; payload: StockMovement }
   | { type: 'ADD_NOTIFICATION'; payload: Notification }
   | { type: 'MARK_NOTIFICATION_READ'; payload: string }
+  | { type: 'MARK_ALL_NOTIFICATIONS_READ' }
+  | { type: 'CLEAR_ALL_NOTIFICATIONS' }
   | { type: 'UPDATE_STATS' }
   | { type: 'TOGGLE_DARK_MODE' }
   | { type: 'TOGGLE_SHOW_VALUES' }
@@ -927,6 +929,18 @@ function businessReducer(state: BusinessState, action: BusinessAction): Business
         notifications: state.notifications.map(n => 
           n.id === action.payload ? { ...n, read: true } : n
         )
+      };
+    
+    case 'MARK_ALL_NOTIFICATIONS_READ':
+      return {
+        ...state,
+        notifications: state.notifications.map(n => ({ ...n, read: true }))
+      };
+    
+    case 'CLEAR_ALL_NOTIFICATIONS':
+      return {
+        ...state,
+        notifications: []
       };
     
     case 'UPDATE_STATS':

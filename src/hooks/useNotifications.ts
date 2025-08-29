@@ -21,6 +21,14 @@ export function useNotifications() {
     dispatch({ type: 'MARK_NOTIFICATION_READ', payload: id });
   };
 
+  const markAllAsRead = () => {
+    dispatch({ type: 'MARK_ALL_NOTIFICATIONS_READ' });
+  };
+
+  const clearAll = () => {
+    dispatch({ type: 'CLEAR_ALL_NOTIFICATIONS' });
+  };
+
   // Check for low stock alerts and overdue loans
   useEffect(() => {
     // Check for low stock products
@@ -80,5 +88,7 @@ export function useNotifications() {
     unreadCount: state.notifications.filter(n => !n.read).length,
     addNotification,
     markAsRead,
+    markAllAsRead,
+    clearAll,
   };
 }
