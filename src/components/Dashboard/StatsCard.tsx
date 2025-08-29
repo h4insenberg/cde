@@ -48,9 +48,6 @@ export function StatsCard({
           <p className="text-lg md:text-2xl font-bold mt-1">
             {displayValue}
           </p>
-          {subtitle && (
-            <p className="text-white/60 text-xs mt-1">{subtitle}</p>
-          )}
         </div>
         <div className={`p-2 md:p-3 rounded-lg ${iconBgClasses[color]} flex-shrink-0`}>
           <Icon className="h-5 w-5 md:h-6 md:w-6" />
