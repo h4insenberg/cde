@@ -13,12 +13,14 @@ import { ComandaSection } from './components/Comanda/ComandaSection';
 import { LoansSection } from './components/Loans/LoansSection';
 import { NotificationModal } from './components/Notifications/NotificationModal';
 import { SaleForm } from './components/Sales/SaleForm';
+import { MenuModal } from './components/Layout/MenuModal';
 import { useBusiness } from './context/BusinessContext';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showQuickSale, setShowQuickSale] = useState(false);
+  const [showMenuModal, setShowMenuModal] = useState(false);
   const { state, dispatch } = useBusiness();
 
   const getPageTitle = () => {
@@ -223,11 +225,19 @@ function AppContent() {
       <BottomNavigation
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        onMenuClick={() => setShowMenuModal(true)}
       />
 
       <NotificationModal
         isOpen={showNotifications}
         onClose={() => setShowNotifications(false)}
+      />
+
+      <MenuModal
+        isOpen={showMenuModal}
+        onClose={() => setShowMenuModal(false)}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
       />
 
       {showQuickSale && (
