@@ -127,86 +127,52 @@ export function LowStockAlerts({ products }: LowStockAlertsProps) {
         {activeTab === 'movements' && (
           <div>
             {recentMovements.length > 0 ? (
-              <div className="space-y-6">
-                {/* Entradas de Estoque */}
-                <div>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <ArrowUpCircle className="h-4 w-4 text-green-500" />
-                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                      Entradas de Estoque
-                    </h4>
-                  </div>
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                {recentMovements.map((movement) => {
+                  const isEntry = movement.type === 'IN';
+                  const bgColor = isEntry 
+                    ? 'bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30' 
+                    : 'bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30';
                   
-                  {recentMovements.filter(m => m.type === 'IN').length > 0 ? (
-                    <div className="space-y-2">
-                      {recentMovements.filter(m => m.type === 'IN').slice(0, 4).map((movement) => (
-                        <div key={movement.id} className={`flex items-center justify-between p-2 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors ${getMovementBg(movement.type)}`}>
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-2">
+                  return (
+                    <div key={movement.id} className={`p-3 sm:p-4 rounded-xl transition-all duration-200 hover:shadow-sm ${bgColor} border border-transparent hover:border-gray-200 dark:hover:border-gray-600`}>
+                      {/* Layout unificado - funciona para mobile e desktop */}
+                      <div className="space-y-3">
+                        {/* Header Row - Ícone, Descrição e Quantidade */}
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start space-x-2 flex-1 min-w-0">
+                            <div className="flex-shrink-0 mt-0.5">
                               {getMovementIcon(movement.type)}
-                              <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                {movement.productName}
-                              </span>
                             </div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                              {movement.reason} • {formatDate(movement.createdAt)}
-                            </p>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-gray-900 dark:text-white leading-tight break-words">
+                                {movement.productName}
+                              </p>
+                            </div>
                           </div>
                           
-                          <div className="text-right">
-                            <p className={`text-sm font-semibold ${getMovementColor(movement.type)}`}>
-                              +{movement.quantity} un
+                          <div className="text-right flex-shrink-0">
+                            <p className={`text-sm sm:text-base font-bold ${getMovementColor(movement.type)} leading-tight`}>
+                              {isEntry ? '+' : '-'}{movement.quantity} un
                             </p>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-500 dark:text-gray-400 text-center py-4 text-sm">
-                      Nenhuma entrada registrada
-                    </p>
-                  )}
-                </div>
-
-                {/* Saídas de Estoque */}
-                <div>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <ArrowDownCircle className="h-4 w-4 text-red-500" />
-                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                      Saídas de Estoque
-                    </h4>
-                  </div>
-                  
-                  {recentMovements.filter(m => m.type === 'OUT').length > 0 ? (
-                    <div className="space-y-2">
-                      {recentMovements.filter(m => m.type === 'OUT').slice(0, 4).map((movement) => (
-                        <div key={movement.id} className={`flex items-center justify-between p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors ${getMovementBg(movement.type)}`}>
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-2">
-                              {getMovementIcon(movement.type)}
-                              <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                {movement.productName}
-                              </span>
-                            </div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                              {movement.reason} • {formatDate(movement.createdAt)}
+                        
+                        {/* Details Row - Data e Motivo */}
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                              {formatDate(movement.createdAt)}
                             </p>
-                          </div>
-                          
-                          <div className="text-right">
-                            <p className={`text-sm font-semibold ${getMovementColor(movement.type)}`}>
-                              -{movement.quantity} un
-                            </p>
+                            <span className="text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full font-medium whitespace-nowrap">
+                              {movement.reason}
+                            </span>
                           </div>
                         </div>
-                      ))}
+                      </div>
                     </div>
-                  ) : (
-                    <p className="text-gray-500 dark:text-gray-400 text-center py-4 text-sm">
-                      Nenhuma saída registrada
-                    </p>
-                  )}
-                </div>
+                  );
+                })}
               </div>
             ) : (
               <div className="text-center py-8">
