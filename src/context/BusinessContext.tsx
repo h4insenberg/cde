@@ -263,6 +263,175 @@ const sampleServices: Service[] = [
   },
 ];
 
+// Sample loans for testing
+const sampleLoans: Loan[] = [
+  {
+    id: generateId(),
+    customerName: 'João Silva',
+    amount: 500.00,
+    interestRate: 10.0,
+    totalAmount: 550.00,
+    status: 'ACTIVE',
+    dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
+    description: 'Empréstimo para compra de material de construção',
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Maria Santos',
+    amount: 1200.00,
+    interestRate: 8.5,
+    totalAmount: 1302.00,
+    status: 'PAID',
+    dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+    description: 'Empréstimo para emergência médica',
+    createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000), // 20 days ago
+    paidAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Carlos Oliveira',
+    amount: 800.00,
+    interestRate: 12.0,
+    totalAmount: 896.00,
+    status: 'OVERDUE',
+    dueDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago (overdue)
+    description: 'Empréstimo para pagamento de contas',
+    createdAt: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000), // 35 days ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Ana Costa',
+    amount: 300.00,
+    interestRate: 5.0,
+    totalAmount: 315.00,
+    status: 'ACTIVE',
+    dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
+    description: 'Empréstimo para compra de eletrodoméstico',
+    createdAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000), // 8 days ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Pedro Ferreira',
+    amount: 2000.00,
+    interestRate: 15.0,
+    totalAmount: 2300.00,
+    status: 'ACTIVE',
+    dueDate: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000), // 25 days from now
+    description: 'Empréstimo para investimento no negócio',
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+  },
+];
+
+// Sample sales for testing
+const sampleSales: Sale[] = [
+  {
+    id: generateId(),
+    items: [
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[0].id, // Açúcar Cristal
+        name: 'Açúcar Cristal',
+        quantity: 2,
+        unitPrice: 5.20,
+        total: 10.40,
+        profit: 3.40,
+      },
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[1].id, // Arroz Branco
+        name: 'Arroz Branco',
+        quantity: 1,
+        unitPrice: 18.50,
+        total: 18.50,
+        profit: 6.50,
+      },
+    ],
+    total: 28.90,
+    profit: 9.90,
+    paymentMethod: 'PIX',
+    netAmount: 28.90,
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+  },
+  {
+    id: generateId(),
+    items: [
+      {
+        id: generateId(),
+        type: 'service',
+        serviceId: sampleServices[0].id, // Corte Masculino
+        name: 'Corte de Cabelo Masculino',
+        quantity: 1,
+        unitPrice: 25.00,
+        total: 25.00,
+        profit: 25.00,
+      },
+    ],
+    total: 25.00,
+    profit: 25.00,
+    paymentMethod: 'CARD',
+    cardFeeRate: 3.5,
+    cardFeeAmount: 0.88,
+    netAmount: 24.12,
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+  },
+];
+
+// Sample comandas for testing
+const sampleComandas: Comanda[] = [
+  {
+    id: generateId(),
+    customerName: 'Roberto Lima',
+    status: 'OPEN',
+    items: [
+      {
+        id: generateId(),
+        type: 'product',
+        productId: sampleProducts[4].id, // Macarrão
+        name: 'Macarrão Espaguete',
+        quantity: 3,
+        unitPrice: 4.20,
+        total: 12.60,
+        addedAt: new Date(),
+      },
+      {
+        id: generateId(),
+        type: 'service',
+        serviceId: sampleServices[2].id, // Barba
+        name: 'Barba e Bigode',
+        quantity: 1,
+        unitPrice: 15.00,
+        total: 15.00,
+        addedAt: new Date(),
+      },
+    ],
+    total: 27.60,
+    createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 hours ago
+  },
+  {
+    id: generateId(),
+    customerName: 'Fernanda Alves',
+    status: 'PAID',
+    items: [
+      {
+        id: generateId(),
+        type: 'service',
+        serviceId: sampleServices[1].id, // Corte Feminino
+        name: 'Corte de Cabelo Feminino',
+        quantity: 1,
+        unitPrice: 45.00,
+        total: 45.00,
+        addedAt: new Date(),
+      },
+    ],
+    total: 45.00,
+    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
+    paidAt: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
+  },
+];
+
 const BusinessContext = createContext<{
   state: BusinessState;
   dispatch: React.Dispatch<BusinessAction>;
@@ -419,6 +588,9 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
           ...initialState,
           products: sampleProducts,
           services: sampleServices,
+          sales: sampleSales,
+          comandas: sampleComandas,
+          loans: sampleLoans,
           darkMode: isDarkMode,
         };
         dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
@@ -429,6 +601,9 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         ...initialState,
         products: sampleProducts,
         services: sampleServices,
+        sales: sampleSales,
+        comandas: sampleComandas,
+        loans: sampleLoans,
         darkMode: isDarkMode,
       };
       dispatch({ type: 'LOAD_DATA', payload: initialDataWithSamples });
