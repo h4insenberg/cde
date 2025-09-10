@@ -33,7 +33,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
           title="Receitas"
           value={dashboardStats.revenue}
           icon={ArrowUp}
-          color="blue"
+          color="green"
           isCurrency={true}
           showValue={state.showValues}
           subtitle={`${sales.length} transaç${sales.length !== 1 ? 'ões' : 'ão'}`}
@@ -43,7 +43,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
           title="Despesas"
           value={dashboardStats.expenses}
           icon={ArrowDown}
-          color="purple"
+          color="red"
           isCurrency={true}
           showValue={state.showValues}
         />
@@ -52,7 +52,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
           title="Lucro Líquido"
           value={dashboardStats.netProfit}
           icon={DollarSign}
-          color="green"
+          color="blue"
           showValue={state.showValues}
         />
         
@@ -60,7 +60,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
           title="Margem de Lucro"
           value={dashboardStats.profitMargin}
           icon={Target}
-          color="yellow"
+          color="purple"
           isCurrency={false}
           showValue={state.showValues}
         />

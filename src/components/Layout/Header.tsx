@@ -14,7 +14,7 @@ export function Header({ title, onMenuClick, onNotificationsClick }: HeaderProps
   const { state, dispatch } = useBusiness();
 
   return (
-    <header className="bg-white dark:bg-[#243447] border-b border-gray-200 dark:border-[#3a4a5c] px-4 sm:px-6 py-3">
+    <header className="bg-white dark:bg-[#131416] border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center space-x-3">
           <div className="flex items-center space-x-2">
@@ -39,7 +39,7 @@ export function Header({ title, onMenuClick, onNotificationsClick }: HeaderProps
         <div className="flex items-center space-x-2">
           <button
             onClick={() => dispatch({ type: 'TOGGLE_SHOW_VALUES' })}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#3a4a5c]/50 transition-colors"
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
             title={state.showValues ? 'Ocultar valores' : 'Mostrar valores'}
           >
             {state.showValues ? (
@@ -51,7 +51,7 @@ export function Header({ title, onMenuClick, onNotificationsClick }: HeaderProps
           
           <button
             onClick={() => dispatch({ type: 'TOGGLE_DARK_MODE' })}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#3a4a5c]/50 transition-colors"
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
             title={state.darkMode ? 'Modo claro' : 'Modo escuro'}
           >
             {state.darkMode ? (
@@ -63,7 +63,7 @@ export function Header({ title, onMenuClick, onNotificationsClick }: HeaderProps
           
           <button
             onClick={onNotificationsClick}
-            className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#3a4a5c]/50 transition-colors"
+            className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
           >
             <Bell className="h-5 w-5 text-gray-500 dark:text-gray-400" />
             {unreadCount > 0 && (
