@@ -36,7 +36,7 @@ export function LowStockAlerts({ products }: LowStockAlertsProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-[#2a3441] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-[#3a4553]">
+    <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
       {/* Header with Tabs */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
@@ -46,12 +46,12 @@ export function LowStockAlerts({ products }: LowStockAlertsProps) {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex space-x-1 bg-gray-100 dark:bg-[#3a4553] rounded-lg p-1 mb-4">
+      <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1 mb-4">
         <button
           onClick={() => setActiveTab('alerts')}
           className={`flex-1 px-3 py-2 rounded-md transition-colors flex items-center justify-center space-x-2 text-sm font-medium ${
             activeTab === 'alerts'
-              ? 'bg-white dark:bg-[#2a3441] text-blue-600 dark:text-blue-400 shadow-sm'
+              ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
           }`}
         >
@@ -67,7 +67,7 @@ export function LowStockAlerts({ products }: LowStockAlertsProps) {
           onClick={() => setActiveTab('movements')}
           className={`flex-1 px-3 py-2 rounded-md transition-colors flex items-center justify-center space-x-2 text-sm font-medium ${
             activeTab === 'movements'
-              ? 'bg-white dark:bg-[#2a3441] text-blue-600 dark:text-blue-400 shadow-sm'
+              ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
           }`}
         >
@@ -86,7 +86,7 @@ export function LowStockAlerts({ products }: LowStockAlertsProps) {
             {lowStockProducts.length > 0 ? (
               <div className="space-y-3">
                 {lowStockProducts.map((product) => (
-                  <div key={product.id} className="flex items-center justify-between p-3 bg-red-50 dark:bg-slate-700 rounded-lg hover:bg-red-100 dark:hover:bg-slate-600 transition-colors border border-red-200 dark:border-red-800">
+                  <div key={product.id} className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors border border-red-200 dark:border-red-800">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2">
                         <AlertTriangle className="h-4 w-4 text-red-500" />
@@ -131,11 +131,11 @@ export function LowStockAlerts({ products }: LowStockAlertsProps) {
                 {recentMovements.map((movement) => {
                   const isEntry = movement.type === 'IN';
                   const bgColor = isEntry 
-                    ? 'bg-green-50 dark:bg-slate-700 hover:bg-green-100 dark:hover:bg-slate-600' 
-                    : 'bg-red-50 dark:bg-slate-700 hover:bg-red-100 dark:hover:bg-slate-600';
+                    ? 'bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30' 
+                    : 'bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30';
                   
                   return (
-                    <div key={movement.id} className={`p-3 sm:p-4 rounded-xl transition-all duration-200 hover:shadow-sm ${bgColor} border border-transparent hover:border-gray-200 dark:hover:border-slate-600`}>
+                    <div key={movement.id} className={`p-3 sm:p-4 rounded-xl transition-all duration-200 hover:shadow-sm ${bgColor} border border-transparent hover:border-gray-200 dark:hover:border-gray-600`}>
                       {/* Layout unificado - funciona para mobile e desktop */}
                       <div className="space-y-3">
                         {/* Header Row - Ícone, Descrição e Quantidade */}

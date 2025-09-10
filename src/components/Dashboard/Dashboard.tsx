@@ -14,7 +14,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
   const { dashboardStats, sales, products, comandas, stockMovements, userSettings } = state;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 pb-20 lg:pb-6">
+    <div className="max-w-7xl mx-auto space-y-6 pb-20">
       {/* Header with greeting and quick action */}
       <div className="flex items-center justify-between sm:justify-start">
         <div className="text-center sm:text-left flex-1 sm:flex-initial">
