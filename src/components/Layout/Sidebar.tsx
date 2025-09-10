@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Package, Wrench, TrendingUp, TrendingDown, ShoppingCart, HandCoins, ClipboardList, BarChart3, Settings, Eye, Clock } from 'lucide-react';
+import { Home, Package, Wrench, TrendingUp, TrendingDown, ShoppingCart, HandCoins, ClipboardList, BarChart3, Settings, Eye, Clock, Store } from 'lucide-react';
 
 interface SidebarProps {
   activeTab: string;
