@@ -36,7 +36,7 @@ export function LowStockAlerts({ products }: LowStockAlertsProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-slate-700">
+    <div className="bg-white dark:bg-[#2a3441] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-[#3a4553]">
       {/* Header with Tabs */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
@@ -46,12 +46,12 @@ export function LowStockAlerts({ products }: LowStockAlertsProps) {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex space-x-1 bg-gray-100 dark:bg-slate-700 rounded-lg p-1 mb-4">
+      <div className="flex space-x-1 bg-gray-100 dark:bg-[#3a4553] rounded-lg p-1 mb-4">
         <button
           onClick={() => setActiveTab('alerts')}
           className={`flex-1 px-3 py-2 rounded-md transition-colors flex items-center justify-center space-x-2 text-sm font-medium ${
             activeTab === 'alerts'
-              ? 'bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm'
+              ? 'bg-white dark:bg-[#2a3441] text-blue-600 dark:text-blue-400 shadow-sm'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
           }`}
         >
@@ -67,7 +67,7 @@ export function LowStockAlerts({ products }: LowStockAlertsProps) {
           onClick={() => setActiveTab('movements')}
           className={`flex-1 px-3 py-2 rounded-md transition-colors flex items-center justify-center space-x-2 text-sm font-medium ${
             activeTab === 'movements'
-              ? 'bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm'
+              ? 'bg-white dark:bg-[#2a3441] text-blue-600 dark:text-blue-400 shadow-sm'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
           }`}
         >

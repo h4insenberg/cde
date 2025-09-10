@@ -238,7 +238,7 @@ function AppContent() {
           title={getPageTitle()}
           onNotificationsClick={() => setShowNotifications(true)}
         />
-        <main className="lg:ml-80 bg-slate-900 min-h-screen pt-20">
+        <main className="lg:ml-80 bg-[#0d1117] min-h-screen pt-20">
           <div className="px-6 py-6">
             {renderContent()}
           </div>

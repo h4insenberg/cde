@@ -155,7 +155,7 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-slate-700">
+    <div className="bg-white dark:bg-[#2a3441] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-[#3a4553]">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
           <Calendar className="h-5 w-5 mr-2 text-blue-500" />
