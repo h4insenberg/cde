@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Eye, EyeOff, Sun, Moon, RotateCcw, Search } from 'lucide-react';
+import { Bell, Eye, EyeOff, Sun, Moon, RotateCcw, Search, Package } from 'lucide-react';
 import { useNotifications } from '../../hooks/useNotifications';
 import { useBusiness } from '../../context/BusinessContext';
 
