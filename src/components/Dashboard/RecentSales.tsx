@@ -155,7 +155,7 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
   }
 
   return (
-    <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-slate-700">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
           <Calendar className="h-5 w-5 mr-2 text-blue-500" />
@@ -167,11 +167,11 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
         {allMovements.map((movement) => {
           const isEntry = movement.category === 'entry';
           const bgColor = isEntry 
-            ? 'bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30' 
-            : 'bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30';
+            ? 'bg-green-50 dark:bg-slate-700 hover:bg-green-100 dark:hover:bg-slate-600' 
+            : 'bg-red-50 dark:bg-slate-700 hover:bg-red-100 dark:hover:bg-slate-600';
           
           return (
-            <div key={movement.id} className={`p-3 sm:p-4 rounded-xl transition-all duration-200 hover:shadow-sm ${bgColor} border border-transparent hover:border-gray-200 dark:hover:border-gray-600`}>
+            <div key={movement.id} className={`p-3 sm:p-4 rounded-xl transition-all duration-200 hover:shadow-sm ${bgColor} border border-transparent hover:border-gray-200 dark:hover:border-slate-600`}>
               {/* Unified Layout - Works for both mobile and desktop */}
               <div className="space-y-3">
                 {/* Header Row - Icon, Description and Amount */}

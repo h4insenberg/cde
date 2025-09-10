@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Database } from 'lucide-react';
+import { Database, Package } from 'lucide-react';
 import { BusinessProvider } from './context/BusinessContext';
 import { Header } from './components/Layout/Header';
+import { Sidebar } from './components/Layout/Sidebar';
+import { DesktopHeader } from './components/Layout/DesktopHeader';
 import { BottomNavigation } from './components/Layout/BottomNavigation';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { ProductsSection } from './components/Products/ProductsSection';
@@ -228,21 +230,38 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#131416]">
-      <Header
-        title={getPageTitle()}
-        onNotificationsClick={() => setShowNotifications(true)}
-      />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-        {renderContent()}
-      </main>
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
+      {/* Desktop Layout */}
+      <div className="hidden lg:block">
+        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        <DesktopHeader
+          title={getPageTitle()}
+          onNotificationsClick={() => setShowNotifications(true)}
+        />
+        <main className="lg:ml-80 bg-slate-900 min-h-screen pt-20">
+          <div className="px-6 py-6">
+            {renderContent()}
+          </div>
+        </main>
+      </div>
 
-      <BottomNavigation
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        onMenuClick={() => setShowMenuModal(true)}
-      />
+      {/* Mobile Layout */}
+      <div className="lg:hidden">
+        <Header
+          title={getPageTitle()}
+          onNotificationsClick={() => setShowNotifications(true)}
+        />
+        
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+          {renderContent()}
+        </main>
+
+        <BottomNavigation
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          onMenuClick={() => setShowMenuModal(true)}
+        />
+      </div>
 
       <NotificationModal
         isOpen={showNotifications}
