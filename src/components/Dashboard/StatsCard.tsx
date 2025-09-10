@@ -40,17 +40,21 @@ export function StatsCard({
   const displayValue = showValue 
     ? (isCurrency ? formatCurrency(value) : `${value.toFixed(1)}%`)
     : '••••';
+    
   return (
-    <div className={`rounded-xl p-3 md:p-4 ${colorClasses[color]} shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}>
+    <div className={`rounded-xl p-4 ${colorClasses[color]} shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-white/80 text-xs md:text-sm font-medium">{title}</p>
-          <p className="text-lg md:text-2xl font-bold mt-1">
+          <p className="text-white/80 text-sm font-medium">{title}</p>
+          <p className="text-2xl font-bold mt-1">
             {displayValue}
           </p>
+          {subtitle && (
+            <p className="text-white/60 text-xs mt-1">{subtitle}</p>
+          )}
         </div>
-        <div className={`p-2 md:p-3 rounded-lg ${iconBgClasses[color]} flex-shrink-0`}>
-          <Icon className="h-5 w-5 md:h-6 md:w-6" />
+        <div className={`p-3 rounded-lg ${iconBgClasses[color]} flex-shrink-0`}>
+          <Icon className="h-6 w-6" />
         </div>
       </div>
     </div>

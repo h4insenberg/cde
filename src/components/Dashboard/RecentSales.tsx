@@ -140,14 +140,14 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
 
   if (allMovements.length === 0) {
     return (
-      <div className="bg-white dark:bg-[#18191c] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+      <div className="bg-[#2c3e50] rounded-xl p-6 shadow-sm border border-[#3a4a5c]">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-            <Calendar className="h-5 w-5 mr-2 text-blue-500" />
+          <h3 className="text-lg font-semibold text-white flex items-center">
+            <Calendar className="h-5 w-5 mr-2 text-[#4ade80]" />
             Extrato
           </h3>
         </div>
-        <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+        <p className="text-gray-400 text-center py-8">
           Nenhuma movimentação registrada ainda
         </p>
       </div>
@@ -155,10 +155,10 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
   }
 
   return (
-    <div className="bg-white dark:bg-[#2c3e50] rounded-xl p-6 shadow-sm border border-gray-200 dark:border-[#3a4a5c]">
+    <div className="bg-[#2c3e50] rounded-xl p-6 shadow-sm border border-[#3a4a5c]">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-          <Calendar className="h-5 w-5 mr-2 text-blue-500" />
+        <h3 className="text-lg font-semibold text-white flex items-center">
+          <Calendar className="h-5 w-5 mr-2 text-[#4ade80]" />
           Extrato
         </h3>
       </div>
@@ -167,11 +167,11 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
         {allMovements.map((movement) => {
           const isEntry = movement.category === 'entry';
           const bgColor = isEntry 
-            ? 'bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30' 
-            : 'bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30';
+            ? 'bg-green-900/20 hover:bg-green-900/30' 
+            : 'bg-red-900/20 hover:bg-red-900/30';
           
           return (
-            <div key={movement.id} className={`p-3 sm:p-4 rounded-xl transition-all duration-200 hover:shadow-sm ${bgColor} border border-transparent hover:border-gray-200 dark:hover:border-gray-600`}>
+            <div key={movement.id} className={`p-4 rounded-xl transition-all duration-200 hover:shadow-sm ${bgColor} border border-transparent hover:border-[#4a5568]`}>
               {/* Unified Layout - Works for both mobile and desktop */}
               <div className="space-y-3">
                 {/* Header Row - Icon, Description and Amount */}
@@ -181,7 +181,7 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
                       {getMovementIcon(movement.type)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white leading-tight break-words">
+                      <p className="text-sm font-semibold text-white leading-tight break-words">
                         {movement.description}
                       </p>
                     </div>
@@ -189,11 +189,11 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
                   
                   <div className="text-right flex-shrink-0">
                     {movement.amount !== undefined ? (
-                      <p className={`text-sm sm:text-base font-bold ${getMovementColor(movement.type)} leading-tight`}>
+                      <p className={`text-base font-bold ${getMovementColor(movement.type)} leading-tight`}>
                         {isEntry ? '+' : '-'}{showValues ? formatCurrency(movement.amount) : '••••'}
                       </p>
                     ) : (
-                      <p className={`text-sm sm:text-base font-bold ${getMovementColor(movement.type)} leading-tight`}>
+                      <p className={`text-base font-bold ${getMovementColor(movement.type)} leading-tight`}>
                         {isEntry ? '+' : '-'}{movement.quantity} {movement.unit || 'un'}
                       </p>
                     )}
@@ -203,11 +203,11 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
                 {/* Details Row - Date, Payment Method, and Profit */}
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                    <p className="text-xs text-gray-400 whitespace-nowrap">
                       {formatDate(movement.createdAt)}
                     </p>
                     {movement.paymentMethod && (
-                      <span className="text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full font-medium whitespace-nowrap">
+                      <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded-full font-medium whitespace-nowrap">
                         {getPaymentMethodLabel(movement.paymentMethod)}
                       </span>
                     )}
@@ -215,7 +215,7 @@ export function RecentSales({ sales, comandas, stockMovements, loans, financialE
                   
                   {movement.profit !== undefined && showValues && isEntry && (
                     <div className="text-right">
-                      <p className="text-xs text-green-600 dark:text-green-400 font-medium whitespace-nowrap">
+                      <p className="text-xs text-green-400 font-medium whitespace-nowrap">
                         Lucro: {formatCurrency(movement.profit)}
                       </p>
                     </div>

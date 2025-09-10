@@ -14,21 +14,21 @@ export function Dashboard({ onNewSale }: DashboardProps) {
   const { dashboardStats, sales, products, comandas, stockMovements, userSettings } = state;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 pb-20">
+    <div className="space-y-6">
       {/* Header with greeting and quick action */}
-      <div className="flex items-center justify-between sm:justify-start">
-        <div className="text-center sm:text-left flex-1 sm:flex-initial">
-          <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-white">
             Olá, {userSettings.name}! 👋
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-base">
+          <p className="text-gray-300">
             Bem-vindo ao seu painel de controle
           </p>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
           title="Receitas"
           value={dashboardStats.revenue}
@@ -67,9 +67,9 @@ export function Dashboard({ onNewSale }: DashboardProps) {
       </div>
 
       {/* Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Mobile: Extrato first, Desktop: Recent Sales first */}
-        <div className="lg:order-1 order-1">
+        <div className="xl:order-1 order-1">
           <RecentSales 
             sales={sales} 
             comandas={comandas}
@@ -79,7 +79,7 @@ export function Dashboard({ onNewSale }: DashboardProps) {
             financialExits={state.financialExits}
           />
         </div>
-        <div className="lg:order-2 order-2">
+        <div className="xl:order-2 order-2">
           <LowStockAlerts products={products} />
         </div>
       </div>
